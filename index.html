@@ -594,6 +594,16 @@ const flat = (shape, depth, mat, bevel = 0.03) => {
 };
 const circlePath = (x, y, r) => { const p = new THREE.Path(); p.absarc(x, y, r, 0, Math.PI * 2, true); return p; };
 
+// Rest-pose bounding-box corners of obj, in its parent's space
+function restCorners(obj) {
+  (obj.parent || obj).updateMatrixWorld(true);
+  const b = new THREE.Box3().setFromObject(obj), out = [];
+  for (const x of [b.min.x, b.max.x]) for (const y of [b.min.y, b.max.y]) for (const z of [b.min.z, b.max.z]) out.push(new THREE.Vector3(x, y, z));
+  if (obj.parent) { const inv = obj.parent.matrixWorld.clone().invert(); out.forEach((v) => v.applyMatrix4(inv)); }
+  return out;
+}
+const _cv = new THREE.Vector3();
+function minYAfter(corners, q, pivot) { let m = Infinity; for (const c of corners) { _cv.copy(c).sub(pivot).applyQuaternion(q).add(pivot); if (_cv.y < m) m = _cv.y; } return m; }
 function threadOn(obj, holeLocal, axisLocal, longLocal, p, t, hint, tip = 1.0) {
   // A hole is much wider than the wire, so the item can lean well off the wire's direction and stay threaded.
   const up = new THREE.Vector3(0, 1, 0); let n = t.dot(up) < 0 ? t.clone().negate() : t.clone();
@@ -613,21 +623,36 @@ function makeKeys() {
   const g = new THREE.Group();
   const V = (x, y, z) => new THREE.Vector3(x, y, z);
   // Split ring, tilted
-  const RR = 1.45, m = V(0.3, 0.75, 0.35).normalize();
+  const RR = 1.45, m = V(0.12, 1, 0.22).normalize(), C = V(0, RR * Math.sin(m.angleTo(V(0, 1, 0))) + 0.08, 0);
   const e1 = V(1, 0, 0).addScaledVector(m, -m.x).normalize(), e2 = new THREE.Vector3().crossVectors(m, e1);
   const ringQ = new THREE.Quaternion().setFromUnitVectors(V(0, 0, 1), m);
   for (const off of [-0.075, 0.075]) {
-    const ring = new THREE.Mesh(new THREE.TorusGeometry(RR, 0.07, 10, 64), steel); ring.quaternion.copy(ringQ); ring.position.copy(m).multiplyScalar(off); g.add(ring);
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(RR, 0.07, 10, 64), steel); ring.quaternion.copy(ringQ); ring.position.copy(m).multiplyScalar(off).add(C); g.add(ring);
   }
   const onRing = (hint) => {                          // ring point facing the hint direction, plus its tangent
     const th = Math.atan2(hint.dot(e2), hint.dot(e1));
-    return { p: e1.clone().multiplyScalar(RR * Math.cos(th)).addScaledVector(e2, RR * Math.sin(th)),
+    return { p: e1.clone().multiplyScalar(RR * Math.cos(th)).addScaledVector(e2, RR * Math.sin(th)).add(C),
              t: e1.clone().multiplyScalar(-Math.sin(th)).addScaledVector(e2, Math.cos(th)).normalize() };
   };
   const dangles = [];
   const hang = (obj, hole, axis, long, hint, tip, lift = 0) => {
-    const { p, t } = onRing(hint); threadOn(obj, hole, axis, long, p, t, hint, tip); obj.position.y += lift; g.add(obj);
-    dangles.push({ obj, p: p.clone().setY(p.y + lift), t, q0: obj.quaternion.clone(), x0: obj.position.clone(),
+    const { p, t } = onRing(hint); threadOn(obj, hole, axis, long, p, t, hint, tip); g.add(obj);
+    // Tip it about its hole (the wire stays through it) until its lowest edge just touches the desk
+    const Lw = long.clone().applyQuaternion(obj.quaternion), ax = new THREE.Vector3().crossVectors(Lw, V(0, 1, 0));
+    const corners0 = restCorners(obj), target = 0.01 + Math.max(0, lift) * 0.15;
+    if (ax.lengthSq() > 1e-6) {
+      ax.normalize(); let best = 0, bestScore = Infinity; const qq = new THREE.Quaternion();
+      for (let ang = -1.3; ang <= 1.3; ang += 0.01) {
+        qq.setFromAxisAngle(ax, ang); const sc = Math.abs(minYAfter(corners0, qq, p) - target) + 0.02 * Math.abs(ang);
+        if (sc < bestScore) { bestScore = sc; best = ang; }
+      }
+      qq.setFromAxisAngle(ax, best);
+      obj.quaternion.premultiply(qq); obj.position.sub(p).applyQuaternion(qq).add(p);
+    }
+    const corners = restCorners(obj), q0 = obj.quaternion.clone();
+    // Swing direction about the wire that lifts the piece off the desk, never into it
+    const sgn = minYAfter(corners, new THREE.Quaternion().setFromAxisAngle(t, 0.2), p) >= minYAfter(corners, new THREE.Quaternion().setFromAxisAngle(t, -0.2), p) ? 1 : -1;
+    dangles.push({ obj, p: p.clone(), t, q0, x0: obj.position.clone(), corners, sgn, rest: minYAfter(corners, new THREE.Quaternion(), p),
       f1: 13 + Math.random() * 9, f2: 9 + Math.random() * 7, a1: 0.22 + Math.random() * 0.2, a2: 0.12 + Math.random() * 0.12, ph: Math.random() * 6.28 });
   };
 
@@ -665,7 +690,7 @@ function makeKeys() {
   const fob = new THREE.Shape(); fob.moveTo(0, 2.5);
   fob.bezierCurveTo(1.0, 2.1, 1.65, 0.7, 1.6, -0.4); fob.absarc(0, -0.4, 1.6, 0, Math.PI, true); fob.bezierCurveTo(-1.65, 0.7, -1.0, 2.1, 0, 2.5);
   fob.holes.push(circlePath(0, 1.8, 0.3));
-  hang(flat(fob, 0.3, blackPlastic), V(0, 0.15, -1.8), V(0, 1, 0), V(0, 0, 1), V(0.55, -0.12, 0.85).normalize(), 0.75, 0.0);
+  hang(flat(fob, 0.3, blackPlastic), V(0, 0.15, -1.8), V(0, 1, 0), V(0, 0, 1), V(0.55, -0.12, 0.85).normalize(), 1.3, 0.0);
 
   // Round tracker in a black holder with a tab
   const tracker = new THREE.Group();
@@ -682,8 +707,8 @@ function makeKeys() {
   hang(flat(pl, 0.35, whitePlastic), V(0, 0.17, -1.05), V(0, 1, 0), V(0, 0, 1), V(-0.65, -0.12, 0.75).normalize(), 0.7, -0.15);
 
   g.scale.setScalar(0.6);
-  g.updateMatrixWorld(true);                          // rest the whole bunch on the table
-  const box = new THREE.Box3().setFromObject(g); g.position.y = -box.min.y;
+  g.updateMatrixWorld(true);                          // pieces are already resting on the table; only lift if something still dips under
+  const box = new THREE.Box3().setFromObject(g); g.position.y = Math.max(0, -box.min.y);
   const wrap = new THREE.Group(); wrap.add(g);
   // Jingle: every key, fob and tag swings about the wire through its own hole, each at its own pace
   let energy = 0, time = 0; const up = new THREE.Vector3(0, 1, 0), qa = new THREE.Quaternion(), qb = new THREE.Quaternion(), tmp = new THREE.Vector3();
@@ -691,14 +716,17 @@ function makeKeys() {
   wrap.userData.wobbleScale = 0.25;                   // the bunch itself barely moves; the pieces do the jingling
   wrap.userData.tick = (dt) => {
     if (energy <= 0) return; time += dt; energy = Math.max(0, energy - dt * 0.9);
+    if (energy === 0) { for (const d of dangles) { d.obj.quaternion.copy(d.q0); d.obj.position.copy(d.x0); } return; }
     const e = energy * energy;
     for (const d of dangles) {
-      qa.setFromAxisAngle(d.t, Math.sin(time * d.f1 + d.ph) * d.a1 * e);
+      qa.setFromAxisAngle(d.t, d.sgn * Math.abs(Math.sin(time * d.f1 + d.ph)) * d.a1 * e);
       qb.setFromAxisAngle(up, Math.sin(time * d.f2 + d.ph * 1.7) * d.a2 * e);
       qa.premultiply(qb);
       d.obj.quaternion.copy(d.q0).premultiply(qa);
       tmp.copy(d.x0).sub(d.p).applyQuaternion(qa); d.obj.position.copy(d.p).add(tmp);
       d.obj.position.y += Math.abs(Math.sin(time * d.f1 * 0.5 + d.ph)) * 0.25 * e;   // little hops as they knock together
+      const low = minYAfter(d.corners, qa, d.p) + d.obj.position.y - (tmp.copy(d.x0).sub(d.p).applyQuaternion(qa).add(d.p).y);
+      if (low < d.rest) d.obj.position.y += d.rest - low;                               // never through the desk
     }
   };
   return wrap;
@@ -792,11 +820,12 @@ function makeMug() {
   };
   return g;
 }
+const _origin = new THREE.Vector3();
 function addProp(obj, x, z, rotY) {
   const holder = new THREE.Group(); holder.position.set(x, 0, z); holder.rotation.y = rotY;
   obj.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; m.userData.prop = holder; } });
   holder.add(obj); scene.add(holder);
-  props.push({ holder, obj, wobble: 0 });
+  const corners = restCorners(obj); props.push({ holder, obj, wobble: 0, corners, rest: minYAfter(corners, new THREE.Quaternion(), new THREE.Vector3()) });
 }
 addProp(makeKeys(), -12.6, 1.4, 1.0);
 addProp(makePen(), 7.2, 8.6, -0.2);
@@ -814,7 +843,9 @@ function wobbleProps(dt) {
   for (const p of props) {
     p.wobble = Math.max(0, p.wobble - dt);
     const t = p.wobble, a = t > 0 ? Math.sin(t * 28) * 0.09 * t * (p.obj.userData.wobbleScale ?? 1) : 0;
-    p.obj.rotation.z = a; p.obj.rotation.x = a * 0.6; p.obj.position.y = Math.abs(a) * 1.2;
+    p.obj.rotation.z = a; p.obj.rotation.x = a * 0.6; p.obj.updateMatrix();
+    const low = minYAfter(p.corners, p.obj.quaternion, _origin);
+    p.obj.position.y = Math.max(0, p.rest - low) + Math.abs(a) * 0.6;            // rock on the desk, never through it
     if (p.obj.userData.tick) p.obj.userData.tick(dt);
   }
 }
@@ -918,7 +949,7 @@ function pick(ev) {
   if (!hit) return null;
   return hit.object.userData.item || hit.object.userData.target || null;
 }
-let hovered = null;
+let hovered = null, walletWobble = 0;
 function setHover(cfg) { hovered = cfg; renderer.domElement.style.cursor = cfg ? 'pointer' : ''; }
 let down = null, dragging = false;
 const el = renderer.domElement;
@@ -934,7 +965,7 @@ el.addEventListener('pointermove', (e) => {
   if (active || e.pointerType === 'touch') return;
   const pp = pickProp(e); if (pp) { jiggle(pp); setHover(null); renderer.domElement.style.cursor = 'default'; return; }
   const t = pick(e);
-  if (openVal < 1) { setHover(t === 'wallet' || (t && t.id) ? 'wallet' : null); return; }
+  if (openVal < 1) { const on = t === 'wallet' || (t && t.id); if (on && hovered !== 'wallet' && openTarget === 0 && walletWobble < 0.3) walletWobble = 1; setHover(on ? 'wallet' : null); return; }
   setHover(t && t.id ? t : null);
 });
 el.addEventListener('pointerup', (e) => {
@@ -976,6 +1007,10 @@ function frame() {
     if (active.dir === -1 && active.p === 0) finishReturn();
   }
   wobbleProps(dt);
+  // The closed wallet gives the same little shake as everything else on the desk when you first point at it
+  walletWobble = Math.max(0, walletWobble - dt);
+  { const k = walletWobble, a = k > 0 && openTarget === 0 ? Math.sin(k * 28) * 0.035 * k : 0;
+    wallet.rotation.z = a; wallet.rotation.x = a * 0.6; wallet.position.y = Math.abs(a) * 3; }
   if (controls.enabled) controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
