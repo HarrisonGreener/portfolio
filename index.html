@@ -176,7 +176,7 @@ const ITEMS = [
     eyebrow: 'Project card', title: 'Rolla',
     body: 'Swipe into work. A gamified, swipe-style recruitment app concept.',
     facts: [], ...art('rolla'), art: 'biz-ink' },
-  { id: 'receipt', side: 'right', kind: 'receipt', label: 'Receipt',
+  { id: 'receipt', side: 'right', kind: 'receipt', label: 'CV',
     eyebrow: 'Note compartment', title: 'Receipt',
     body: 'An itemised receipt of skills and experience, tucked in where the cash would go.',
     facts: [], front: 'assets/receipt.png', back: null, art: 'receipt' },
@@ -1201,7 +1201,7 @@ const clock = new THREE.Clock();
 function frame() {
   const dt = Math.min(clock.getDelta(), 0.05);
   if (openVal !== openTarget) {
-    const step = dt / (0.95 * SPEED);
+    const step = dt / (1.5 * SPEED);                        // wallet opens over 1.5 s
     openVal = openTarget > openVal ? Math.min(openTarget, openVal + step) : Math.max(openTarget, openVal - step);
     applyOpen();
     if (openVal === 1 && pendingItem) { const c = pendingItem; pendingItem = null; pull(c); }
@@ -1216,7 +1216,8 @@ function frame() {
     if (cfg.kind === 'receipt') cfg.group.position.z += (1 - ease(openVal)) * 1.1;   // tucked right in while closed
   }
   if (active) {
-    const rate = active.p < 1 || (active.p === 1 && active.dir < 0) ? 1 / (0.5 * SPEED) : 1 / (0.75 * SPEED);
+    const fly = active.item.kind === 'receipt' ? 1.6 : 1.2;   // seconds to reach you; longer for the receipt so the unfold reads
+    const rate = active.p < 1 || (active.p === 1 && active.dir < 0) ? 1 / (0.85 * SPEED) : 1 / (fly * SPEED);
     const before = active.p;
     active.p = Math.max(0, Math.min(2, active.p + active.dir * dt * rate));
     yaw += (yawT - yaw) * Math.min(1, dt * 8); pitch += (pitchT - pitch) * Math.min(1, dt * 8);
