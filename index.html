@@ -98,23 +98,49 @@ body.item-out .brand .logo{color:var(--ink)}   /* black while an item is out ove
   --hand-grab:image-set(url("assets/cursor/hand-grab.png") 1x,url("assets/cursor/hand-grab@2x.png") 2x) 9 8,url("assets/cursor/hand-grab.png") 9 8,grab}
 html,body,canvas{cursor:var(--hand-point)}
 canvas.can-grab{cursor:var(--hand-grab)}
-.phone-ui{position:fixed;z-index:6;display:flex;flex-direction:column;overflow:hidden;background:#1F1F1F;color:#F2F2F0;
-  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.02em;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.phone-ui{position:fixed;z-index:6;overflow:hidden;color:#F2F2F0;font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.02em;
+  background:radial-gradient(120% 70% at 75% 18%,rgba(115,149,111,.45),rgba(115,149,111,0) 60%),linear-gradient(#2a2a2a,#141414);
+  opacity:0;pointer-events:none;transition:opacity .25s ease}
 .phone-ui.on{opacity:1;pointer-events:auto}
-.pu-bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:2.6em .9em .7em;border-bottom:1px solid rgba(242,242,240,.12)}
-.pu-bar b{font-size:1.05em}
-.pu-cancel{justify-self:start;background:none;border:0;padding:0;font:inherit;color:#73956F;cursor:pointer}
-.pu-form{display:flex;flex-direction:column;gap:.55em;padding:.9em;flex:1;min-height:0}
-.pu-to{padding-bottom:.4em;border-bottom:1px solid rgba(242,242,240,.12);color:rgba(242,242,240,.6)}
-.pu-to b{color:#F2F2F0}
-.pu-form input,.pu-form textarea{font:inherit;color:#F2F2F0;background:#2a2a2a;border:1px solid transparent;border-radius:.6em;padding:.6em .7em;outline:none;width:100%}
-.pu-form input:focus,.pu-form textarea:focus{border-color:#73956F}
-.pu-form textarea{flex:1;min-height:4em;resize:none}
-.pu-form ::placeholder{color:rgba(242,242,240,.4)}
-.pu-send{font:inherit;font-weight:700;color:#F2F2F0;background:#73956F;border:0;border-radius:.7em;padding:.7em;cursor:pointer}
-.pu-send:focus-visible,.pu-cancel:focus-visible{outline:2px solid #F2F2F0;outline-offset:2px}
-.pu-note{margin:0;font-size:.72em;text-align:center;color:rgba(242,242,240,.5)}
-@media (prefers-reduced-motion:reduce){.phone-ui{transition:none}}
+.pu-status{position:absolute;inset:0 0 auto;height:2.6em;display:flex;align-items:center;justify-content:space-between;padding:0 1.5em;font-weight:600;font-size:.8em;z-index:3}
+.pu-pill{position:absolute;left:50%;top:.55em;width:6.2em;height:1.7em;margin-left:-3.1em;border-radius:1em;background:#000}
+.pu-icons{display:flex;gap:.35em;align-items:center}.pu-icons svg{height:.8em;fill:currentColor}
+.pu-screen{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;transition:opacity .35s ease,transform .45s cubic-bezier(.2,.7,.2,1);opacity:0;transform:translateY(4%);pointer-events:none}
+.phone-ui[data-step=lock] .pu-lock,.phone-ui[data-step=pass] .pu-pass,.phone-ui[data-step=chat] .pu-chat{opacity:1;transform:none;pointer-events:auto}
+.phone-ui[data-step=chat] .pu-pass{transform:translateY(-12%)}
+.pu-lock{padding-top:4.2em;text-align:center}
+.pu-date{font-size:.95em;font-weight:500;opacity:.85}
+.pu-bigtime{font-size:4.4em;font-weight:700;line-height:1;margin-top:.1em}
+.pu-swipe{margin-top:auto;margin-bottom:2.2em;font-size:.8em;opacity:.7}
+.pu-pass{padding-top:4.4em;background:rgba(20,20,20,.55);backdrop-filter:blur(10px)}
+.pu-pass-title{font-size:1em;font-weight:500}
+.pu-dots{display:flex;gap:.9em;margin:1.1em 0 2em}
+.pu-dots i{width:.75em;height:.75em;border-radius:50%;border:1.5px solid #F2F2F0;transition:background .12s}
+.pu-dots i.on{background:#F2F2F0}
+.pu-keys{display:grid;grid-template-columns:repeat(3,3.9em);gap:.9em 1.4em;justify-items:center}
+.pu-keys b{width:3.9em;height:3.9em;border-radius:50%;background:rgba(242,242,240,.16);display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:1em;font-weight:400;transition:background .12s}
+.pu-keys b small{font-size:.42em;letter-spacing:.12em;font-weight:600;margin-top:.1em;opacity:.8}
+.pu-keys b.hit{background:rgba(242,242,240,.55)}
+.pu-chat{padding-top:2.6em;background:#1F1F1F;align-items:stretch}
+.pu-head{display:grid;grid-template-columns:2.4em 1fr 2.4em;align-items:center;padding:.3em .6em .7em;border-bottom:1px solid rgba(242,242,240,.1)}
+.pu-back{background:none;border:0;color:#73956F;font:inherit;font-size:1.8em;line-height:1;cursor:pointer;padding:0}
+.pu-who{display:flex;flex-direction:column;align-items:center;gap:.3em;font-size:.78em}
+.pu-avatar{width:2.6em;height:2.6em;border-radius:50%;background:#73956F;display:grid;place-items:center;font-weight:700;font-size:1.2em}
+.pu-thread{flex:1;min-height:0;overflow:auto;display:flex;flex-direction:column;gap:.4em;padding:.9em .8em}
+.pu-stamp{align-self:center;font-size:.68em;opacity:.5;margin-bottom:.3em}
+.pu-msg{margin:0;max-width:80%;padding:.55em .8em;border-radius:1.1em;font-size:.9em;line-height:1.3}
+.pu-msg.them{align-self:flex-start;background:#2f2f2f;border-bottom-left-radius:.35em}
+.pu-msg.me{align-self:flex-end;background:#73956F;border-bottom-right-radius:.35em}
+.pu-compose{display:flex;flex-direction:column;gap:.45em;padding:.6em .7em .8em;border-top:1px solid rgba(242,242,240,.1)}
+.pu-row{display:flex;gap:.45em}
+.pu-compose input,.pu-compose textarea{flex:1;min-width:0;font:inherit;font-size:.85em;color:#F2F2F0;background:#2a2a2a;border:1px solid transparent;border-radius:1.2em;padding:.55em .8em;outline:none;resize:none}
+.pu-compose input:focus,.pu-compose textarea:focus{border-color:#73956F}
+.pu-compose ::placeholder{color:rgba(242,242,240,.4)}
+.pu-send-row{align-items:flex-end}
+.pu-send{flex:none;width:2.2em;height:2.2em;border-radius:50%;border:0;background:#73956F;color:#F2F2F0;font:inherit;font-weight:700;cursor:pointer}
+.pu-back:focus-visible,.pu-send:focus-visible{outline:2px solid #F2F2F0;outline-offset:2px}
+.pu-note{margin:0;font-size:.62em;text-align:center;opacity:.45}
+@media (prefers-reduced-motion:reduce){.phone-ui,.pu-screen,.pu-dots i,.pu-keys b{transition:none}}
 </style>
 
 <div id="stage" aria-label="Interactive 3D wallet. Use the buttons below to open it and pull out each item."></div>
@@ -125,17 +151,41 @@ canvas.can-grab{cursor:var(--hand-grab)}
 </header>
 
 <div class="tag" id="tag" aria-hidden="true"><span class="tag-text" id="tagText"></span><i class="tag-line" id="tagLine"></i><i class="tag-dot"></i></div>
-<div class="phone-ui" id="phoneUI" role="dialog" aria-label="Message Harry">
-  <div class="pu-bar"><button type="button" class="pu-cancel" id="puCancel">Cancel</button><b>New Message</b><span></span></div>
-  <form class="pu-form" id="puForm">
-    <div class="pu-to"><span>To:</span> <b>Harry Greener</b></div>
-    <input name="name" placeholder="Your name" autocomplete="name" required>
-    <input name="email" type="email" placeholder="Your email" autocomplete="email" required>
-    <input name="subject" placeholder="Subject">
-    <textarea name="message" placeholder="Message" required></textarea>
-    <button type="submit" class="pu-send">Send</button>
-    <p class="pu-note" id="puNote">Opens your email app with this ready to send.</p>
-  </form>
+<div class="phone-ui" id="phoneUI" role="dialog" aria-label="Message Harry" data-step="lock">
+  <div class="pu-status"><span class="pu-clock" data-clock>00:00</span><i class="pu-pill"></i>
+    <span class="pu-icons" aria-hidden="true"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="1.6"/><rect x="23.5" y="4" width="2" height="4" rx="1" opacity=".5"/></svg></span></div>
+  <section class="pu-screen pu-lock" aria-hidden="true">
+    <div class="pu-date" data-date></div><div class="pu-bigtime" data-clock>00:00</div>
+    <div class="pu-swipe">Unlocking…</div>
+  </section>
+  <section class="pu-screen pu-pass" aria-hidden="true">
+    <div class="pu-pass-title">Enter Passcode</div>
+    <div class="pu-dots"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+    <div class="pu-keys">
+      <b data-k="1">1<small>&nbsp;</small></b><b data-k="2">2<small>ABC</small></b><b data-k="3">3<small>DEF</small></b>
+      <b data-k="4">4<small>GHI</small></b><b data-k="5">5<small>JKL</small></b><b data-k="6">6<small>MNO</small></b>
+      <b data-k="7">7<small>PQRS</small></b><b data-k="8">8<small>TUV</small></b><b data-k="9">9<small>WXYZ</small></b>
+      <span></span><b data-k="0">0</b><span></span>
+    </div>
+  </section>
+  <section class="pu-screen pu-chat">
+    <header class="pu-head">
+      <button type="button" class="pu-back" id="puCancel" aria-label="Put the phone down">‹</button>
+      <div class="pu-who"><span class="pu-avatar" aria-hidden="true">G</span><b>Harry Greener</b></div>
+      <span></span>
+    </header>
+    <div class="pu-thread" id="puThread">
+      <div class="pu-stamp">Today <span data-clock>00:00</span></div>
+      <p class="pu-msg them">Hey, thanks for opening my wallet.</p>
+      <p class="pu-msg them">Got a role, a project or just a question? Message me here and I'll get back to you.</p>
+    </div>
+    <form class="pu-compose" id="puForm">
+      <div class="pu-row"><input name="name" placeholder="Your name" autocomplete="name" required><input name="email" type="email" placeholder="Your email" autocomplete="email" required></div>
+      <div class="pu-row pu-send-row"><textarea name="message" rows="2" placeholder="Message" required></textarea>
+        <button type="submit" class="pu-send" aria-label="Send">↑</button></div>
+      <p class="pu-note" id="puNote">Sends through your email app.</p>
+    </form>
+  </section>
 </div>
 <div class="veil" id="veil"><p id="veilText"></p></div>
 
@@ -1007,9 +1057,9 @@ addProp((() => { const m = makeMug(); m.scale.setScalar(1.45); return m; })(), 1
 
 /* ---------- The phone: the contact section. Click it and it comes up to you with a message form on screen. ---------- */
 const PH = { W: 7.15, L: 14.67, T: 0.74, R: 1.0, INSET: 0.2 };   // a modern 6.1-inch phone, in cm
-function phoneScreenCanvas() {
+function phoneScreenCanvas(c = document.createElement('canvas')) {
   const CW = 600, CH = Math.round(CW * (PH.L - 2 * PH.INSET) / (PH.W - 2 * PH.INSET));
-  const c = document.createElement('canvas'); c.width = CW; c.height = CH; const g = c.getContext('2d');
+  c.width = CW; c.height = CH; const g = c.getContext('2d');
   const HV = '"Helvetica Neue", Helvetica, Arial, sans-serif';
   const bg = g.createLinearGradient(0, 0, 0, CH); bg.addColorStop(0, '#2a2a2a'); bg.addColorStop(1, '#161616'); g.fillStyle = bg; g.fillRect(0, 0, CW, CH);
   const glow = g.createRadialGradient(CW * 0.7, CH * 0.25, 10, CW * 0.7, CH * 0.25, CW * 0.9); glow.addColorStop(0, 'rgba(115,149,111,.28)'); glow.addColorStop(1, 'rgba(115,149,111,0)');
@@ -1045,7 +1095,9 @@ function makePhone() {
   const pos = scrG.attributes.position, uv = scrG.attributes.uv;
   for (let k = 0; k < pos.count; k++) uv.setXY(k, (pos.getX(k) + sx / 2) / sx, (pos.getY(k) + sy / 2) / sy);
   scrG.rotateX(-Math.PI / 2);
-  const st = tex(phoneScreenCanvas());
+  const sc = phoneScreenCanvas(), st = tex(sc);
+  let shown = '';                                        // keep the lock screen on the real time and date
+  setInterval(() => { const k = new Date().toDateString() + new Date().getMinutes(); if (k !== shown) { shown = k; phoneScreenCanvas(sc); st.needsUpdate = true; } }, 5000);
   const screen = new THREE.Mesh(scrG, new THREE.MeshStandardMaterial({ map: st, emissive: 0xffffff, emissiveMap: st, emissiveIntensity: 0.85, roughness: 0.12 }));
   screen.position.y = T + 0.003; g.add(screen);
   for (const [x, z, len] of [[-PW / 2 - 0.02, -PL / 2 + 3.2, 0.5], [-PW / 2 - 0.02, -PL / 2 + 4.3, 0.9], [-PW / 2 - 0.02, -PL / 2 + 5.5, 0.9], [PW / 2 + 0.02, -PL / 2 + 4.6, 1.5]]) {
@@ -1073,7 +1125,7 @@ function openPhone() {
 }
 function closePhone() {
   if (phoneTarget === 0) return;
-  phoneTarget = 0; phoneUI.classList.remove('on'); document.activeElement && document.activeElement.blur && document.activeElement.blur();
+  phoneTarget = 0; phoneUI.classList.remove('on'); unlockTimers.forEach(clearTimeout); unlockTimers = []; document.activeElement && document.activeElement.blur && document.activeElement.blur();
   document.body.classList.remove('item-out');
 }
 function posePhone() {
@@ -1100,7 +1152,7 @@ function phoneTick(dt) {
   if (phoneP !== phoneTarget) {
     phoneP = phoneTarget > phoneP ? Math.min(1, phoneP + dt / (1.1 * SPEED)) : Math.max(0, phoneP - dt / (0.9 * SPEED));
     posePhone();
-    if (phoneP === 1) { placePhoneUI(); phoneUI.classList.add('on'); }
+    if (phoneP === 1) { placePhoneUI(); phoneUI.classList.add('on'); unlockSequence(); }
     if (phoneP === 0) { const h = phoneProp.holder; h.position.copy(phoneHome.pos); h.quaternion.copy(phoneHome.quat); h.scale.setScalar(1); backdrop.material.opacity = 0; controls.enabled = true; }
   } else if (phoneP === 1) { posePhone(); placePhoneUI(); }
 }
@@ -1339,15 +1391,40 @@ el.addEventListener('pointermove', (e) => {
 el.addEventListener('pointerleave', () => { tagFor = null; tagEl.classList.remove('on'); });
 el.addEventListener('pointerdown', () => { tagFor = null; tagEl.classList.remove('on'); });
 
-/* ---------- Contact form: hands the message to the visitor's email app ---------- */
+/* ---------- Phone screen: unlock with a passcode, then a message thread with Harry ---------- */
+const fmtTime = (d) => `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+function tickClocks() {
+  const d = new Date();
+  phoneUI.querySelectorAll('[data-clock]').forEach((n) => (n.textContent = fmtTime(d)));
+  phoneUI.querySelectorAll('[data-date]').forEach((n) => (n.textContent = d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' })));
+}
+tickClocks(); setInterval(tickClocks, 1000);
+let unlockTimers = [];
+function unlockSequence() {
+  unlockTimers.forEach(clearTimeout); unlockTimers = [];
+  const dots = phoneUI.querySelectorAll('.pu-dots i'), keys = phoneUI.querySelectorAll('.pu-keys b');
+  dots.forEach((d) => d.classList.remove('on'));
+  if (reduceMotion) { phoneUI.dataset.step = 'chat'; return; }
+  phoneUI.dataset.step = 'lock';
+  const at = (ms, fn) => unlockTimers.push(setTimeout(fn, ms));
+  at(650, () => (phoneUI.dataset.step = 'pass'));
+  '240693'.split('').forEach((digit, i) => {
+    const key = [...keys].find((k) => k.dataset.k === digit), t = 1150 + i * 230;
+    at(t, () => { key.classList.add('hit'); dots[i].classList.add('on'); });
+    at(t + 140, () => key.classList.remove('hit'));
+  });
+  at(1150 + 6 * 230 + 250, () => (phoneUI.dataset.step = 'chat'));
+}
 document.getElementById('puCancel').addEventListener('click', closePhone);
 document.getElementById('puForm').addEventListener('submit', (e) => {
   e.preventDefault();
-  const f = new FormData(e.target), name = f.get('name').trim(), from = f.get('email').trim();
-  const subject = f.get('subject').trim() || `Hello from ${name}`;
-  const body = `${f.get('message').trim()}\n\n${name}\n${from}`;
-  location.href = `mailto:harrygreener@hotmail.co.uk?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  document.getElementById('puNote').textContent = 'Your email app should now be open with the message ready. Just press send.';
+  const f = new FormData(e.target), name = f.get('name').trim(), from = f.get('email').trim(), msg = f.get('message').trim();
+  const bubble = document.createElement('p'); bubble.className = 'pu-msg me'; bubble.textContent = msg;
+  const thread = document.getElementById('puThread'); thread.appendChild(bubble); thread.scrollTop = thread.scrollHeight;
+  const body = `${msg}\n\n${name}\n${from}`;
+  location.href = `mailto:harrygreener@hotmail.co.uk?subject=${encodeURIComponent('Hello from ' + name)}&body=${encodeURIComponent(body)}`;
+  document.getElementById('puNote').textContent = 'Your email app should be open with this ready. Just press send.';
+  e.target.elements.message.value = '';
 });
 
 /* ---------- Loop ---------- */
@@ -1413,7 +1490,7 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
-window.__wallet = { phoneNow: () => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); phoneUI.classList.add('on'); }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
+window.__wallet = { phoneNow: (step) => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); phoneUI.classList.add('on'); if (step) phoneUI.dataset.step = step; else unlockSequence(); }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
