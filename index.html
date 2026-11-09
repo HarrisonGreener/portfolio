@@ -624,7 +624,12 @@ function makeKeys() {
     return { p: e1.clone().multiplyScalar(RR * Math.cos(th)).addScaledVector(e2, RR * Math.sin(th)),
              t: e1.clone().multiplyScalar(-Math.sin(th)).addScaledVector(e2, Math.cos(th)).normalize() };
   };
-  const hang = (obj, hole, axis, long, hint, tip, lift = 0) => { const { p, t } = onRing(hint); threadOn(obj, hole, axis, long, p, t, hint, tip); obj.position.y += lift; g.add(obj); };
+  const dangles = [];
+  const hang = (obj, hole, axis, long, hint, tip, lift = 0) => {
+    const { p, t } = onRing(hint); threadOn(obj, hole, axis, long, p, t, hint, tip); obj.position.y += lift; g.add(obj);
+    dangles.push({ obj, p: p.clone().setY(p.y + lift), t, q0: obj.quaternion.clone(), x0: obj.position.clone(),
+      f1: 13 + Math.random() * 9, f2: 9 + Math.random() * 7, a1: 0.22 + Math.random() * 0.2, a2: 0.12 + Math.random() * 0.12, ph: Math.random() * 6.28 });
+  };
 
   // Screw-gate carabiner clipped straight onto the ring
   const cara = new THREE.Group(); const a = 0.9, len = 2.9;
@@ -679,17 +684,34 @@ function makeKeys() {
   g.scale.setScalar(0.6);
   g.updateMatrixWorld(true);                          // rest the whole bunch on the table
   const box = new THREE.Box3().setFromObject(g); g.position.y = -box.min.y;
-  const wrap = new THREE.Group(); wrap.add(g); return wrap;
+  const wrap = new THREE.Group(); wrap.add(g);
+  // Jingle: every key, fob and tag swings about the wire through its own hole, each at its own pace
+  let energy = 0, time = 0; const up = new THREE.Vector3(0, 1, 0), qa = new THREE.Quaternion(), qb = new THREE.Quaternion(), tmp = new THREE.Vector3();
+  wrap.userData.splash = () => { energy = 1; for (const d of dangles) d.ph = Math.random() * 6.28; };
+  wrap.userData.wobbleScale = 0.25;                   // the bunch itself barely moves; the pieces do the jingling
+  wrap.userData.tick = (dt) => {
+    if (energy <= 0) return; time += dt; energy = Math.max(0, energy - dt * 0.9);
+    const e = energy * energy;
+    for (const d of dangles) {
+      qa.setFromAxisAngle(d.t, Math.sin(time * d.f1 + d.ph) * d.a1 * e);
+      qb.setFromAxisAngle(up, Math.sin(time * d.f2 + d.ph * 1.7) * d.a2 * e);
+      qa.premultiply(qb);
+      d.obj.quaternion.copy(d.q0).premultiply(qa);
+      tmp.copy(d.x0).sub(d.p).applyQuaternion(qa); d.obj.position.copy(d.p).add(tmp);
+      d.obj.position.y += Math.abs(Math.sin(time * d.f1 * 0.5 + d.ph)) * 0.25 * e;   // little hops as they knock together
+    }
+  };
+  return wrap;
 }
 
 // A standard clear Bic: hexagonal clear barrel, ink tube inside, blue cap with clip, blue end plug.
 function makePen() {
   const g = new THREE.Group();
-  const clear = new THREE.MeshPhysicalMaterial({ color: 0xf4f8fa, transmission: 1, thickness: 0.35, roughness: 0.12, ior: 1.5, transparent: true });
+  const clear = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.16, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.05, specularIntensity: 1, depthWrite: false, side: THREE.DoubleSide });
   const blue = new THREE.MeshStandardMaterial({ color: 0x1d3fa0, roughness: 0.4 });
   const R = 0.46;
   const barrel = new THREE.Mesh(new THREE.CylinderGeometry(R, R, 11.6, 6), clear); barrel.rotation.set(0, 0, Math.PI / 2); barrel.rotation.order = 'ZXY'; barrel.position.set(-0.6, R * 0.87, 0); g.add(barrel);
-  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 11.2, 16), new THREE.MeshPhysicalMaterial({ color: 0xf2f2f2, transmission: 0.6, roughness: 0.3, transparent: true, opacity: 0.9 }));
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 11.2, 16), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.22, roughness: 0.1, depthWrite: false }));
   tube.rotation.z = Math.PI / 2; tube.position.set(-0.6, R * 0.87, 0); g.add(tube);
   const ink = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 7.5, 12), new THREE.MeshStandardMaterial({ color: 0x163a9c, roughness: 0.3 }));
   ink.rotation.z = Math.PI / 2; ink.position.set(1.0, R * 0.87, 0); g.add(ink);
@@ -791,7 +813,7 @@ function jiggle(p) { if (p.wobble < 0.3) { p.wobble = 1; if (p.obj.userData.spla
 function wobbleProps(dt) {
   for (const p of props) {
     p.wobble = Math.max(0, p.wobble - dt);
-    const t = p.wobble, a = t > 0 ? Math.sin(t * 28) * 0.09 * t : 0;
+    const t = p.wobble, a = t > 0 ? Math.sin(t * 28) * 0.09 * t * (p.obj.userData.wobbleScale ?? 1) : 0;
     p.obj.rotation.z = a; p.obj.rotation.x = a * 0.6; p.obj.position.y = Math.abs(a) * 1.2;
     if (p.obj.userData.tick) p.obj.userData.tick(dt);
   }
