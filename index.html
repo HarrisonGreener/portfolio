@@ -179,7 +179,7 @@ const ITEMS = [
   { id: 'receipt', side: 'right', kind: 'receipt', label: 'Receipt',
     eyebrow: 'Note compartment', title: 'Receipt',
     body: 'An itemised receipt of skills and experience, tucked in where the cash would go.',
-    facts: [], front: null, back: null, art: 'receipt' },
+    facts: [], front: 'assets/receipt.png', back: null, art: 'receipt' },
 ];
 
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -448,8 +448,62 @@ function drawArt(kind, side) {
   placeholderTag(g, W2, H2, dark); return c;
 }
 
+/* ---------- The CV receipt: real paper, folded concertina-style, crumpled ---------- */
+function crumpleCanvas() {
+  const c = document.createElement('canvas'); c.width = 512; c.height = 2048; const g = c.getContext('2d');
+  g.fillStyle = '#808080'; g.fillRect(0, 0, 512, 2048);
+  for (let i = 0; i < 140; i++) {                         // creases: a bright ridge beside a dark valley
+    let x = Math.random() * 512, y = Math.random() * 2048, a = Math.random() * Math.PI * 2; const len = 60 + Math.random() * 260, steps = 6;
+    const pts = [[x, y]]; for (let k = 0; k < steps; k++) { a += (Math.random() - 0.5) * 0.9; x += Math.cos(a) * len / steps; y += Math.sin(a) * len / steps; pts.push([x, y]); }
+    for (const [off, col] of [[1.2, 'rgba(255,255,255,.28)'], [-1.2, 'rgba(0,0,0,.28)']]) {
+      g.strokeStyle = col; g.lineWidth = 1 + Math.random() * 1.5; g.beginPath();
+      pts.forEach(([px, py], k) => (k ? g.lineTo(px + off, py + off) : g.moveTo(px + off, py + off))); g.stroke();
+    }
+  }
+  g.filter = 'blur(1.5px)'; g.drawImage(c, 0, 0); g.filter = 'none';
+  const d = g.getImageData(0, 0, 512, 2048); for (let i = 0; i < d.data.length; i += 4) { const n = (Math.random() - 0.5) * 14; d.data[i] += n; d.data[i + 1] += n; d.data[i + 2] += n; }
+  g.putImageData(d, 0, 0); return c;
+}
+function makeReceipt(cfg) {
+  const N = cfg.folds, w = cfg.w, Lp = cfg.h / N, GAP = 0.0025;
+  const bump = new THREE.CanvasTexture(crumpleCanvas()); bump.anisotropy = maxAniso;
+  const frontMat = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.9, bumpMap: bump, bumpScale: 1.4, alphaTest: 0.5, envMapIntensity: 0.5 });
+  const backMat = new THREE.MeshStandardMaterial({ color: 0xf3f1ea, roughness: 0.92, bumpMap: bump, bumpScale: 1.4, side: THREE.BackSide, envMapIntensity: 0.5 });
+  cfg.frontMat = frontMat; cfg.backMat = backMat;
+  const root = new THREE.Group(), panels = []; let parent = root;
+  const rnd = [Math.random() * 6, Math.random() * 6, Math.random() * 6, Math.random() * 6];
+  const crumple = (x, y) => 0.55 * Math.sin(1.1 * x + 0.7 * y + rnd[0]) + 0.3 * Math.sin(2.7 * x - 1.9 * y + rnd[1]) + 0.2 * Math.sin(5.1 * x + 3.3 * y + rnd[2]) + 0.12 * Math.sin(9.7 * x - 7.1 * y + rnd[3]);
+  for (let i = 0; i < N; i++) {
+    const geo = new THREE.PlaneGeometry(w, Lp, 16, 24); geo.translate(0, -Lp / 2, 0);
+    const uv = geo.attributes.uv; for (let k = 0; k < uv.count; k++) uv.setY(k, 1 - (i + 1) / N + uv.getY(k) / N);   // this panel's slice of the print
+    const pos = geo.attributes.position, noise = new Float32Array(pos.count);
+    for (let k = 0; k < pos.count; k++) { const x = pos.getX(k), y = pos.getY(k); const edge = Math.min(1, -y / 0.6, (y + Lp) / 0.6); noise[k] = crumple(x, y - i * Lp) * Math.max(0.25, edge); }
+    const hinge = new THREE.Group(); hinge.position.set(0, i === 0 ? Lp / 2 : -Lp, 0);
+    const front = new THREE.Mesh(geo, frontMat), back = new THREE.Mesh(geo, backMat);
+    for (const m of [front, back]) { m.castShadow = true; m.receiveShadow = true; m.userData.item = cfg; hinge.add(m); }
+    parent.add(hinge); panels.push({ hinge, geo, noise }); parent = hinge;
+  }
+  cfg.fold = -1;
+  cfg.setFold = (f) => {                                  // f = 0 folded flat in the slot, 1 opened out
+    if (Math.abs(f - cfg.fold) < 1e-4) return; cfg.fold = f;
+    panels.forEach((pn, i) => {
+      if (i > 0) {
+        const sign = i % 2 ? 1 : -1, parentFlipped = (i - 1) % 2 === 1;
+        pn.hinge.rotation.x = sign * (Math.PI - (Math.PI - 0.09) * f);     // the creases never quite flatten out
+        pn.hinge.position.z = (parentFlipped ? 1 : -1) * GAP * (1 - f);
+      }
+      const p = pn.geo.attributes.position; for (let k = 0; k < p.count; k++) p.setZ(k, pn.noise[k] * 0.085 * f);
+      p.needsUpdate = true; pn.geo.computeVertexNormals();
+    });
+  };
+  cfg.setFold(0);
+  root.rotation.x = -Math.PI / 2;
+  return root;
+}
+
 /* ---------- Cards ---------- */
 function makeItemMesh(cfg) {
+  if (cfg.kind === 'receipt') return makeReceipt(cfg);
   const isReceipt = cfg.kind === 'receipt', isPaper = cfg.kind === 'biz';
   const { w, h, t } = cfg;
   const shape = rr(-w / 2, -h / 2, w / 2, h / 2, isReceipt ? 0.06 : isPaper ? 0.12 : 0.32);
@@ -490,11 +544,11 @@ const linePath = (x0, z0, x1, z1) => { const p = new THREE.Path(); p.moveTo(x0, 
 
 // Real sizes. Cards stand portrait in their slots and nearly fill the wallet, as in the product photo.
 for (const cfg of ITEMS) {
-  if (cfg.kind === 'receipt') Object.assign(cfg, { w: 15.0, h: 6.5, t: 0.012 });
+  if (cfg.kind === 'receipt') Object.assign(cfg, { w: 8.0, h: 33.6, t: 0.01, folds: 4 });   // 80 mm till roll, the CV is 336 mm long
   else if (cfg.kind === 'biz') Object.assign(cfg, { w: 8.5, h: 5.5, t: 0.02 });
   else Object.assign(cfg, { w: CARD.w, h: CARD.w * 650 / 1004, t: CARD.t });
   cfg.rotated = cfg.kind !== 'receipt';
-  cfg.zLen = cfg.rotated ? cfg.w : cfg.h;
+  cfg.zLen = cfg.rotated ? cfg.w : cfg.kind === 'receipt' ? cfg.h / cfg.folds : cfg.h;   // the receipt sits folded
   cfg.xLen = cfg.rotated ? cfg.h : cfg.w;
   cfg.slide = cfg.id === 'licence' ? new THREE.Vector3(1, 0, 0) : new THREE.Vector3(0, 0, -1);
 }
@@ -512,8 +566,8 @@ const POCKET_EDGE = -1.83;
 
 let y = PT + 0.002;
 const receiptCfg = ITEMS.find((i) => i.kind === 'receipt');
-receiptCfg.home = { parent: 'right', y: y + 0.006, x: -0.1, zTop: -H / 2 - 0.55 };   // the note peeks out of the top
-y += 0.014;
+receiptCfg.home = { parent: 'right', y: y + 0.008, x: W / 2 + 0.05, zTop: -H / 2 - 0.9 };   // folded receipt in the right end of the money slot
+y += 0.016;
 const lining = slab(rightShape, LAYER, y); wallet.add(lining); addPick(lining, 'wallet');
 y += LAYER + 0.002;
 const liningTop = y;
@@ -630,7 +684,7 @@ const noteGroup = (() => {
   const t = new THREE.TextureLoader().load('assets/note-top.jpg'); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = maxAniso; const w = 12.5, h = 6.5;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: t, roughness: 0.5 }));
   m.rotation.x = -Math.PI / 2; m.receiveShadow = true; m.castShadow = true;
-  m.position.set(0.9, PT + 0.004, -H / 2 - 1.75 + h / 2); m.rotation.z = 0.025;    // slightly askew, a touch higher than the receipt
+  m.position.set(0.9, PT + 0.0015, -H / 2 - 1.75 + h / 2); m.rotation.z = 0.025;    // slightly askew, a touch higher than the receipt
   m.userData.baseZ = m.position.z; addPick(m, 'note'); wallet.add(m); return m;
 })();
 
@@ -640,7 +694,7 @@ const foldClip = [new THREE.Plane(new THREE.Vector3(1, 0, 0), 0)];
 let receiptClipped = null;
 function clipReceipt(on) {
   if (receiptClipped === on) return; receiptClipped = on;
-  for (const grp of [receiptCfg.group, noteGroup]) grp.traverse((m) => { if (m.isMesh) { m.material.clippingPlanes = on ? foldClip : null; m.material.clipShadows = true; m.material.needsUpdate = true; } });
+  for (const grp of [noteGroup]) grp.traverse((m) => { if (m.isMesh) { m.material.clippingPlanes = on ? foldClip : null; m.material.clipShadows = true; m.material.needsUpdate = true; } });
 }
 
 /* ---------- The desk: everyday things beside the wallet. They jiggle when you hover; only the wallet opens. ---------- */
@@ -961,11 +1015,19 @@ function setOpen(v) {
   openTarget = v ? 1 : 0; updateUI();
 }
 
+let receiptScroll = 0, receiptScrollT = 0;
 function expandedPose(cfg) {
   const D = 14;
   const visH = 2 * D * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   const visW = visH * camera.aspect;
   const mobile = innerWidth <= 720;
+  if (cfg.kind === 'receipt') {                           // opened out: wide enough to read, scroll to move down it
+    const q = camera.quaternion, s = Math.min((mobile ? 0.82 : 0.36) * visW / cfg.w, 2.2);
+    const L = cfg.h * s, over = Math.max(0, L - visH * 0.9), top = visH * 0.45 - (cfg.zLen / 2) * s;
+    const pos = camera.position.clone().addScaledVector(new THREE.Vector3(0, 0, -1).applyQuaternion(q), D)
+      .addScaledVector(new THREE.Vector3(0, 1, 0).applyQuaternion(q), top + receiptScroll * over);
+    return { pos, quat: q.clone(), scale: s };
+  }
   const s = Math.min((mobile ? 0.4 : 0.56) * visH / cfg.h, (mobile ? 0.86 : 0.5) * visW / cfg.w);
   const q = camera.quaternion;
   const pos = camera.position.clone()
@@ -986,6 +1048,7 @@ function pull(cfg) {
   const dirV = cfg.slide.clone();
   const dist = dirV.x > 0 ? 1.6 : dirV.x < 0 ? cfg.xLen + 0.6 : homePos.z + cfg.zLen / 2 + H / 2 + 0.6; // licence: out to the right; cards: up out of the slot
   scene.attach(cfg.group);
+  receiptScroll = receiptScrollT = 0;
   yaw = yawT = 0; pitch = pitchT = 0;
   active = { item: cfg, p: 0, dir: 1, homePos, homeQuat, dist, dirV };
   controls.enabled = false;
@@ -1010,12 +1073,14 @@ function poseActive() {
     g.quaternion.slerpQuaternions(homeQuat, t.quat, f);
     g.scale.setScalar(1 + (t.scale - 1) * f);
   }
+  if (item.setFold) item.setFold(p <= 1 ? 0 : ease(p - 1));   // unfolds on the way to you, folds back up on the way home
   backdrop.material.opacity = Math.max(0, Math.min(1, p - 1)) * 0.45;
 }
 function finishReturn() {
   const cfg = active.item;
   cfg.parent.attach(cfg.group);
   cfg.group.position.copy(cfg.homePos); cfg.group.quaternion.copy(cfg.homeQuat); cfg.group.scale.setScalar(1);
+  if (cfg.setFold) cfg.setFold(0);
   active = null; backdrop.material.opacity = 0; controls.enabled = true; updateUI();
 }
 
@@ -1024,7 +1089,14 @@ function showSheet() {}
 function hideSheet() {}
 function updateUI() {}
 el_leave: { renderer.domElement.addEventListener('pointerleave', () => { overStage = false; hoverProp = hoverPick = null; }); }
-addEventListener('keydown', (e) => { if (e.key === 'Escape') { if (active) putBack(); else setOpen(false); } });
+addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { if (active) putBack(); else setOpen(false); }
+  if (active && active.item.kind === 'receipt' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) receiptScrollT = Math.max(0, Math.min(1, receiptScrollT + (e.key === 'ArrowDown' ? 0.08 : -0.08)));
+});
+addEventListener('wheel', (e) => {
+  if (!active || active.item.kind !== 'receipt' || active.p < 2) return;
+  e.preventDefault(); receiptScrollT = Math.max(0, Math.min(1, receiptScrollT + e.deltaY * 0.0011));
+}, { passive: false });
 
 /* ---------- Pointer: pick, hover, drag to turn ---------- */
 const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
@@ -1046,7 +1118,8 @@ el.addEventListener('pointerdown', (e) => {
 });
 el.addEventListener('pointermove', (e) => {
   if (dragging && down) {
-    yawT += (e.clientX - down.lx) * 0.009; pitchT = Math.max(-0.9, Math.min(0.9, pitchT + (e.clientY - down.ly) * 0.009));
+    if (active.item.kind === 'receipt') receiptScrollT = Math.max(0, Math.min(1, receiptScrollT - (e.clientY - down.ly) * 0.0016));
+    else { yawT += (e.clientX - down.lx) * 0.009; pitchT = Math.max(-0.9, Math.min(0.9, pitchT + (e.clientY - down.ly) * 0.009)); }
     down.lx = e.clientX; down.ly = e.clientY; el.classList.add('can-grab'); return;
   }
   if (active || e.pointerType === 'touch') return;
@@ -1061,7 +1134,7 @@ el.addEventListener('pointerup', (e) => {
   const wasDragging = dragging; dragging = false; el.classList.toggle('can-grab', !!hovered);
   down = null;
   if (moved > 6) return;
-  if (active) { if (active.p >= 2) { const t = pick(e); if (t && t === active.item) yawT += Math.PI; else putBack(); } return; }
+  if (active) { if (active.p >= 2) { const t = pick(e); if (t && t === active.item) { if (t.kind !== 'receipt') yawT += Math.PI; } else putBack(); } return; }
   const t = pick(e);
   if (!t) { if (openTarget === 1) setOpen(false); return; }  // click the table to close
   if (openVal < 1 || openTarget === 0) { setOpen(true); return; }
@@ -1140,13 +1213,14 @@ function frame() {
     cfg.hover += (target - cfg.hover) * Math.min(1, dt * 12);
     cfg.group.position.copy(cfg.homePos).addScaledVector(cfg.slide, cfg.hover * 0.6);
     if (cfg.kind === 'biz') cfg.group.position.y += cfg.hover * 0.011;   // just clears the flattened stitches, stays under the pocket front
-    if (cfg.kind === 'receipt') cfg.group.position.z += (1 - ease(openVal)) * 0.8;
+    if (cfg.kind === 'receipt') cfg.group.position.z += (1 - ease(openVal)) * 1.1;   // tucked right in while closed
   }
   if (active) {
     const rate = active.p < 1 || (active.p === 1 && active.dir < 0) ? 1 / (0.5 * SPEED) : 1 / (0.75 * SPEED);
     const before = active.p;
     active.p = Math.max(0, Math.min(2, active.p + active.dir * dt * rate));
     yaw += (yawT - yaw) * Math.min(1, dt * 8); pitch += (pitchT - pitch) * Math.min(1, dt * 8);
+    receiptScroll += (receiptScrollT - receiptScroll) * Math.min(1, dt * 10);
     poseActive();
     if (active.dir === 1 && before < 2 && active.p === 2) showSheet(active.item);
     if (active.dir === -1 && active.p === 0) finishReturn();
@@ -1183,7 +1257,7 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
-window.__wallet = { props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
+window.__wallet = { holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
