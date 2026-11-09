@@ -102,6 +102,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
   background:radial-gradient(120% 70% at 75% 18%,rgba(115,149,111,.45),rgba(115,149,111,0) 60%),linear-gradient(#2a2a2a,#141414);
   opacity:0;pointer-events:none;transition:opacity .25s ease}
 .phone-ui.on{opacity:1;pointer-events:auto}
+.phone-ui:not(.on),.phone-ui:not(.on) *{pointer-events:none!important}   /* hidden screen must never catch clicks */
 .pu-status{position:absolute;inset:0 0 auto;height:2.6em;display:flex;align-items:center;justify-content:space-between;padding:0 1.5em;font-weight:600;font-size:.8em;z-index:3}
 .pu-pill{position:absolute;left:50%;top:.55em;width:6.2em;height:1.7em;margin-left:-3.1em;border-radius:1em;background:#000}
 .pu-icons{display:flex;gap:.35em;align-items:center}.pu-icons svg{height:.8em;fill:currentColor}
@@ -176,7 +177,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
     </header>
     <div class="pu-thread" id="puThread">
       <div class="pu-stamp">Today <span data-clock>00:00</span></div>
-      <p class="pu-msg them">Hey, thanks for opening my wallet.</p>
+      <p class="pu-msg them">Hey, thanks for viewing my portfolio.</p>
       <p class="pu-msg them">Got a role, a project or just a question? Message me here and I'll get back to you.</p>
     </div>
     <form class="pu-compose" id="puForm">
@@ -1105,7 +1106,7 @@ function makePhone() {
   }
   return g;
 }
-addProp(makePhone(), -2.6, -13.1, -1.35, 'Contact me');
+addProp(makePhone(), -2.6, -13.1, -1.35, 'Phone');
 const phoneProp = props[props.length - 1];
 let phoneP = 0, phoneTarget = 0, phoneHome = null;
 const _pq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);   // screen to face you, top of the phone up
@@ -1125,7 +1126,8 @@ function openPhone() {
 }
 function closePhone() {
   if (phoneTarget === 0) return;
-  phoneTarget = 0; phoneUI.classList.remove('on'); unlockTimers.forEach(clearTimeout); unlockTimers = []; document.activeElement && document.activeElement.blur && document.activeElement.blur();
+  phoneTarget = 0; phoneUI.classList.remove('on'); unlockTimers.forEach(clearTimeout); unlockTimers = [];
+  setTimeout(() => { if (!phoneTarget) phoneUI.dataset.step = 'lock'; }, 300); document.activeElement && document.activeElement.blur && document.activeElement.blur();
   document.body.classList.remove('item-out');
 }
 function posePhone() {
@@ -1339,7 +1341,7 @@ el.addEventListener('pointerup', (e) => {
 const tagEl = document.getElementById('tag'), tagTextEl = document.getElementById('tagText'), tagLineEl = document.getElementById('tagLine');
 let tagFor = null;                                        // what the label is attached to right now
 const _ta = new THREE.Vector3(), _tb = new THREE.Vector3();
-const PROP_ANCHOR = { 'Contact me': [0, 0.8, 0], Keys: [0, 0.6, 0], Pen: [0, 1.2, 0], 'Cup of tea': [-3.9, 6.5, 1.2] };   // a point on each object for its label
+const PROP_ANCHOR = { Phone: [0, 0.8, 0], Keys: [0, 0.6, 0], Pen: [0, 1.2, 0], 'Cup of tea': [-3.9, 6.5, 1.2] };   // a point on each object for its label
 function tagTarget(e) {
   if (phoneTarget || phoneP > 0) return null;
   if (e.pointerType === 'touch' || active || dragging) return null;
@@ -1490,7 +1492,7 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
-window.__wallet = { phoneNow: (step) => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); phoneUI.classList.add('on'); if (step) phoneUI.dataset.step = step; else unlockSequence(); }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
+window.__wallet = { state: () => ({ phoneP, phoneTarget, openVal, openTarget, active: !!active }), phoneNow: (step) => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); phoneUI.classList.add('on'); if (step) phoneUI.dataset.step = step; else unlockSequence(); }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
