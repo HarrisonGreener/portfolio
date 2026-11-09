@@ -1,0 +1,730 @@
+<title>Wallet CV</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+/* Layout: full-bleed 3D tabletop; quiet HUD pinned to the corners; an item sheet slides in when something is pulled out. */
+:root{
+  --table:#e6d3ba;
+  --paper:#fbf8f3;
+  --ink:#1c1915;
+  --ink-soft:#6a5f55;
+  --line:rgba(28,25,21,.14);
+  --accent:#2a43c4;
+  --display:'Bricolage Grotesque','Helvetica Neue',Arial,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:light;
+}
+html,body{height:100%}
+body{background:var(--table);color:var(--ink);font-family:var(--display);overflow:hidden;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+#stage{position:fixed;inset:0}
+#stage canvas{display:block;touch-action:none;outline:none}
+.vignette{position:fixed;inset:0;pointer-events:none;background:radial-gradient(120% 90% at 50% 45%,transparent 55%,rgba(60,40,20,.18) 100%)}
+
+.brand{position:fixed;z-index:3;top:calc(env(safe-area-inset-top,0px) + 20px);left:calc(max(16px,env(safe-area-inset-left,0px)) + 8px);pointer-events:none}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
+.brand h1{margin:6px 0 0;font-size:clamp(22px,3.2vw,30px);font-weight:700;letter-spacing:-.01em;line-height:1.05}
+.brand p{margin:4px 0 0;font-size:14px;color:var(--ink-soft)}
+
+.hint{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 86px);
+  font-family:var(--mono);font-size:12px;letter-spacing:.04em;color:var(--ink);background:rgba(251,248,243,.82);
+  border:1px solid var(--line);padding:8px 14px;border-radius:999px;white-space:nowrap;pointer-events:none;
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:opacity .3s}
+
+.bar{position:fixed;z-index:3;left:0;right:0;bottom:0;display:flex;gap:12px;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;
+  padding-left:calc(max(16px,env(safe-area-inset-left,0px)) + 8px);padding-right:calc(max(16px,env(safe-area-inset-right,0px)) + 8px);
+  padding-block:0 calc(env(safe-area-inset-bottom,0px) + 20px);pointer-events:none}
+.inventory{display:flex;flex-wrap:wrap;gap:6px;align-items:center;pointer-events:auto;min-width:0}
+.inventory .label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft);margin-right:4px}
+.controls{display:flex;gap:8px;pointer-events:auto}
+.btn{font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.05em;color:var(--ink);background:var(--paper);
+  border:1px solid var(--line);border-radius:999px;padding:9px 14px;cursor:pointer;transition:background .2s,transform .15s}
+.btn:hover{background:#fff}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn.primary{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.btn.primary:hover{background:#000}
+.chip{padding:7px 11px;font-size:11.5px}
+.chip[aria-pressed="true"]{border-color:var(--accent);color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:default}
+
+.sheet{position:fixed;z-index:4;right:calc(max(16px,env(safe-area-inset-right,0px)) + 12px);top:50%;width:min(340px,calc(100vw - 48px));
+  transform:translate(16px,-50%);opacity:0;pointer-events:none;background:var(--paper);border:1px solid var(--line);border-radius:18px;
+  padding:22px 22px 18px;box-shadow:0 24px 60px -24px rgba(20,14,8,.45);transition:opacity .35s,transform .35s;display:flex;flex-direction:column;gap:14px}
+.sheet.open{opacity:1;transform:translate(0,-50%);pointer-events:auto}
+.sheet h2{margin:0;font-size:26px;line-height:1.1;letter-spacing:-.01em;text-wrap:balance}
+.sheet .body{margin:0;font-size:15px;line-height:1.5;color:var(--ink);max-width:60ch}
+.facts{margin:0;display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13.5px;border-top:1px solid var(--line);padding-top:12px}
+.facts dt{font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);padding-top:2px}
+.facts dd{margin:0;min-width:0}
+.note{font-family:var(--mono);font-size:11px;color:var(--ink-soft);margin:0}
+.sheet .actions{display:flex;gap:8px;flex-wrap:wrap}
+
+.veil{position:fixed;inset:0;z-index:5;display:grid;place-items:center;background:var(--table);transition:opacity .6s}
+.veil.gone{opacity:0;pointer-events:none}
+.veil p{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-soft);text-align:center;max-width:40ch;line-height:1.6}
+
+@media (max-width:720px){
+  .hint{bottom:auto;top:calc(env(safe-area-inset-top,0px) + 96px);font-size:11px}
+  .sheet{top:auto;bottom:0;left:0;right:0;width:auto;border-radius:18px 18px 0 0;max-height:46vh;overflow:auto;
+    transform:translateY(24px);padding-bottom:calc(env(safe-area-inset-bottom,0px) + 18px);
+    padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+  .sheet.open{transform:translateY(0)}
+  .inventory .label{display:none}
+  .bar{flex-direction:column;align-items:stretch}
+  .inventory{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .inventory .chip{flex:none}
+  .controls{justify-content:flex-end}
+}
+@media (prefers-reduced-motion:reduce){ .sheet,.hint,.veil{transition:none} }
+</style>
+
+<div id="stage" aria-label="Interactive 3D wallet. Use the buttons below to open it and pull out each item."></div>
+<div class="vignette"></div>
+
+<header class="brand">
+  <div class="eyebrow">Wallet CV · prototype</div>
+  <h1>Harrison Greener</h1>
+  <p>Designer · graphic, web, UX/UI</p>
+</header>
+
+<div class="hint" id="hint" role="status">Click the wallet to open it</div>
+
+<div class="bar">
+  <nav class="inventory" id="inventory" aria-label="Items in the wallet"><span class="label">Inside</span></nav>
+  <div class="controls">
+    <button class="btn" id="resetBtn" type="button">Reset view</button>
+    <button class="btn primary" id="openBtn" type="button">Open wallet</button>
+  </div>
+</div>
+
+<aside class="sheet" id="sheet" aria-live="polite" aria-hidden="true">
+  <div class="eyebrow" id="sheetEyebrow"></div>
+  <h2 id="sheetTitle"></h2>
+  <p class="body" id="sheetBody"></p>
+  <dl class="facts" id="sheetFacts"></dl>
+  <p class="note" id="sheetNote"></p>
+  <div class="actions">
+    <button class="btn primary" id="flipBtn" type="button">Flip it over</button>
+    <button class="btn" id="backBtn" type="button">Put it back</button>
+  </div>
+</aside>
+
+<div class="veil" id="veil"><p id="veilText">Unpacking the wallet…</p></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+
+<script>
+  // If the 3D library never arrives, say so instead of leaving a blank veil.
+  window.__walletReady = false;
+  setTimeout(() => { if (!window.__walletReady) { const t = document.getElementById('veilText'); if (t) t.textContent = 'The 3D view could not load. Check your connection and refresh the page.'; } }, 15000);
+</script>
+
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+
+/* ---------- Real-world sizes, in centimetres ---------- */
+const W = 9.4;        // one panel's width (x)
+const H = 12.4;       // wallet height (z, top of wallet = -z)
+const PT = 0.32;      // panel thickness
+const CARD = { w: 8.56, h: 5.4, t: 0.076 };   // ID-1 / CR80 card
+const SLIDE_DIR = new THREE.Vector3(0, 0, -1);
+
+/* ---------- What goes in the wallet. Artwork lives in assets/cards/<id>-front.jpg and -back.jpg. ---------- */
+const art = (id) => ({ front: `assets/cards/${id}-front.jpg`, back: `assets/cards/${id}-back.jpg` });
+const ITEMS = [
+  { id: 'licence', side: 'left', kind: 'licence', label: 'Licence',
+    eyebrow: 'ID window', title: 'Designer Licence',
+    body: 'A driving-licence-style card listing everything I am licensed to design. The back rates my tools and its QR code and chip link to my portfolio.',
+    facts: [['Holder', 'Mr Harrison Jay Greener'], ['Categories', 'Graphic, web, UX/UI, SEO, marketing, logos, social media, AI'], ['Portfolio', 'www.HarrisonGreener.co.uk']],
+    ...art('licence'), art: 'licence' },
+  { id: 'stack', side: 'right', slot: 0, kind: 'biz', label: 'Stack',
+    eyebrow: 'Project card', title: 'Stack',
+    body: 'Own it. Play it everywhere. An app of mine, with its own brand and mascot.',
+    facts: [], ...art('stack'), art: 'biz-paper' },
+  { id: 'folio', side: 'right', slot: 0, kind: 'biz', label: 'Folio',
+    eyebrow: 'Project card', title: 'Folio',
+    body: 'A clear lens for your money. A concept digital bank for investing, with a full pitch deck and brand identity guide.',
+    facts: [['Status', 'Concept and prototype']], ...art('folio'), art: 'biz-ink' },
+  { id: 'quotable', side: 'right', slot: 1, kind: 'biz', label: 'Quotable',
+    eyebrow: 'Project card', title: 'Quotable',
+    body: 'Quoting, invoicing and scheduling built for tradespeople. A launched product, run as my own limited company.',
+    facts: [['Site', 'quotable-it.co.uk'], ['Status', 'Live']], ...art('quotable'), art: 'biz-paper' },
+  { id: 'pat', side: 'right', slot: 1, kind: 'biz', label: 'Pat',
+    eyebrow: 'Project card', title: 'Pat',
+    body: 'Smart networking. A smart business card company concept, with marketing material and a working simulator website.',
+    facts: [], ...art('pat'), art: 'biz-paper' },
+  { id: 'brandomizer', side: 'right', slot: 2, kind: 'biz', label: 'Brandomizer',
+    eyebrow: 'Project card', title: 'The Great Brandomizer',
+    body: 'A slot machine for designers. Pull the handle to spin up a colour palette and font pairing for a brand, and hold the reels you like.',
+    facts: [], ...art('brandomizer'), art: 'biz-ink' },
+  { id: 'big-brother', side: 'right', slot: 2, kind: 'biz', label: 'Big Brother Inc.',
+    eyebrow: 'Project card', title: 'Big Brother Inc.',
+    body: 'A locally hosted team of AI agents, themed on Orwell’s 1984, with me as Big Brother.',
+    facts: [], ...art('big-brother'), art: 'biz-ink' },
+  { id: 'fly', side: 'right', slot: 3, kind: 'biz', label: 'Fly × Tetris',
+    eyebrow: 'Project card', title: 'Can a fly play Tetris?',
+    body: 'A slice of the real FlyWire fruit-fly connectome, given a controller and a block-stacking game. It plays badly.',
+    facts: [['Data', 'FlyWire Consortium, CC BY 4.0']], ...art('fly'), art: 'biz-paper' },
+  { id: 'rolla', side: 'right', slot: 3, kind: 'biz', label: 'Rolla',
+    eyebrow: 'Project card', title: 'Rolla',
+    body: 'Swipe into work. A gamified, swipe-style recruitment app concept.',
+    facts: [], ...art('rolla'), art: 'biz-ink' },
+  { id: 'receipt', side: 'right', kind: 'receipt', label: 'Receipt',
+    eyebrow: 'Note compartment', title: 'Receipt',
+    body: 'An itemised receipt of skills and experience, tucked in where the cash would go.',
+    facts: [], front: null, back: null, art: 'receipt' },
+];
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const SPEED = reduceMotion ? 0.35 : 1;
+const $ = (s) => document.querySelector(s);
+
+/* ---------- Renderer, scene, camera ---------- */
+const stage = $('#stage');
+const renderer = new THREE.WebGLRenderer({ antialias: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+renderer.toneMapping = THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure = 1.0;
+stage.appendChild(renderer.domElement);
+const maxAniso = renderer.capabilities.getMaxAnisotropy();
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xe6d3ba);
+const pmrem = new THREE.PMREMGenerator(renderer);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 0.1, 400);
+scene.add(camera);
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.08;
+controls.enablePan = false;
+controls.minPolarAngle = 0.12;
+controls.maxPolarAngle = 1.05;
+controls.minDistance = 16;
+controls.maxDistance = 90;
+
+const VIEW_DIR = new THREE.Vector3(0, 31, 21).normalize();
+function fitCamera() {
+  const halfFov = THREE.MathUtils.degToRad(camera.fov / 2);
+  const needW = 24 / (2 * Math.tan(halfFov) * camera.aspect);
+  const needH = 17 / (2 * Math.tan(halfFov));
+  const d = Math.max(34, needW, needH);
+  controls.maxDistance = Math.max(90, d * 1.4);
+  camera.position.copy(controls.target).addScaledVector(VIEW_DIR, d);
+  camera.lookAt(controls.target);
+}
+
+/* ---------- Light ---------- */
+scene.add(new THREE.HemisphereLight(0xffffff, 0xcdb393, 0.7));
+const sun = new THREE.DirectionalLight(0xfff1e0, 2.4);
+sun.position.set(-14, 30, -12);
+sun.castShadow = true;
+sun.shadow.mapSize.set(2048, 2048);
+Object.assign(sun.shadow.camera, { left: -18, right: 18, top: 18, bottom: -18, near: 1, far: 90 });
+sun.shadow.bias = -0.0004;
+sun.shadow.normalBias = 0.02;
+scene.add(sun);
+
+/* ---------- Procedural textures ---------- */
+function noiseCanvas(size, layers, base = 128) {
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const g = c.getContext('2d');
+  g.fillStyle = `rgb(${base},${base},${base})`; g.fillRect(0, 0, size, size);
+  for (const [cells, alpha] of layers) {
+    const s = document.createElement('canvas'); s.width = s.height = cells;
+    const sg = s.getContext('2d'); const img = sg.createImageData(cells, cells);
+    for (let i = 0; i < img.data.length; i += 4) { const v = (Math.random() * 255) | 0; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; }
+    sg.putImageData(img, 0, 0);
+    g.globalAlpha = alpha; g.imageSmoothingEnabled = cells < size; g.drawImage(s, 0, 0, size, size);
+  }
+  g.globalAlpha = 1; return c;
+}
+function tex(canvas, { srgb = true, repeat = 0 } = {}) {
+  const t = new THREE.CanvasTexture(canvas);
+  if (srgb) t.colorSpace = THREE.SRGBColorSpace;
+  t.anisotropy = maxAniso;
+  if (repeat) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(repeat, repeat); t.offset.set(0.5, 0.5); }
+  return t;
+}
+
+// Leather: mottled near-black colour + fine pebble grain for bump and roughness.
+const leatherCol = noiseCanvas(1024, [[4, .6], [14, .45], [48, .3]]);
+{ const g = leatherCol.getContext('2d'); g.globalCompositeOperation = 'multiply'; g.fillStyle = 'rgb(52,49,47)'; g.fillRect(0, 0, 1024, 1024); }
+const leatherGrain = noiseCanvas(2048, [[96, .35], [384, .5], [1400, .55]]);
+const LEATHER_REPEAT = 1 / 20; // UVs are in cm; one tile covers 20 cm, so no seams show on the panels.
+const leatherMat = new THREE.MeshPhysicalMaterial({
+  color: 0xffffff, map: tex(leatherCol, { repeat: LEATHER_REPEAT }),
+  bumpMap: tex(leatherGrain, { srgb: false, repeat: LEATHER_REPEAT }), bumpScale: 0.5,
+  roughnessMap: tex(leatherGrain, { srgb: false, repeat: LEATHER_REPEAT }), roughness: 1.45,
+  sheen: 1, sheenColor: new THREE.Color(0x3a3734), sheenRoughness: 0.55, envMapIntensity: 0.6,
+});
+const edgeMat = new THREE.MeshPhysicalMaterial({ color: 0x0b0b0b, roughness: 0.42, clearcoat: 0.3, clearcoatRoughness: 0.4, envMapIntensity: 0.8 });
+const stitchMat = new THREE.MeshStandardMaterial({ color: 0x2c2b2a, roughness: 0.65 });
+const paneMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.1, roughness: 0.06, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.05, depthWrite: false, envMapIntensity: 1.4 });
+
+// Table: warm linen, matched to the product photos.
+const tableCanvas = document.createElement('canvas'); tableCanvas.width = tableCanvas.height = 512;
+{ const g = tableCanvas.getContext('2d'); g.fillStyle = '#e6d3ba'; g.fillRect(0, 0, 512, 512); g.globalAlpha = 0.07; g.drawImage(noiseCanvas(512, [[32, 1], [256, 1]]), 0, 0); }
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshStandardMaterial({ map: tex(tableCanvas, { repeat: 24 }), roughness: 1 }));
+ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
+
+/* ---------- Geometry helpers ---------- */
+// Rounded rectangle with per-corner radii [bottom-left, bottom-right, top-right, top-left] in shape space.
+function rr(x0, y0, x1, y1, r, PathType = THREE.Shape) {
+  const [bl, br, tr, tl] = Array.isArray(r) ? r : [r, r, r, r];
+  const s = new PathType();
+  s.moveTo(x0 + bl, y0);
+  s.lineTo(x1 - br, y0); if (br) s.absarc(x1 - br, y0 + br, br, -Math.PI / 2, 0, false);
+  s.lineTo(x1, y1 - tr); if (tr) s.absarc(x1 - tr, y1 - tr, tr, 0, Math.PI / 2, false);
+  s.lineTo(x0 + tl, y1); if (tl) s.absarc(x0 + tl, y1 - tl, tl, Math.PI / 2, Math.PI, false);
+  s.lineTo(x0, y0 + bl); if (bl) s.absarc(x0 + bl, y0 + bl, bl, Math.PI, Math.PI * 1.5, false);
+  return s;
+}
+// A flat leather piece lying on the table: shape x → world x, shape y → world -z, thickness → world y.
+function slab(shape, thick, y0, mats = [leatherMat, edgeMat]) {
+  const bev = Math.min(0.035, thick * 0.3);
+  const g = new THREE.ExtrudeGeometry(shape, { depth: Math.max(thick - 2 * bev, 0.002), bevelEnabled: true, bevelThickness: bev, bevelSize: bev * 0.7, bevelOffset: -bev * 0.7, bevelSegments: 2, curveSegments: 20 });
+  g.translate(0, 0, bev); g.rotateX(-Math.PI / 2);
+  const m = new THREE.Mesh(g, mats); m.position.y = y0; m.castShadow = true; m.receiveShadow = true; return m;
+}
+// Saddle-style stitch run along an inset outline, on the top or bottom face of a panel.
+function stitches(shape, y, flip = false) {
+  const len = shape.getLength(); const n = Math.max(8, Math.round(len / 0.14));
+  const pts = shape.getSpacedPoints(n);
+  const count = Math.floor(pts.length / 2);
+  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.1, 0.022, 0.026), stitchMat, count);
+  const d = new THREE.Object3D(); let k = 0;
+  for (let i = 0; i + 1 < pts.length && k < count; i += 2, k++) {
+    const p = pts[i], q = pts[i + 1];
+    d.position.set((p.x + q.x) / 2, y + (flip ? -0.004 : 0.004), -(p.y + q.y) / 2);
+    d.rotation.set(0, Math.atan2(q.y - p.y, q.x - p.x), 0); d.updateMatrix(); mesh.setMatrixAt(k, d.matrix);
+  }
+  mesh.count = k; mesh.castShadow = false; mesh.receiveShadow = true; return mesh;
+}
+function faceGeo(shape, w, h) {
+  const g = new THREE.ShapeGeometry(shape, 16);
+  const p = g.attributes.position, uv = g.attributes.uv;
+  for (let i = 0; i < p.count; i++) uv.setXY(i, (p.getX(i) + w / 2) / w, (p.getY(i) + h / 2) / h);
+  uv.needsUpdate = true; return g;
+}
+
+/* ---------- Placeholder artwork (drawn until the real files arrive) ---------- */
+function artCanvas(w, h) { const c = document.createElement('canvas'); c.width = w; c.height = h; return [c, c.getContext('2d')]; }
+const F = { d: "'Bricolage Grotesque', Arial, sans-serif", m: "'IBM Plex Mono', Menlo, monospace" };
+function placeholderTag(g, w, h, dark) {
+  g.font = `500 22px ${F.m}`; g.fillStyle = dark ? 'rgba(255,255,255,.45)' : 'rgba(0,0,0,.38)';
+  g.textAlign = 'right'; g.fillText('PLACEHOLDER ARTWORK', w - 40, h - 34); g.textAlign = 'left';
+}
+function drawArt(kind, side) {
+  if (kind === 'receipt') {
+    const [c, g] = artCanvas(720, 1340);
+    g.fillStyle = '#fbfaf6'; g.fillRect(0, 0, 720, 1340);
+    if (side === 'back') { g.fillStyle = 'rgba(0,0,0,.05)'; for (let y = 0; y < 1340; y += 6) g.fillRect(0, y, 720, 1); return c; }
+    g.fillStyle = '#26231f'; g.textAlign = 'center';
+    g.font = `600 40px ${F.m}`; g.fillText('HARRISON GREENER', 360, 110);
+    g.font = `400 26px ${F.m}`; g.fillText('DESIGN · EST. MANCHESTER', 360, 154);
+    const rule = (y) => { g.setLineDash([10, 8]); g.strokeStyle = '#26231f'; g.lineWidth = 2; g.beginPath(); g.moveTo(50, y); g.lineTo(670, y); g.stroke(); g.setLineDash([]); };
+    rule(200);
+    g.textAlign = 'left'; g.font = `400 28px ${F.m}`;
+    const rows = [['ITEM', 'QTY'], ['Graphic design', '1'], ['Web design', '1'], ['UX / UI design', '1'], ['Agency campaigns', '1'], ['Physical making', '1']];
+    rows.forEach(([a, b], i) => { const y = 260 + i * 56; g.font = `${i ? 400 : 600} 28px ${F.m}`; g.fillText(a, 60, y); g.textAlign = 'right'; g.fillText(b, 660, y); g.textAlign = 'left'; });
+    rule(610);
+    g.font = `600 32px ${F.m}`; g.fillText('TOTAL', 60, 670); g.textAlign = 'right'; g.fillText('HIRE ME', 660, 670);
+    g.textAlign = 'center'; g.font = `400 24px ${F.m}`; g.fillText('THANK YOU FOR VISITING', 360, 760);
+    for (let i = 0; i < 46; i++) { const x = 120 + i * 10.5; g.fillRect(x, 820, (i % 3 === 0 ? 6 : 3), 110); }
+    g.font = `500 22px ${F.m}`; g.fillStyle = 'rgba(0,0,0,.38)'; g.fillText('PLACEHOLDER ARTWORK', 360, 1270);
+    return c;
+  }
+  const [c, g] = artCanvas(1024, 646);
+  const W2 = 1024, H2 = 646;
+  if (kind === 'licence') {
+    if (side === 'back') {
+      g.fillStyle = '#e9eef4'; g.fillRect(0, 0, W2, H2);
+      g.strokeStyle = 'rgba(42,67,196,.12)'; g.lineWidth = 2;
+      for (let i = -H2; i < W2; i += 18) { g.beginPath(); g.moveTo(i, 0); g.lineTo(i + H2, H2); g.stroke(); }
+      g.fillStyle = '#1c1915'; g.font = `600 30px ${F.m}`; g.fillText('9. CATEGORIES', 60, 90);
+      g.font = `400 28px ${F.m}`; ['GD  Graphic design', 'WD  Web design', 'UX  UX / UI design'].forEach((t, i) => g.fillText(t, 60, 150 + i * 50));
+      placeholderTag(g, W2, H2, false); return c;
+    }
+    const grd = g.createLinearGradient(0, 0, W2, H2); grd.addColorStop(0, '#f3f6fa'); grd.addColorStop(1, '#dbe4ee');
+    g.fillStyle = grd; g.fillRect(0, 0, W2, H2);
+    g.fillStyle = '#2a43c4'; g.fillRect(0, 0, W2, 92);
+    g.fillStyle = '#fff'; g.font = `700 44px ${F.d}`; g.fillText('DESIGNER LICENCE', 48, 62);
+    g.fillStyle = '#c9d2dd'; g.fillRect(48, 132, 230, 290);
+    g.fillStyle = '#8b97a6'; g.font = `500 22px ${F.m}`; g.fillText('PHOTO', 128, 284);
+    g.fillStyle = '#c9a54a'; g.fillRect(48, 450, 92, 72); g.strokeStyle = '#a8852f'; g.lineWidth = 2; g.strokeRect(60, 462, 68, 48);
+    g.fillStyle = '#1c1915';
+    [['1.', 'GREENER'], ['2.', 'HARRISON JAY'], ['4c.', 'GRAPHIC · WEB · UX/UI'], ['8.', 'MANCHESTER / BRIGHTON']]
+      .forEach(([n, t], i) => { g.font = `500 24px ${F.m}`; g.fillStyle = '#6a5f55'; g.fillText(n, 320, 170 + i * 66); g.font = `600 32px ${F.m}`; g.fillStyle = '#1c1915'; g.fillText(t, 380, 170 + i * 66); });
+    placeholderTag(g, W2, H2, false); return c;
+  }
+  const palette = { 'biz-ink': ['#16140f', '#f6f1e8'], 'biz-paper': ['#f6f1e8', '#16140f'], 'biz-blue': ['#2a43c4', '#f6f1e8'] }[kind];
+  const [bg, fg] = palette; const dark = bg !== '#f6f1e8';
+  g.fillStyle = bg; g.fillRect(0, 0, W2, H2); g.fillStyle = fg;
+  if (side === 'back') {
+    g.font = `700 220px ${F.d}`; g.textAlign = 'center'; g.fillText('HG', W2 / 2, H2 / 2 + 76); g.textAlign = 'left';
+    placeholderTag(g, W2, H2, dark); return c;
+  }
+  g.font = `700 64px ${F.d}`; g.fillText('Harrison Greener', 60, 140);
+  g.font = `500 28px ${F.m}`; g.fillText('DESIGNER — GRAPHIC · WEB · UX/UI', 62, 196);
+  g.globalAlpha = .5; g.fillRect(62, 236, 120, 3); g.globalAlpha = 1;
+  g.font = `400 26px ${F.m}`; g.fillText('Manchester / Brighton', 62, 520);
+  placeholderTag(g, W2, H2, dark); return c;
+}
+
+/* ---------- Cards ---------- */
+function makeItemMesh(cfg) {
+  const isReceipt = cfg.kind === 'receipt', isPaper = cfg.kind === 'biz';
+  const { w, h, t } = cfg;
+  const shape = rr(-w / 2, -h / 2, w / 2, h / 2, isReceipt ? 0.06 : isPaper ? 0.12 : 0.32);
+  const group = new THREE.Group();
+  const bodyGeo = new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false, curveSegments: 12 });
+  bodyGeo.translate(0, 0, -t / 2);
+  const body = new THREE.Mesh(bodyGeo, new THREE.MeshStandardMaterial({ color: isReceipt ? 0xf4f2ec : 0xf1eee7, roughness: 0.6 }));
+  const surface = isReceipt ? { roughness: 0.92 } : isPaper ? { roughness: 0.62, sheen: 0.3, sheenRoughness: 0.8 } : { roughness: 0.32, clearcoat: 0.55, clearcoatRoughness: 0.22 };
+  const frontMat = new THREE.MeshPhysicalMaterial({ map: tex(drawArt(cfg.art, 'front')), ...surface });
+  const backMat = new THREE.MeshPhysicalMaterial({ map: tex(drawArt(cfg.art, 'back')), ...surface });
+  const fg = faceGeo(shape, w, h);
+  const front = new THREE.Mesh(fg, frontMat); front.position.z = t / 2 + 0.0015;
+  const back = new THREE.Mesh(fg.clone(), backMat); back.rotation.y = Math.PI; back.position.z = -t / 2 - 0.0015;
+  for (const m of [body, front, back]) { m.castShadow = true; m.receiveShadow = true; m.userData.item = cfg; group.add(m); }
+  group.rotation.x = -Math.PI / 2; // lie flat, artwork facing up, artwork top toward the top of the wallet
+  cfg.frontMat = frontMat; cfg.backMat = backMat;
+  return group;
+}
+// Swap in real artwork later: ITEMS[i].front = 'cards/licence-front.png' and it loads here.
+const loader = new THREE.TextureLoader();
+function loadArt(cfg) {
+  for (const side of ['front', 'back']) {
+    if (!cfg[side]) continue;
+    loader.load(cfg[side], (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = maxAniso; const m = cfg[side + 'Mat']; m.map = t; m.needsUpdate = true; });
+  }
+}
+
+/* ---------- Build the wallet ---------- */
+const wallet = new THREE.Group(); scene.add(wallet);
+const pickables = [];
+function addPick(mesh, target) { mesh.userData.target = target; pickables.push(mesh); }
+
+// Right panel (stays on the table)
+const rightShape = rr(0, -H / 2, W, H / 2, [0.15, 0.7, 0.7, 0.15]);
+const rightPanel = slab(rightShape, PT, 0); wallet.add(rightPanel); addPick(rightPanel, 'wallet');
+const rightStitch = rr(0.3, -H / 2 + 0.3, W - 0.3, H / 2 - 0.3, [0.05, 0.42, 0.42, 0.05]);
+wallet.add(stitches(rightStitch, PT), stitches(rightStitch, 0, true));
+
+// Real sizes: the licence is PVC (CR80, matching its artwork's ratio), project cards are 85 × 55 mm card stock.
+for (const cfg of ITEMS) {
+  if (cfg.kind === 'receipt') Object.assign(cfg, { w: 7.2, h: 13.4, t: 0.014 });
+  else if (cfg.kind === 'biz') Object.assign(cfg, { w: 8.5, h: 5.5, t: 0.045 });
+  else Object.assign(cfg, { w: CARD.w, h: CARD.w * 650 / 1004, t: CARD.t });
+}
+
+// Right inner layers, bottom to top: receipt, lining, then four stepped pockets holding two cards each.
+let y = PT + 0.002;
+const receiptCfg = ITEMS.find((i) => i.id === 'receipt');
+receiptCfg.home = { parent: 'right', y: y + 0.007, x: W / 2 - 0.25, zTop: -H / 2 - 1.5 };
+y += 0.016;
+const lining = slab(rr(0.25, -(H / 2 - 0.25), W - 0.25, H / 2 - 0.25, [0.1, 0.5, 0.5, 0.1]), 0.05, y); wallet.add(lining); addPick(lining, 'wallet');
+y += 0.052;
+const pocketEdges = [-H / 2 + 2.2, -H / 2 + 3.2, -H / 2 + 4.2, -H / 2 + 5.2];
+pocketEdges.forEach((edge, k) => {
+  const inSlot = ITEMS.filter((i) => i.side === 'right' && i.slot === k);
+  inSlot.forEach((cfg, j) => {
+    // The second card in a slot sits a little lower and to the right, so both top edges show.
+    cfg.home = { parent: 'right', y: y + cfg.t / 2, x: W / 2 + (j ? 0.14 : -0.14), zTop: edge - 1.35 + j * 0.5 };
+    y += cfg.t + 0.002;
+  });
+  const pocket = slab(rr(0.28, -(H / 2 - 0.28), W - 0.28, -edge, [0.1, 0.45, 0.06, 0.06]), 0.05, y);
+  wallet.add(pocket); addPick(pocket, inSlot[inSlot.length - 1]);
+  y += 0.053;
+});
+const rightStack = y - PT;
+
+// Left panel on a hinge at the spine. Pivot height lets it fold over both stacks when closed.
+const licenceCfg = ITEMS.find((i) => i.id === 'licence');
+const leftStack = 0.002 + CARD.t + 0.003 + 0.05;
+const HP = PT + (rightStack + leftStack) / 2 + 0.05;
+const leftPivot = new THREE.Group(); leftPivot.position.set(0, HP, 0); wallet.add(leftPivot);
+const leftContent = new THREE.Group(); leftContent.position.set(0, -HP, 0); leftPivot.add(leftContent);
+const leftShape = rr(-W, -H / 2, 0, H / 2, [0.7, 0.15, 0.15, 0.7]);
+const leftPanel = slab(leftShape, PT, 0); leftContent.add(leftPanel); addPick(leftPanel, 'wallet');
+const leftStitch = rr(-W + 0.3, -H / 2 + 0.3, -0.3, H / 2 - 0.3, [0.42, 0.05, 0.05, 0.42]);
+leftContent.add(stitches(leftStitch, PT), stitches(leftStitch, 0, true));
+
+// ID window: frame with a cut-out, a clear pane, the licence behind it.
+const winZ = 0.9;
+licenceCfg.home = { parent: 'left', y: PT + 0.002 + CARD.t / 2, x: -W / 2, zTop: winZ - licenceCfg.h / 2 };
+const frameShape = rr(-W + 0.25, -(H / 2 - 0.25), -0.25, H / 2 - 0.25, [0.5, 0.1, 0.1, 0.5]);
+frameShape.holes.push(rr(-W / 2 - 3.9, -(winZ + 2.35), -W / 2 + 3.9, -(winZ - 2.35), 0.28, THREE.Path));
+const winFrame = slab(frameShape, 0.05, PT + 0.002 + CARD.t + 0.003); leftContent.add(winFrame); addPick(winFrame, licenceCfg);
+const pane = new THREE.Mesh(new THREE.PlaneGeometry(7.8, 4.7), paneMat);
+pane.rotation.x = -Math.PI / 2; pane.position.set(-W / 2, PT + CARD.t + 0.03, winZ); pane.renderOrder = 2; leftContent.add(pane);
+
+// Subtle embossed monogram on the outside cover.
+{
+  const [c, g] = artCanvas(512, 256);
+  g.fillStyle = 'rgba(255,255,255,.16)'; g.font = `600 120px ${F.m}`; g.textAlign = 'center'; g.fillText('H·G', 256, 168);
+  const mono = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.3), new THREE.MeshStandardMaterial({ map: tex(c), transparent: true, roughness: 0.55, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }));
+  mono.rotation.set(Math.PI / 2, 0, Math.PI); mono.position.set(-W / 2, -0.003, 3.9); leftContent.add(mono);
+}
+
+// Spine: an arc of leather that appears as the wallet folds.
+let spine = null;
+function updateSpine(theta) {
+  if (spine) { wallet.remove(spine); spine.geometry.dispose(); pickables.splice(pickables.indexOf(spine), 1); spine = null; }
+  if (theta > -0.01) return;
+  const s = new THREE.Shape();
+  const a0 = -Math.PI / 2, a1 = -Math.PI / 2 + theta;
+  s.absarc(0, HP, HP, a0, a1, true);
+  s.absarc(0, HP, HP - PT, a1, a0, false);
+  const depth = H - 0.2;
+  const g = new THREE.ExtrudeGeometry(s, { depth, bevelEnabled: false, curveSegments: 24 });
+  g.translate(0, 0, -depth / 2);
+  spine = new THREE.Mesh(g, [edgeMat, leatherMat]); spine.castShadow = true; spine.receiveShadow = true;
+  wallet.add(spine); addPick(spine, 'wallet');
+}
+
+// Items into their homes
+for (const cfg of ITEMS) {
+  const g = makeItemMesh(cfg);
+  const h = cfg.home;
+  const parent = h.parent === 'left' ? leftContent : wallet;
+  g.position.set(h.x, h.y, h.zTop + cfg.h / 2);
+  cfg.group = g; cfg.parent = parent;
+  cfg.homePos = g.position.clone(); cfg.homeQuat = g.quaternion.clone();
+  cfg.hover = 0;
+  parent.add(g);
+  g.traverse((m) => { if (m.isMesh) pickables.push(m); });
+  loadArt(cfg);
+}
+
+/* ---------- Backdrop that dims the table while an item is out ---------- */
+const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshBasicMaterial({ color: 0x15110d, transparent: true, opacity: 0, depthWrite: false }));
+backdrop.position.z = -19; camera.add(backdrop);
+
+/* ---------- State ---------- */
+const ease = (x) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+let openVal = 0, openTarget = 0, pendingItem = null;
+let active = null;          // { item, p, dir, homePos, homeQuat, dist }
+let yaw = 0, yawT = 0, pitch = 0, pitchT = 0;
+const tmpQ = new THREE.Quaternion(), tmpE = new THREE.Euler();
+const closedTarget = new THREE.Vector3(W / 2, 0, 0), openTargetV = new THREE.Vector3(0, 0, 0);
+
+function applyOpen() {
+  const e = ease(openVal);
+  const theta = -Math.PI * (1 - e);
+  leftPivot.rotation.z = theta;
+  updateSpine(theta);
+  const tgt = closedTarget.clone().lerp(openTargetV, e);
+  const delta = tgt.sub(controls.target);
+  controls.target.add(delta); camera.position.add(delta);
+}
+function setOpen(v) {
+  if (active) return;
+  openTarget = v ? 1 : 0; updateUI();
+}
+
+function expandedPose(cfg) {
+  const D = 14;
+  const visH = 2 * D * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
+  const visW = visH * camera.aspect;
+  const mobile = innerWidth <= 720;
+  const s = Math.min((mobile ? 0.4 : 0.56) * visH / cfg.h, (mobile ? 0.86 : 0.5) * visW / cfg.w);
+  const q = camera.quaternion;
+  const pos = camera.position.clone()
+    .addScaledVector(new THREE.Vector3(0, 0, -1).applyQuaternion(q), D)
+    .addScaledVector(new THREE.Vector3(1, 0, 0).applyQuaternion(q), mobile ? 0 : -0.15 * visW)
+    .addScaledVector(new THREE.Vector3(0, 1, 0).applyQuaternion(q), mobile ? 0.2 * visH : 0);
+  const quat = q.clone().multiply(tmpQ.setFromEuler(tmpE.set(pitch, yaw, 0)));
+  return { pos, quat, scale: s };
+}
+
+function pull(cfg) {
+  if (active) return;
+  if (openVal < 1) { pendingItem = cfg; setOpen(true); return; }
+  cfg.hover = 0; cfg.group.position.copy(cfg.homePos); cfg.group.quaternion.copy(cfg.homeQuat);
+  cfg.group.updateMatrixWorld(true);
+  const homePos = new THREE.Vector3(), homeQuat = new THREE.Quaternion();
+  cfg.group.getWorldPosition(homePos); cfg.group.getWorldQuaternion(homeQuat);
+  const bottomZ = homePos.z + cfg.h / 2;
+  const dist = bottomZ + H / 2 + 0.6;
+  scene.attach(cfg.group);
+  yaw = yawT = 0; pitch = pitchT = 0;
+  active = { item: cfg, p: 0, dir: 1, homePos, homeQuat, dist };
+  controls.enabled = false;
+  setHover(null);
+  updateUI();
+}
+function putBack() {
+  if (!active || active.dir === -1) return;
+  active.dir = -1; yawT = 0; pitchT = 0;
+  hideSheet(); updateUI();
+}
+function poseActive() {
+  const { item, p, homePos, homeQuat, dist } = active; const g = item.group;
+  const slideEnd = homePos.clone().addScaledVector(SLIDE_DIR, dist);
+  if (p <= 1) {
+    const f = ease(p);
+    g.position.copy(homePos).addScaledVector(SLIDE_DIR, dist * f);
+    g.quaternion.copy(homeQuat); g.scale.setScalar(1);
+  } else {
+    const f = ease(p - 1); const t = expandedPose(item);
+    g.position.lerpVectors(slideEnd, t.pos, f); g.position.y += Math.sin(Math.PI * f) * 2.2;
+    g.quaternion.slerpQuaternions(homeQuat, t.quat, f);
+    g.scale.setScalar(1 + (t.scale - 1) * f);
+  }
+  backdrop.material.opacity = Math.max(0, Math.min(1, p - 1)) * 0.45;
+}
+function finishReturn() {
+  const cfg = active.item;
+  cfg.parent.attach(cfg.group);
+  cfg.group.position.copy(cfg.homePos); cfg.group.quaternion.copy(cfg.homeQuat); cfg.group.scale.setScalar(1);
+  active = null; backdrop.material.opacity = 0; controls.enabled = true; updateUI();
+}
+
+/* ---------- Sheet + UI ---------- */
+const sheet = $('#sheet');
+function showSheet(cfg) {
+  $('#sheetEyebrow').textContent = cfg.eyebrow;
+  $('#sheetTitle').textContent = cfg.title;
+  $('#sheetBody').textContent = cfg.body;
+  const facts = $('#sheetFacts'); facts.replaceChildren();
+  for (const [k, v] of cfg.facts) { const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v; facts.append(dt, dd); }
+  facts.hidden = cfg.facts.length === 0;
+  $('#sheetNote').textContent = cfg.front ? '' : 'Placeholder artwork. The real design drops in here.';
+  sheet.classList.add('open'); sheet.setAttribute('aria-hidden', 'false');
+  $('#flipBtn').focus({ preventScroll: true });
+}
+function hideSheet() { sheet.classList.remove('open'); sheet.setAttribute('aria-hidden', 'true'); }
+
+const hint = $('#hint'), openBtn = $('#openBtn');
+const chips = [];
+for (const cfg of ITEMS) {
+  const b = document.createElement('button');
+  b.className = 'btn chip'; b.type = 'button'; b.textContent = cfg.label; b.setAttribute('aria-pressed', 'false');
+  b.addEventListener('click', () => { if (active && active.item === cfg) putBack(); else if (!active) pull(cfg); });
+  $('#inventory').append(b); chips.push([cfg, b]);
+}
+function updateUI() {
+  const isOpen = openTarget === 1;
+  openBtn.textContent = isOpen ? 'Close wallet' : 'Open wallet';
+  openBtn.disabled = !!active;
+  for (const [cfg, b] of chips) { b.setAttribute('aria-pressed', String(!!active && active.item === cfg)); b.disabled = !!active && active.item !== cfg; }
+  hint.textContent = active ? 'Drag to turn it · Esc or click outside to put it back'
+    : isOpen ? 'Pick something to pull it out · drag to look around' : 'Click the wallet to open it';
+}
+openBtn.addEventListener('click', () => setOpen(openTarget !== 1));
+$('#resetBtn').addEventListener('click', () => { if (!active) fitCamera(); });
+$('#flipBtn').addEventListener('click', () => { yawT += Math.PI; });
+$('#backBtn').addEventListener('click', putBack);
+addEventListener('keydown', (e) => { if (e.key === 'Escape') putBack(); });
+
+/* ---------- Pointer: pick, hover, drag to turn ---------- */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+function pick(ev) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(pickables, false)[0];
+  if (!hit) return null;
+  return hit.object.userData.item || hit.object.userData.target || null;
+}
+let hovered = null;
+function setHover(cfg) { hovered = cfg; renderer.domElement.style.cursor = cfg ? 'pointer' : ''; }
+let down = null, dragging = false;
+const el = renderer.domElement;
+el.addEventListener('pointerdown', (e) => {
+  down = { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY };
+  if (active && active.p >= 2) { dragging = true; el.setPointerCapture(e.pointerId); }
+});
+el.addEventListener('pointermove', (e) => {
+  if (dragging && down) {
+    yawT += (e.clientX - down.lx) * 0.009; pitchT = Math.max(-0.9, Math.min(0.9, pitchT + (e.clientY - down.ly) * 0.009));
+    down.lx = e.clientX; down.ly = e.clientY; el.style.cursor = 'grabbing'; return;
+  }
+  if (active || e.pointerType === 'touch') return;
+  const t = pick(e);
+  if (openVal < 1) { setHover(t === 'wallet' || (t && t.id) ? 'wallet' : null); return; }
+  setHover(t && t.id ? t : null);
+});
+el.addEventListener('pointerup', (e) => {
+  const moved = down ? Math.hypot(e.clientX - down.x, e.clientY - down.y) : 99;
+  const wasDragging = dragging; dragging = false; el.style.cursor = '';
+  down = null;
+  if (moved > 6) return;
+  if (active) { if (active.p >= 2) { const t = pick(e); if (!(t && t === active.item)) putBack(); } return; }
+  const t = pick(e);
+  if (!t) return;
+  if (openVal < 1 || openTarget === 0) { setOpen(true); return; }
+  if (t.id) pull(t);
+});
+
+/* ---------- Loop ---------- */
+const clock = new THREE.Clock();
+function frame() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  if (openVal !== openTarget) {
+    const step = dt / (0.95 * SPEED);
+    openVal = openTarget > openVal ? Math.min(openTarget, openVal + step) : Math.max(openTarget, openVal - step);
+    applyOpen();
+    if (openVal === 1 && pendingItem) { const c = pendingItem; pendingItem = null; pull(c); }
+  }
+  // Hover nudge: the card rises slightly out of its slot.
+  for (const cfg of ITEMS) {
+    if (active && active.item === cfg) continue;
+    const target = (!active && openVal === 1 && hovered === cfg) ? 1 : 0;
+    cfg.hover += (target - cfg.hover) * Math.min(1, dt * 12);
+    cfg.group.position.set(cfg.homePos.x, cfg.homePos.y, cfg.homePos.z - cfg.hover * 0.7);
+  }
+  if (active) {
+    const rate = active.p < 1 || (active.p === 1 && active.dir < 0) ? 1 / (0.5 * SPEED) : 1 / (0.75 * SPEED);
+    const before = active.p;
+    active.p = Math.max(0, Math.min(2, active.p + active.dir * dt * rate));
+    yaw += (yawT - yaw) * Math.min(1, dt * 8); pitch += (pitchT - pitch) * Math.min(1, dt * 8);
+    poseActive();
+    if (active.dir === 1 && before < 2 && active.p === 2) showSheet(active.item);
+    if (active.dir === -1 && active.p === 0) finishReturn();
+  }
+  if (controls.enabled) controls.update();
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+
+addEventListener('resize', () => {
+  camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+
+/* ---------- Start ---------- */
+controls.target.copy(closedTarget);
+applyOpen();
+fitCamera();
+updateUI();
+await Promise.race([
+  Promise.all([document.fonts.load(`700 40px ${F.d}`), document.fonts.load(`500 20px ${F.m}`), document.fonts.load(`600 20px ${F.m}`)]),
+  new Promise((r) => setTimeout(r, 2500)),
+]).catch(() => {});
+// Redraw placeholder art now that the fonts are in.
+for (const cfg of ITEMS) {
+  if (!cfg.front) { cfg.frontMat.map = tex(drawArt(cfg.art, 'front')); cfg.frontMat.needsUpdate = true; }
+  if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
+}
+window.__walletReady = true;
+requestAnimationFrame(frame);
+setTimeout(() => $('#veil').classList.add('gone'), 150);
+</script>
