@@ -941,38 +941,27 @@ function makeMug() {
   const handle = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.32, 16, 40, Math.PI), glaze);
   handle.rotation.z = -Math.PI / 2; handle.position.set(2.6, 3.3, 0); g.add(handle);
   // Coffee surface with enough rings to ripple
-  const sg = new THREE.RingGeometry(0.001, 2.42, 64, 14); sg.rotateX(-Math.PI / 2);
-  const coffee = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: 0x8a5a30, roughness: 0.38, envMapIntensity: 0.25 }));
+  const sg = new THREE.RingGeometry(0.001, 2.42, 72, 22); sg.rotateX(-Math.PI / 2);
+  const coffee = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: 0x8a5a30, roughness: 0.18, envMapIntensity: 0.5 }));   // a little sheen so the slosh catches the light
   coffee.position.y = 5.5; g.add(coffee);
-  const base = sg.attributes.position.array.slice();
-  const drops = [];
-  const dropMat = coffee.material;
-  for (let i = 0; i < 10; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.09 + Math.random() * 0.07, 8, 6), dropMat); d.visible = false; g.add(d); drops.push({ m: d, v: new THREE.Vector3(), life: 0 }); }
-  let amp = 0, t = 0, dir = 0;
-  g.userData.splash = () => {
-    amp = 0.32; dir = Math.random() * Math.PI * 2;
-    for (const d of drops) {                             // a few droplets flick up and fall back in
-      const r = 1.2 + Math.random() * 1.1, a = Math.random() * Math.PI * 2;
-      d.m.position.set(Math.cos(a) * r, 5.6, Math.sin(a) * r);
-      d.v.set(Math.cos(a) * (0.8 + Math.random()), 5 + Math.random() * 4, Math.sin(a) * (0.8 + Math.random()));
-      d.life = 1; d.m.visible = true;
-    }
-  };
+  const base = sg.attributes.position.array.slice(), RIM = 2.42;
+  // Sloshing, not splashing: the surface rocks to and fro (the first slosh mode of a cylinder, about 3 Hz in an 8 cm mug),
+  // a weaker saddle-shaped wobble rides on top, and fine rings spread out from the centre and fade
+  let amp = 0, ring = 0, t = 0, dir = 0;
+  g.userData.splash = () => { amp = Math.min(0.42, amp + 0.3); ring = Math.min(0.08, ring + 0.06); dir = Math.random() * Math.PI * 2; t = 0; };
   g.userData.tick = (dt) => {
-    t += dt; amp *= Math.exp(-dt * 2.2);
-    const p = sg.attributes.position;
+    if (amp < 0.001 && ring < 0.001) return;
+    t += dt; amp *= Math.exp(-dt * 1.6); ring *= Math.exp(-dt * 3.2);
+    const w = 19, p = sg.attributes.position;
     for (let i = 0; i < p.count; i++) {
-      const x = base[i * 3], z = base[i * 3 + 2], r = Math.hypot(x, z);
-      const slosh = (x * Math.cos(dir) + z * Math.sin(dir)) / 2.42 * Math.sin(t * 9) * amp;
-      const ripple = Math.sin(r * 5 - t * 14) * amp * 0.35 * (1 - r / 2.6);
-      p.setY(i, slosh + ripple);
+      const x = base[i * 3], z = base[i * 3 + 2], r = Math.hypot(x, z) / RIM, th = Math.atan2(z, x) - dir;
+      const rock = amp * r * (1 - 0.18 * r * r) * Math.cos(th) * Math.sin(w * t);                 // tips one way, then the other
+      const saddle = amp * 0.28 * r * r * Math.cos(2 * th) * Math.sin(1.62 * w * t + 0.6);       // the smaller wobble on top
+      const rings = ring * Math.sin(r * RIM * 7 - t * 15) * Math.exp(-r * 1.2) * (1 - r);        // fine rings, flat at the wall
+      p.setY(i, rock + saddle + rings);
     }
-    p.needsUpdate = true; if (amp > 0.002) sg.computeVertexNormals();
-    for (const d of drops) {
-      if (!d.life) continue;
-      d.v.y -= 30 * dt; d.m.position.addScaledVector(d.v, dt);
-      if (d.m.position.y < 5.5 && d.v.y < 0) { d.life = 0; d.m.visible = false; }
-    }
+    p.needsUpdate = true; sg.computeVertexNormals();
+    if (amp < 0.001 && ring < 0.001) { for (let i = 0; i < p.count; i++) p.setY(i, 0); p.needsUpdate = true; sg.computeVertexNormals(); }
   };
   return g;
 }
