@@ -201,9 +201,9 @@ controls.maxDistance = 90;
 const VIEW_DIR = new THREE.Vector3(0, 31, 21).normalize();
 function fitCamera() {
   const halfFov = THREE.MathUtils.degToRad(camera.fov / 2);
-  const needW = 30 / (2 * Math.tan(halfFov) * camera.aspect);
-  const needH = 19 / (2 * Math.tan(halfFov));
-  const d = Math.max(34, needW, needH);
+  const needW = 36 / (2 * Math.tan(halfFov) * camera.aspect);
+  const needH = 23 / (2 * Math.tan(halfFov));
+  const d = Math.max(40, needW, needH);
   controls.maxDistance = Math.max(90, d * 1.4);
   camera.position.copy(controls.target).addScaledVector(VIEW_DIR, d);
   camera.lookAt(controls.target);
@@ -303,7 +303,7 @@ const leatherMat = new THREE.MeshPhysicalMaterial({
   roughness: 0.8, sheen: 0.3, sheenColor: new THREE.Color(0x3a3a3a), sheenRoughness: 0.75, envMapIntensity: 0.3,
 });
 const edgeMat = new THREE.MeshPhysicalMaterial({ color: 0x1c1c1c, roughness: 0.5, clearcoat: 0.25, clearcoatRoughness: 0.45, envMapIntensity: 0.45 });
-const stitchMat = new THREE.MeshStandardMaterial({ color: 0x1b1b1c, roughness: 0.7 });
+const stitchMat = new THREE.MeshPhysicalMaterial({ color: 0x5b5b58, roughness: 0.5, sheen: 0.6, sheenColor: 0x9a9a96, sheenRoughness: 0.4 });  // waxed grey thread, as on the real wallet
 const paneMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.05, roughness: 0.1, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.1, depthWrite: false, envMapIntensity: 0.5 });
 
 // Table: warm linen, matched to the product photos.
@@ -335,18 +335,20 @@ function slab(shape, thick, y0, mats = [leatherMat, edgeMat]) {
 // Saddle-style stitch run along an inset outline, on the top or bottom face of a panel.
 // yAt(z) gives the surface height under each stitch, so the thread sits on whichever layer is on top there.
 function stitches(shape, yAt, flip = false) {
-  const len = shape.getLength(); const n = Math.max(8, Math.round(len / 0.12));
-  const pts = shape.getSpacedPoints(n);
-  const count = Math.floor(pts.length / 2);
-  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.085, 0.012, 0.018), stitchMat, count);
-  const d = new THREE.Object3D(); let k = 0;
-  for (let i = 0; i + 1 < pts.length && k < count; i += 2, k++) {
-    const p = pts[i], q = pts[i + 1];
-    const z = -(p.y + q.y) / 2;
-    d.position.set((p.x + q.x) / 2, yAt((p.x + q.x) / 2, z) + (flip ? -0.003 : 0.003), z);
+  // Waxed thread, ~0.8 mm thick, 2.3 mm stitches with a 1.1 mm gap: thick enough to read from across the desk
+  const PITCH = 0.34, LEN = 0.23;
+  const len = shape.getLength(); const count = Math.max(4, Math.floor(len / PITCH));
+  const geo = new THREE.CapsuleGeometry(0.04, LEN - 0.08, 3, 8); geo.rotateZ(Math.PI / 2); geo.scale(1, 0.55, 1);
+  const mesh = new THREE.InstancedMesh(geo, stitchMat, count);
+  const d = new THREE.Object3D();
+  for (let k = 0; k < count; k++) {
+    const u0 = (k * PITCH) / len, u1 = Math.min(1, (k * PITCH + LEN) / len);
+    const p = shape.getPointAt(u0), q = shape.getPointAt(u1);
+    const z = -(p.y + q.y) / 2, x = (p.x + q.x) / 2;
+    d.position.set(x, yAt(x, z) + (flip ? -0.012 : 0.012), z);
     d.rotation.set(0, Math.atan2(q.y - p.y, q.x - p.x), 0); d.updateMatrix(); mesh.setMatrixAt(k, d.matrix);
   }
-  mesh.count = k; mesh.castShadow = false; mesh.receiveShadow = true; return mesh;
+  mesh.castShadow = false; mesh.receiveShadow = true; return mesh;
 }
 function faceGeo(shape, w, h) {
   const g = new THREE.ShapeGeometry(shape, 16);
@@ -623,7 +625,7 @@ function makeKeys() {
   const g = new THREE.Group();
   const V = (x, y, z) => new THREE.Vector3(x, y, z);
   // Split ring, tilted
-  const RR = 1.45, m = V(0.12, 1, 0.22).normalize(), C = V(0, RR * Math.sin(m.angleTo(V(0, 1, 0))) + 0.08, 0);
+  const RR = 1.9, m = V(0.12, 1, 0.22).normalize(), C = V(0, RR * Math.sin(m.angleTo(V(0, 1, 0))) + 0.08, 0);
   const e1 = V(1, 0, 0).addScaledVector(m, -m.x).normalize(), e2 = new THREE.Vector3().crossVectors(m, e1);
   const ringQ = new THREE.Quaternion().setFromUnitVectors(V(0, 0, 1), m);
   for (const off of [-0.075, 0.075]) {
@@ -653,19 +655,8 @@ function makeKeys() {
     // Swing direction about the wire that lifts the piece off the desk, never into it
     const sgn = minYAfter(corners, new THREE.Quaternion().setFromAxisAngle(t, 0.2), p) >= minYAfter(corners, new THREE.Quaternion().setFromAxisAngle(t, -0.2), p) ? 1 : -1;
     dangles.push({ obj, p: p.clone(), t, q0, x0: obj.position.clone(), corners, sgn, rest: minYAfter(corners, new THREE.Quaternion(), p),
-      f1: 13 + Math.random() * 9, f2: 9 + Math.random() * 7, a1: 0.22 + Math.random() * 0.2, a2: 0.12 + Math.random() * 0.12, ph: Math.random() * 6.28 });
+      f1: 13 + Math.random() * 9, f2: 9 + Math.random() * 7, a1: 0.22 + Math.random() * 0.2, a2: 0, ph: Math.random() * 6.28 });
   };
-
-  // Screw-gate carabiner clipped straight onto the ring
-  const cara = new THREE.Group(); const a = 0.9, len = 2.9;
-  const ell = (cy, s, e) => new THREE.CatmullRomCurve3(new THREE.EllipseCurve(0, cy, a, a * 1.1, s, e, false).getPoints(18).map((pt) => V(pt.x, 0, pt.y)));
-  const cur = new THREE.CurvePath();
-  cur.add(new THREE.LineCurve3(V(-a, 0, len / 2), V(-a, 0, -len / 2))); cur.add(ell(-len / 2, Math.PI, Math.PI * 2));
-  cur.add(new THREE.LineCurve3(V(a, 0, -len / 2), V(a, 0, len / 2))); cur.add(ell(len / 2, 0, Math.PI));
-  cara.add(new THREE.Mesh(new THREE.TubeGeometry(cur, 140, 0.14, 12, true), steel));
-  const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 1.0, 16), steel); sleeve.rotation.x = Math.PI / 2; sleeve.position.set(-a, 0, 0.2); cara.add(sleeve);
-  for (let i = 0; i < 5; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.028, 6, 16), steel); r.position.set(-a, 0, -0.2 + i * 0.2); cara.add(r); }
-  hang(cara, V(0, 0, len / 2 + a * 1.1), V(1, 0, 0), V(0, 0, -1), V(-0.3, -0.08, -1).normalize(), 1.35);
 
   // Old skeleton key: round bow, round shank with a collar, notched bit
   const sk = new THREE.Group();
@@ -675,7 +666,7 @@ function makeKeys() {
   const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.35, 16), nickel); collar.rotation.z = Math.PI / 2; collar.position.set(4.8, 0, 0); sk.add(collar);
   const bit = new THREE.Shape(); bit.moveTo(0, 0); bit.lineTo(1.0, 0); bit.lineTo(1.0, -1.35); bit.lineTo(0.72, -1.35); bit.lineTo(0.72, -0.95); bit.lineTo(0.5, -0.95); bit.lineTo(0.5, -1.35); bit.lineTo(0, -1.35); bit.lineTo(0, 0);
   const bm = flat(bit, 0.2, nickel); bm.position.set(5.5, -0.1, 0.15); sk.add(bm);
-  hang(sk, V(0, 0, 0), V(0, 1, 0), V(1, 0, 0), V(-1, -0.12, 0.3).normalize(), 1.15, 0.05);
+  hang(sk, V(0, 0, 0), V(0, 1, 0), V(1, 0, 0), V(-0.961, -0.1, -0.276).normalize(), 1.15, 0.05);
 
   // Flat cylinder key
   const yk = new THREE.Shape();
@@ -684,32 +675,32 @@ function makeKeys() {
   [[-0.9, 0.18], [-1.4, 0.05], [-1.9, 0.22], [-2.5, 0.08], [-3.1, 0.24], [-3.7, 0.12]].forEach(([yy, d]) => { yk.lineTo(0.45 - d, yy); yk.lineTo(0.45, yy - 0.25); });
   yk.lineTo(0.45, -4.3); yk.lineTo(0.05, -4.6); yk.lineTo(-0.45, -4.3); yk.lineTo(-0.45, -0.3); yk.lineTo(-0.9, 0); yk.quadraticCurveTo(-1.3, 0, -1.3, 0.4);
   yk.holes.push(circlePath(0, 2.3, 0.36));
-  hang(flat(yk, 0.2, nickel), V(0, 0.1, -2.3), V(0, 1, 0), V(0, 0, 1), V(-0.15, -0.12, 1).normalize(), 0.9, 0.25);
+  hang(flat(yk, 0.2, nickel), V(0, 0.1, -2.3), V(0, 1, 0), V(0, 0, 1), V(0.616, -0.1, 0.788).normalize(), 0.9, 0.25);
 
   // Black teardrop fob
   const fob = new THREE.Shape(); fob.moveTo(0, 2.5);
   fob.bezierCurveTo(1.0, 2.1, 1.65, 0.7, 1.6, -0.4); fob.absarc(0, -0.4, 1.6, 0, Math.PI, true); fob.bezierCurveTo(-1.65, 0.7, -1.0, 2.1, 0, 2.5);
   fob.holes.push(circlePath(0, 1.8, 0.3));
-  hang(flat(fob, 0.3, blackPlastic), V(0, 0.15, -1.8), V(0, 1, 0), V(0, 0, 1), V(0.55, -0.12, 0.85).normalize(), 1.3, 0.0);
+  hang(flat(fob, 0.3, blackPlastic), V(0, 0.15, -1.8), V(0, 1, 0), V(0, 0, 1), V(0.966, -0.1, -0.259).normalize(), 1.3, 0.0);
 
   // Round tracker in a black holder with a tab
   const tracker = new THREE.Group();
-  const holder = new THREE.Shape(); holder.absarc(0, 0, 1.85, 0, Math.PI * 2, false); tracker.add(flat(holder, 0.55, blackPlastic));
-  const tab = new THREE.Shape(); tab.moveTo(-0.6, 1.2); tab.lineTo(0.6, 1.2); tab.lineTo(0.6, 2.4); tab.absarc(0, 2.4, 0.6, 0, Math.PI, false); tab.lineTo(-0.6, 1.2);
-  tab.holes.push(circlePath(0, 2.4, 0.28)); const tabM = flat(tab, 0.3, blackPlastic); tabM.position.y = 0.12; tracker.add(tabM);
-  const face = new THREE.Mesh(new THREE.CylinderGeometry(1.48, 1.48, 0.12, 48), new THREE.MeshStandardMaterial({ color: 0xd8d9d6, metalness: 0.6, roughness: 0.3 }));
+  const holder = new THREE.Shape(); holder.absarc(0, 0, 2.35, 0, Math.PI * 2, false); tracker.add(flat(holder, 0.55, blackPlastic));
+  const tab = new THREE.Shape(); tab.moveTo(-0.6, 1.9); tab.lineTo(0.6, 1.9); tab.lineTo(0.6, 3.05); tab.absarc(0, 3.05, 0.6, 0, Math.PI, false); tab.lineTo(-0.6, 1.9);
+  tab.holes.push(circlePath(0, 3.05, 0.28)); const tabM = flat(tab, 0.3, blackPlastic); tabM.position.y = 0.12; tracker.add(tabM);
+  const face = new THREE.Mesh(new THREE.CylinderGeometry(2.0, 2.0, 0.12, 48), new THREE.MeshStandardMaterial({ color: 0xd8d9d6, metalness: 0.6, roughness: 0.3 }));
   face.position.y = 0.62; tracker.add(face);
-  hang(tracker, V(0, 0.27, -2.4), V(0, 1, 0), V(0, 0, 1), V(1, -0.1, 0.1).normalize(), 1.2, -0.1);
+  hang(tracker, V(0, 0.27, -3.05), V(0, 1, 0), V(0, 0, 1), V(0.000, -0.1, -1.000).normalize(), 1.2, -0.1);
 
   // Small white plastic tag
   const pl = new THREE.Shape(); pl.moveTo(-0.75, -1.5); pl.lineTo(0.75, -1.5); pl.lineTo(0.75, 1.2); pl.quadraticCurveTo(0.75, 1.6, 0.35, 1.6); pl.lineTo(-0.35, 1.6); pl.quadraticCurveTo(-0.75, 1.6, -0.75, 1.2); pl.lineTo(-0.75, -1.5);
   pl.holes.push(circlePath(0, 1.05, 0.28));
-  hang(flat(pl, 0.35, whitePlastic), V(0, 0.17, -1.05), V(0, 1, 0), V(0, 0, 1), V(-0.65, -0.12, 0.75).normalize(), 0.7, -0.15);
+  hang(flat(pl, 0.35, whitePlastic), V(0, 0.17, -1.05), V(0, 1, 0), V(0, 0, 1), V(-0.559, -0.1, 0.829).normalize(), 0.7, -0.15);
 
-  g.scale.setScalar(0.6);
+  g.scale.setScalar(0.8);
   g.updateMatrixWorld(true);                          // pieces are already resting on the table; only lift if something still dips under
   const box = new THREE.Box3().setFromObject(g); g.position.y = Math.max(0, -box.min.y);
-  const wrap = new THREE.Group(); wrap.add(g);
+  const wrap = new THREE.Group(); wrap.add(g); wrap.userData.dangles = dangles;
   // Jingle: every key, fob and tag swings about the wire through its own hole, each at its own pace
   let energy = 0, time = 0; const up = new THREE.Vector3(0, 1, 0), qa = new THREE.Quaternion(), qb = new THREE.Quaternion(), tmp = new THREE.Vector3();
   wrap.userData.splash = () => { energy = 1; for (const d of dangles) d.ph = Math.random() * 6.28; };
@@ -737,15 +728,15 @@ function makePen() {
   const g = new THREE.Group();
   const clear = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.16, roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.05, specularIntensity: 1, depthWrite: false, side: THREE.DoubleSide });
   const blue = new THREE.MeshStandardMaterial({ color: 0x1d3fa0, roughness: 0.4 });
-  const R = 0.46;
+  const R = 0.41;
   const barrel = new THREE.Mesh(new THREE.CylinderGeometry(R, R, 11.6, 6), clear); barrel.rotation.set(0, 0, Math.PI / 2); barrel.rotation.order = 'ZXY'; barrel.position.set(-0.6, R * 0.87, 0); g.add(barrel);
   const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 11.2, 16), new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.22, roughness: 0.1, depthWrite: false }));
   tube.rotation.z = Math.PI / 2; tube.position.set(-0.6, R * 0.87, 0); g.add(tube);
   const ink = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 7.5, 12), new THREE.MeshStandardMaterial({ color: 0x163a9c, roughness: 0.3 }));
   ink.rotation.z = Math.PI / 2; ink.position.set(1.0, R * 0.87, 0); g.add(ink);
-  const plug = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.3, 0.7, 16), blue); plug.rotation.z = Math.PI / 2; plug.position.set(-6.6, R * 0.87, 0); g.add(plug);
-  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.42, 3.4, 24), blue); cap.rotation.z = Math.PI / 2; cap.position.set(6.3, R * 0.87, 0); g.add(cap);
-  const capEnd = new THREE.Mesh(new THREE.SphereGeometry(0.42, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), blue); capEnd.rotation.z = -Math.PI / 2; capEnd.position.set(8.0, R * 0.87, 0); g.add(capEnd);
+  const plug = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.27, 0.7, 16), blue); plug.rotation.z = Math.PI / 2; plug.position.set(-6.6, R * 0.87, 0); g.add(plug);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.4, 3.4, 24), blue); cap.rotation.z = Math.PI / 2; cap.position.set(6.3, R * 0.87, 0); g.add(cap);
+  const capEnd = new THREE.Mesh(new THREE.SphereGeometry(0.4, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), blue); capEnd.rotation.z = -Math.PI / 2; capEnd.position.set(8.0, R * 0.87, 0); g.add(capEnd);
   const clip = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.12, 0.28), blue); clip.position.set(5.9, R * 0.87 + 0.55, 0); g.add(clip);
   const clipTip = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.28), blue); clipTip.position.set(4.5, R * 0.87 + 0.42, 0); g.add(clipTip);
   return g;
@@ -827,9 +818,9 @@ function addProp(obj, x, z, rotY) {
   holder.add(obj); scene.add(holder);
   const corners = restCorners(obj); props.push({ holder, obj, wobble: 0, corners, rest: minYAfter(corners, new THREE.Quaternion(), new THREE.Vector3()) });
 }
-addProp(makeKeys(), -12.6, 1.4, 1.0);
-addProp(makePen(), 7.2, 8.6, -0.2);
-addProp(makeMug(), 11.0, -5.8, 0.4);
+addProp(makeKeys(), -14.8, 2.0, 2.16);
+addProp((() => { const m = makePen(); m.scale.setScalar(0.97); return m; })(), 7.2, 8.6, -0.2);
+addProp((() => { const m = makeMug(); m.scale.setScalar(1.45); return m; })(), 13.6, -7.6, 0.4);
 const propMeshes = []; for (const p of props) p.obj.traverse((m) => { if (m.isMesh) propMeshes.push(m); });
 function pickProp(ev) {
   const r = renderer.domElement.getBoundingClientRect();
@@ -1036,7 +1027,7 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
-window.__wallet = { jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
+window.__wallet = { props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
