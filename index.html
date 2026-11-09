@@ -27,7 +27,8 @@ body{background:var(--table);color:var(--ink);font-family:var(--display);overflo
 
 .brand{position:fixed;z-index:3;top:calc(env(safe-area-inset-top,0px) + 20px);left:calc(max(16px,env(safe-area-inset-left,0px)) + 8px);pointer-events:none}
 .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-soft)}
-.brand .logo{display:block;width:clamp(150px,18vw,220px);height:auto;margin:8px 0 0;color:var(--green)}
+.brand .logo{display:block;width:clamp(150px,18vw,220px);height:auto;margin:8px 0 0;color:var(--green);transition:color .4s ease}
+body.item-out .brand .logo{color:var(--ink)}   /* black while an item is out over the dimmed desk */
 .brand p{margin:8px 0 0;font-size:14px;font-stretch:110%;color:var(--ink-soft)}
 
 .hint{position:fixed;z-index:3;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom,0px) + 86px);
@@ -365,12 +366,14 @@ function slab(shape, thick, y0, mats = [leatherMat, edgeMat]) {
 function stitches(shape, yAt, flip = false, flatAt = null) {
   // Waxed thread, ~0.8 mm thick, 2.3 mm stitches with a 1.1 mm gap: thick enough to read from across the desk
   const PITCH = 0.34, LEN = 0.23;
-  const len = shape.getLength(); const count = Math.max(4, Math.floor(len / PITCH));
+  const len = shape.getLength(), closed = shape instanceof THREE.Shape;
+  const count = Math.max(4, Math.round((closed ? len : len - LEN + (PITCH - LEN)) / PITCH) + (closed ? 0 : 1));
+  const P = closed ? len / count : (len - LEN) / (count - 1);   // even spacing, so every run ends exactly where it should
   const geo = new THREE.CapsuleGeometry(0.04, LEN - 0.08, 3, 8); geo.rotateZ(Math.PI / 2); geo.scale(1, 0.55, 1);
   const mesh = new THREE.InstancedMesh(geo, stitchMat, count);
   const d = new THREE.Object3D();
   for (let k = 0; k < count; k++) {
-    const u0 = (k * PITCH) / len, u1 = Math.min(1, (k * PITCH + LEN) / len);
+    const u0 = (k * P) / len, u1 = Math.min(1, (k * P + LEN) / len);
     const p = shape.getPointAt(u0), q = shape.getPointAt(u1);
     const z = -(p.y + q.y) / 2, x = (p.x + q.x) / 2;
     const fl = flatAt && flatAt(x, z);                   // pressed flat where cards slide over the thread
@@ -586,6 +589,21 @@ y += 0.006 + 0.02 + RIGHT_IDS.length * CARD_LIFT + 0.011 + 0.008;   // room for 
 const pocket = slab(rr(STRIP, -H / 2, W, -POCKET_EDGE, [0.06, RAD_OUT, 0, 0]), LAYER, y);
 wallet.add(pocket); addPick(pocket, 'wallet');
 const pocketTop = y + LAYER;
+// Blind-debossed label under the card slots, so it's clear the cards are portfolio projects
+function debossText(text, w, h) {
+  const CW = 2048, CH = Math.round(CW * h / w), mk = (blur, fill) => {
+    const c = document.createElement('canvas'); c.width = CW; c.height = CH; const g = c.getContext('2d');
+    g.fillStyle = fill[0]; g.fillRect(0, 0, CW, CH); g.filter = `blur(${blur}px)`;
+    g.font = `700 ${Math.round(CH * 0.62)}px "Helvetica Neue", Helvetica, Arial, sans-serif`; g.letterSpacing = `${-CH * 0.012}px`;
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = fill[1]; g.fillText(text, CW / 2, CH * 0.54); return c;
+  };
+  const bump = new THREE.CanvasTexture(mk(3, ['#fff', '#000'])), alpha = new THREE.CanvasTexture(mk(9, ['#000', '#fff']));
+  const mat = new THREE.MeshPhysicalMaterial({ color: 0x0b0b0b, roughness: 0.62, envMapIntensity: 0.35, bumpMap: bump, bumpScale: 2.4, alphaMap: alpha,
+    transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), mat); m.geometry.rotateX(-Math.PI / 2); return m;
+}
+const projectsLabel = debossText('Portfolio Projects', 5.4, 0.62);
+projectsLabel.position.set((STRIP + W) / 2, pocketTop + 0.001, POCKET_EDGE + 0.95); wallet.add(projectsLabel);
 y += LAYER + 0.003;
 const rightStack = y - PT;
 const rightTopAt = (x, z) => (x < STRIP + 0.05 ? liningTop : z >= POCKET_EDGE ? pocketTop : backingTop);
@@ -1051,6 +1069,7 @@ function pull(cfg) {
   receiptScroll = receiptScrollT = 0;
   yaw = yawT = 0; pitch = pitchT = 0;
   active = { item: cfg, p: 0, dir: 1, homePos, homeQuat, dist, dirV };
+  document.body.classList.add('item-out');
   controls.enabled = false;
   setHover(null);
   updateUI();
@@ -1058,6 +1077,7 @@ function pull(cfg) {
 function putBack() {
   if (!active || active.dir === -1) return;
   active.dir = -1; yawT = 0; pitchT = 0;
+  document.body.classList.remove('item-out');
   hideSheet(); updateUI();
 }
 function poseActive() {
@@ -1081,6 +1101,7 @@ function finishReturn() {
   cfg.parent.attach(cfg.group);
   cfg.group.position.copy(cfg.homePos); cfg.group.quaternion.copy(cfg.homeQuat); cfg.group.scale.setScalar(1);
   if (cfg.setFold) cfg.setFold(0);
+  document.body.classList.remove('item-out');
   active = null; backdrop.material.opacity = 0; controls.enabled = true; updateUI();
 }
 
