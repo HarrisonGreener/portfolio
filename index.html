@@ -112,7 +112,14 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .pu-lock{padding-top:4.2em;text-align:center}
 .pu-date{font-size:.95em;font-weight:500;opacity:.85}
 .pu-bigtime{font-size:4.4em;font-weight:700;line-height:1;margin-top:.1em}
-.pu-swipe{margin-top:auto;margin-bottom:2.2em;font-size:.8em;opacity:.7}
+.pu-swipe{margin-top:auto;margin-bottom:1.6em;font-size:.8em;opacity:.75;display:flex;flex-direction:column;align-items:center;gap:.2em}
+.pu-arrow{font-size:1.3em;line-height:.6;animation:pu-nudge 1.1s ease-in-out infinite}
+.pu-homebar{position:absolute;bottom:.7em;left:50%;width:7em;height:.3em;margin-left:-3.5em;border-radius:.2em;background:#F2F2F0;opacity:.85;animation:pu-nudge 1.1s ease-in-out infinite}
+@keyframes pu-nudge{0%,100%{transform:translateY(0)}50%{transform:translateY(-.45em)}}
+.phone-ui[data-step=pass] .pu-lock,.phone-ui[data-step=chat] .pu-lock{transform:translateY(-100%);opacity:0;transition:transform .7s cubic-bezier(.5,0,.2,1),opacity .7s ease}
+.phone-ui[data-step=swipe] .pu-lock{opacity:1;transform:translateY(-6%)}
+.phone-ui[data-step=swipe] .pu-homebar{animation:none;transform:translateY(-2.2em);transition:transform .35s ease}
+.phone-ui[data-step=swipe] .pu-swipe{opacity:0;transition:opacity .2s ease}
 .pu-pass{padding-top:4.4em;background:rgba(20,20,20,.55);backdrop-filter:blur(10px)}
 .pu-pass-title{font-size:1em;font-weight:500}
 .pu-dots{display:flex;gap:.9em;margin:1.1em 0 2em}
@@ -141,7 +148,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .pu-send{flex:none;width:2.2em;height:2.2em;border-radius:50%;border:0;background:#73956F;color:#F2F2F0;font:inherit;font-weight:700;cursor:pointer}
 .pu-back:focus-visible,.pu-send:focus-visible{outline:2px solid #F2F2F0;outline-offset:2px}
 .pu-note{margin:0;font-size:.62em;text-align:center;opacity:.45}
-@media (prefers-reduced-motion:reduce){.phone-ui,.pu-screen,.pu-dots i,.pu-keys b{transition:none}}
+@media (prefers-reduced-motion:reduce){.phone-ui,.pu-screen,.pu-dots i,.pu-keys b{transition:none}.pu-arrow,.pu-homebar{animation:none}}
 </style>
 
 <div id="stage" aria-label="Interactive 3D wallet. Use the buttons below to open it and pull out each item."></div>
@@ -157,7 +164,8 @@ canvas.can-grab{cursor:var(--hand-grab)}
     <span class="pu-icons" aria-hidden="true"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="1.6"/><rect x="23.5" y="4" width="2" height="4" rx="1" opacity=".5"/></svg></span></div>
   <section class="pu-screen pu-lock" aria-hidden="true">
     <div class="pu-date" data-date></div><div class="pu-bigtime" data-clock>00:00</div>
-    <div class="pu-swipe">Unlocking…</div>
+    <div class="pu-swipe"><span class="pu-arrow" aria-hidden="true">⌃</span>Swipe up to open</div>
+    <i class="pu-homebar"></i>
   </section>
   <section class="pu-screen pu-pass" aria-hidden="true">
     <div class="pu-pass-title">Enter Passcode</div>
@@ -1106,7 +1114,7 @@ function makePhone() {
   }
   return g;
 }
-addProp(makePhone(), -2.6, -13.1, -1.35, 'Phone');
+addProp(makePhone(), -8.4, -12.2, -1.42, 'Phone');
 const phoneProp = props[props.length - 1];
 let phoneP = 0, phoneTarget = 0, phoneHome = null;
 const _pq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);   // screen to face you, top of the phone up
@@ -1152,7 +1160,7 @@ function placePhoneUI() {
 }
 function phoneTick(dt) {
   if (phoneP !== phoneTarget) {
-    phoneP = phoneTarget > phoneP ? Math.min(1, phoneP + dt / (1.1 * SPEED)) : Math.max(0, phoneP - dt / (0.9 * SPEED));
+    phoneP = phoneTarget > phoneP ? Math.min(1, phoneP + dt / (1.4 * SPEED)) : Math.max(0, phoneP - dt / (1.0 * SPEED));
     posePhone();
     if (phoneP === 1) { placePhoneUI(); phoneUI.classList.add('on'); unlockSequence(); }
     if (phoneP === 0) { const h = phoneProp.holder; h.position.copy(phoneHome.pos); h.quaternion.copy(phoneHome.quat); h.scale.setScalar(1); backdrop.material.opacity = 0; controls.enabled = true; }
@@ -1409,13 +1417,15 @@ function unlockSequence() {
   if (reduceMotion) { phoneUI.dataset.step = 'chat'; return; }
   phoneUI.dataset.step = 'lock';
   const at = (ms, fn) => unlockTimers.push(setTimeout(fn, ms));
-  at(650, () => (phoneUI.dataset.step = 'pass'));
+  at(1300, () => (phoneUI.dataset.step = 'swipe'));          // thumb catches the bottom of the screen
+  at(1650, () => (phoneUI.dataset.step = 'pass'));           // and swipes the lock screen away
+  const T0 = 2500, STEP = 320;
   '240693'.split('').forEach((digit, i) => {
-    const key = [...keys].find((k) => k.dataset.k === digit), t = 1150 + i * 230;
+    const key = [...keys].find((k) => k.dataset.k === digit), t = T0 + i * STEP + (i === 3 ? 120 : 0);
     at(t, () => { key.classList.add('hit'); dots[i].classList.add('on'); });
-    at(t + 140, () => key.classList.remove('hit'));
+    at(t + 170, () => key.classList.remove('hit'));
   });
-  at(1150 + 6 * 230 + 250, () => (phoneUI.dataset.step = 'chat'));
+  at(T0 + 6 * STEP + 450, () => (phoneUI.dataset.step = 'chat'));
 }
 document.getElementById('puCancel').addEventListener('click', closePhone);
 document.getElementById('puForm').addEventListener('submit', (e) => {
