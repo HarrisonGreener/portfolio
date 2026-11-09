@@ -158,6 +158,38 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .pu-back:focus-visible,.pu-send:focus-visible{outline:2px solid #F2F2F0;outline-offset:2px}
 .pu-note{margin:0;font-size:.62em;text-align:center;opacity:.45}
 @media (prefers-reduced-motion:reduce){.phone-ui,.pu-screen,.pu-dots i,.pu-keys b{transition:none}.pu-arrow,.pu-homebar,.pu-notif{animation:none}}
+/* Menu: three uneven bars that level out and twist into an X; the panel opens from the corner like a stitched leather tab */
+.menu-btn{position:fixed;z-index:9;top:calc(env(safe-area-inset-top,0px) + 24px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 8px);width:48px;height:48px;
+  border:0;background:none;padding:0;cursor:inherit;display:flex;flex-direction:column;align-items:flex-end;justify-content:center;gap:6px}
+.menu-btn i{display:block;height:3px;border-radius:2px;background:var(--ink);transition:transform .45s cubic-bezier(.7,0,.2,1),width .3s ease,opacity .2s ease,background .3s ease}
+.menu-btn i:nth-child(1){width:28px}.menu-btn i:nth-child(2){width:18px}.menu-btn i:nth-child(3){width:23px}
+.menu-btn:hover i:nth-child(2){width:28px}.menu-btn:hover i:nth-child(3){width:28px}
+.menu-btn[aria-expanded=true] i{width:28px;background:#F2F2F0}
+.menu-btn[aria-expanded=true] i:nth-child(1){transform:translateY(9px) rotate(225deg)}
+.menu-btn[aria-expanded=true] i:nth-child(2){opacity:0;transform:translateX(10px)}
+.menu-btn[aria-expanded=true] i:nth-child(3){transform:translateY(-9px) rotate(-225deg)}
+.menu-btn:focus-visible{outline:2px solid #73956F;outline-offset:4px;border-radius:6px}
+.menu{position:fixed;z-index:8;top:calc(env(safe-area-inset-top,0px) + 12px);right:calc(max(16px,env(safe-area-inset-right,0px)) - 4px);width:min(380px,calc(100vw - 32px));
+  padding:84px 30px 30px;border-radius:22px;background:#1F1F1F;color:#F2F2F0;box-shadow:0 18px 50px rgba(0,0,0,.25);
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.025em;
+  clip-path:circle(0 at calc(100% - 36px) 36px);transition:clip-path .6s cubic-bezier(.7,0,.2,1)}
+.menu::after{content:"";position:absolute;inset:9px;border:1.5px dashed rgba(242,242,240,.35);border-radius:15px;pointer-events:none}   /* the stitching */
+.menu.open{clip-path:circle(150% at calc(100% - 36px) 36px)}
+.menu-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.menu-list>li{opacity:0;transform:translateY(10px);transition:opacity .35s ease,transform .45s cubic-bezier(.2,.7,.2,1)}
+.menu.open .menu-list>li{opacity:1;transform:none}
+.menu.open .menu-list>li:nth-child(1){transition-delay:.18s}.menu.open .menu-list>li:nth-child(2){transition-delay:.26s}.menu.open .menu-list>li:nth-child(3){transition-delay:.34s}
+.menu-item{all:unset;box-sizing:border-box;cursor:inherit;display:flex;align-items:baseline;gap:14px;width:100%;padding:6px 0;font-weight:700;font-size:34px;line-height:1.05;color:#F2F2F0;transition:color .2s ease,transform .25s ease}
+.menu-item:hover,.menu-item[aria-expanded=true]{color:#73956F;transform:translateX(4px)}
+.menu-item:focus-visible{outline:2px solid #73956F;outline-offset:4px;border-radius:4px}
+.menu-num{font-size:13px;font-weight:700;letter-spacing:0;color:rgba(242,242,240,.45);transform:translateY(-14px)}
+.menu-sub{list-style:none;margin:4px 0 10px 30px;padding:0 0 0 14px;border-left:1.5px dashed rgba(242,242,240,.3);display:flex;flex-direction:column}
+.menu-sub button{all:unset;box-sizing:border-box;cursor:inherit;display:flex;align-items:center;gap:10px;padding:6px 0;font-size:18px;font-weight:700;color:rgba(242,242,240,.8);transition:color .2s ease,transform .2s ease}
+.menu-sub button::before{content:"";width:7px;height:7px;border-radius:50%;background:rgba(242,242,240,.25);transition:background .2s ease}
+.menu-sub button:hover{color:#F2F2F0;transform:translateX(3px)}.menu-sub button:hover::before{background:#73956F}
+.menu-sub button:focus-visible{outline:2px solid #73956F;outline-offset:3px;border-radius:4px}
+@media (max-width:480px){.menu-item{font-size:28px}}
+@media (prefers-reduced-motion:reduce){.menu,.menu-btn i,.menu-list>li{transition:none}}
 </style>
 
 <div id="stage" aria-label="Interactive 3D wallet. Use the buttons below to open it and pull out each item."></div>
@@ -168,6 +200,15 @@ canvas.can-grab{cursor:var(--hand-grab)}
 </header>
 
 <div class="tag" id="tag" aria-hidden="true"><span class="tag-text" id="tagText"></span><i class="tag-line" id="tagLine"></i><i class="tag-dot"></i></div>
+<button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
+<nav class="menu" id="menu" aria-label="Sections" hidden>
+  <ol class="menu-list">
+    <li><button type="button" class="menu-item" id="menuProjects" aria-expanded="false" aria-controls="menuProjectList"><span class="menu-num">01</span>Portfolio Projects</button>
+      <ul class="menu-sub" id="menuProjectList" hidden></ul></li>
+    <li><button type="button" class="menu-item" data-go="receipt"><span class="menu-num">02</span>CV</button></li>
+    <li><button type="button" class="menu-item" data-go="phone"><span class="menu-num">03</span>Contact</button></li>
+  </ol>
+</nav>
 <div class="phone-ui" id="phoneUI" role="dialog" aria-label="Message Harry" data-step="lock">
   <div class="pu-status"><span class="pu-clock" data-clock>00:00</span><i class="pu-pill"></i>
     <span class="pu-icons" aria-hidden="true"><svg viewBox="0 0 18 12"><rect x="0" y="8" width="3" height="4" rx="1"/><rect x="5" y="5.5" width="3" height="6.5" rx="1"/><rect x="10" y="3" width="3" height="9" rx="1"/><rect x="15" y="0" width="3" height="12" rx="1"/></svg><svg viewBox="0 0 26 12"><rect x=".5" y=".5" width="22" height="11" rx="3" fill="none" stroke="currentColor" opacity=".5"/><rect x="2" y="2" width="16" height="8" rx="1.6"/><rect x="23.5" y="4" width="2" height="4" rx="1" opacity=".5"/></svg></span></div>
@@ -1298,6 +1339,7 @@ function finishReturn() {
   if (cfg.setFold) cfg.setFold(0);
   document.body.classList.remove('item-out');
   active = null; backdrop.material.opacity = 0; controls.enabled = true; updateUI();
+  if (queuedGo) { const go = queuedGo; queuedGo = null; go(); }
 }
 
 /* ---------- No on-screen controls: the wallet itself is the navigation ---------- */
@@ -1306,6 +1348,7 @@ function hideSheet() {}
 function updateUI() {}
 el_leave: { renderer.domElement.addEventListener('pointerleave', () => { overStage = false; hoverProp = hoverPick = null; }); }
 addEventListener('keydown', (e) => {
+  if (e.key === 'Escape' && menuBtn.getAttribute('aria-expanded') === 'true') { setMenu(false); menuBtn.focus(); return; }
   if (e.key === 'Escape') { if (phoneTarget) closePhone(); else if (active) putBack(); else setOpen(false); }
   if (active && active.item.kind === 'receipt' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) receiptScrollT = Math.max(0, Math.min(1, receiptScrollT + (e.key === 'ArrowDown' ? 0.08 : -0.08)));
 });
@@ -1457,6 +1500,28 @@ document.getElementById('puForm').addEventListener('submit', (e) => {
   document.getElementById('puNote').textContent = 'Your email app should be open with this ready. Just press send.';
   e.target.elements.message.value = '';
 });
+
+/* ---------- Menu: jump straight to a section ---------- */
+let queuedGo = null;
+const menuBtn = document.getElementById('menuBtn'), menu = document.getElementById('menu'), projList = document.getElementById('menuProjectList'), projBtn = document.getElementById('menuProjects');
+ITEMS.filter((i) => i.kind === 'biz').forEach((cfg) => {
+  const li = document.createElement('li'), b = document.createElement('button'); b.type = 'button'; b.textContent = cfg.label; b.dataset.go = cfg.id;
+  li.appendChild(b); projList.appendChild(li);
+});
+function setMenu(open) {
+  menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
+  if (open) { menu.hidden = false; requestAnimationFrame(() => menu.classList.add('open')); }
+  else { menu.classList.remove('open'); setTimeout(() => { if (!menu.classList.contains('open')) menu.hidden = true; }, 600); }
+}
+menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+projBtn.addEventListener('click', () => { const open = projList.hidden; projList.hidden = !open; projBtn.setAttribute('aria-expanded', String(open)); });
+function goTo(id) {
+  const run = () => { if (id === 'phone') openPhone(); else pull(ITEMS.find((i) => i.id === id)); };
+  if (phoneTarget || phoneP > 0) { closePhone(); setTimeout(run, 1100 * SPEED); return; }
+  if (active) { if (active.item.id === id) return; queuedGo = run; putBack(); return; }
+  run();
+}
+menu.addEventListener('click', (e) => { const b = e.target.closest('[data-go]'); if (!b) return; setMenu(false); goTo(b.dataset.go); });
 
 /* ---------- Loop ---------- */
 const clock = new THREE.Clock();
