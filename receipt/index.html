@@ -18,6 +18,7 @@
   .receipt::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.35;mix-blend-mode:multiply;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .18 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E")}
   .c{text-align:center}
+  .pen{position:absolute;top:2mm;left:3.5mm;width:15mm;transform:rotate(-8deg);mix-blend-mode:multiply;opacity:.92}   /* biro scribble so it's easy to spot in the wallet */
   .logo{display:block;width:44mm;margin:0 auto 3mm;color:var(--ink)}
   h1,h2,.big{font-family:"Helvetica Neue",Helvetica,"FreeSans",Arial,sans-serif;font-weight:700;letter-spacing:-.025em;margin:0}
   h1{font-size:15px;line-height:1.15}
@@ -42,6 +43,14 @@
 <body>
 <main class="receipt" aria-label="CV of Harrison J. Greener, laid out as a till receipt">
 
+  <svg class="pen" viewBox="0 0 66 46" aria-hidden="true">
+    <g fill="none" stroke="#C3272B" stroke-linecap="round" stroke-linejoin="round">
+      <path stroke-width="3.4" d="M29 9 C 22 3, 8 6, 6 19 C 4 31, 15 39, 30 31"/>
+      <path stroke-width="3.4" d="M36 7 C 39 15, 43 26, 47 35 C 51 25, 55 14, 61 5"/>
+      <path stroke-width="2.6" d="M5 42 C 20 37, 41 40, 62 36"/>
+      <path stroke-width="1.2" opacity=".5" d="M28.5 10 C 21 4.5, 9 7.5, 7.2 19.5 M37 8 C 40 16, 44 27, 47.6 34"/>
+    </g>
+  </svg>
   <svg class="logo" viewBox="-2.0 -1.5 747.6 192.1" role="img" aria-label="Greener"><use href="#greener"/></svg>
   <div class="c">
     <h1>HARRISON J. GREENER</h1>

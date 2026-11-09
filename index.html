@@ -569,7 +569,7 @@ const POCKET_EDGE = -1.83;
 
 let y = PT + 0.002;
 const receiptCfg = ITEMS.find((i) => i.kind === 'receipt');
-receiptCfg.home = { parent: 'right', y: y + 0.008, x: W / 2 + 0.05, zTop: -H / 2 - 0.9 };   // folded receipt in the right end of the money slot
+receiptCfg.home = { parent: 'right', y: y + 0.008, x: W / 2 + 0.05, zTop: -H / 2 - 1.3 };   // folded receipt in the right end of the money slot
 y += 0.016;
 const lining = slab(rightShape, LAYER, y); wallet.add(lining); addPick(lining, 'wallet');
 y += LAYER + 0.002;
@@ -1223,7 +1223,7 @@ function frame() {
     cfg.hover += (target - cfg.hover) * Math.min(1, dt * 12);
     cfg.group.position.copy(cfg.homePos).addScaledVector(cfg.slide, cfg.hover * 0.6);
     if (cfg.kind === 'biz') cfg.group.position.y += cfg.hover * 0.011;   // just clears the flattened stitches, stays under the pocket front
-    if (cfg.kind === 'receipt') cfg.group.position.z += (1 - ease(openVal)) * 1.1;   // tucked right in while closed
+    if (cfg.kind === 'receipt') cfg.group.position.z += (1 - ease(openVal)) * 1.5;   // tucked right in while closed
   }
   if (active) {
     const fly = active.item.kind === 'receipt' ? 1.6 : 1.2;   // seconds to reach you; longer for the receipt so the unfold reads
