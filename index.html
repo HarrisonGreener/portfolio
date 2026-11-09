@@ -910,10 +910,10 @@ function makePen() {
 // Stoneware mug: speckled green glaze, lighter rim where the glaze breaks, bare clay foot, coffee that sloshes.
 function glazeCanvas() {
   const c = document.createElement('canvas'); c.width = 1024; c.height = 512; const g = c.getContext('2d');
-  g.fillStyle = '#6f9168'; g.fillRect(0, 0, 1024, 512);
+  g.fillStyle = '#e9e7e1'; g.fillRect(0, 0, 1024, 512);   // warm white stoneware glaze
   for (let i = 0; i < 60; i++) {                       // pooled glaze, slightly darker and lighter patches
     const x = Math.random() * 1024, y = Math.random() * 512, r = 20 + Math.random() * 90, gr = g.createRadialGradient(x, y, 0, x, y, r);
-    const tone = Math.random() < 0.5 ? '70,105,66' : '150,178,140';
+    const tone = Math.random() < 0.5 ? '200,196,186' : '248,247,242';
     gr.addColorStop(0, `rgba(${tone},.22)`); gr.addColorStop(1, `rgba(${tone},0)`); g.fillStyle = gr; g.fillRect(x - r, y - r, 2 * r, 2 * r);
   }
   for (let i = 0; i < 2600; i++) {                     // iron speckles
@@ -934,7 +934,7 @@ function makeMug() {
   for (let i = 0; i <= 10; i++) P(2.42, 6.2 - i * (5.7 / 10));
   P(0, 0.5);
   const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 72), glaze); g.add(body);
-  const rim = new THREE.Mesh(new THREE.TorusGeometry(2.56, 0.1, 10, 72), new THREE.MeshStandardMaterial({ color: 0xb9c9ac, roughness: 0.35 }));
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(2.56, 0.1, 10, 72), new THREE.MeshStandardMaterial({ color: 0xd8d4ca, roughness: 0.4 }));
   rim.rotation.x = Math.PI / 2; rim.position.y = 6.45; g.add(rim);
   const foot = new THREE.Mesh(new THREE.CylinderGeometry(2.55, 2.45, 0.38, 72), new THREE.MeshStandardMaterial({ color: 0xc9b89a, roughness: 0.95 }));
   foot.position.y = 0.19; g.add(foot);
