@@ -583,47 +583,191 @@ function clipReceipt(on) {
 
 /* ---------- The desk: everyday things beside the wallet. They jiggle when you hover; only the wallet opens. ---------- */
 const props = [];
-const brass = new THREE.MeshStandardMaterial({ color: 0xc9a85c, metalness: 1, roughness: 0.32 });
-const steel = new THREE.MeshStandardMaterial({ color: 0xc9ccd0, metalness: 1, roughness: 0.28 });
-function keyShape() {
-  const s = new THREE.Shape();
-  s.absarc(0, 0, 1.15, Math.PI * 0.3, Math.PI * 1.7, false);           // round head
-  s.lineTo(0.95, -0.3); s.lineTo(4.4, -0.3);                            // blade underside
-  s.lineTo(4.4, 0.05); s.lineTo(4.0, 0.3); s.lineTo(3.7, 0.05); s.lineTo(3.4, 0.3); s.lineTo(3.1, 0.05);
-  s.lineTo(2.8, 0.3); s.lineTo(2.5, 0.12); s.lineTo(2.2, 0.3); s.lineTo(0.95, 0.3);   // teeth
-  const hole = new THREE.Path(); hole.absarc(-0.45, 0, 0.32, 0, Math.PI * 2, true); s.holes.push(hole);
-  return s;
+const nickel = new THREE.MeshStandardMaterial({ color: 0x8f8d86, metalness: 1, roughness: 0.32 });
+const steel = new THREE.MeshStandardMaterial({ color: 0xa4a8ac, metalness: 1, roughness: 0.2 });
+const blackPlastic = new THREE.MeshStandardMaterial({ color: 0x161616, roughness: 0.55 });
+const whitePlastic = new THREE.MeshStandardMaterial({ color: 0xecebe6, roughness: 0.4 });
+const flat = (shape, depth, mat, bevel = 0.03) => {
+  const g = new THREE.ExtrudeGeometry(shape, { depth, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 2, curveSegments: 24 });
+  g.rotateX(-Math.PI / 2);                     // lie flat: shape x → x, shape y → -z, depth → y
+  const m = new THREE.Mesh(g, mat); return m;
+};
+const circlePath = (x, y, r) => { const p = new THREE.Path(); p.absarc(x, y, r, 0, Math.PI * 2, true); return p; };
+
+function threadOn(obj, holeLocal, axisLocal, longLocal, p, t, hint, tip = 1.0) {
+  // A hole is much wider than the wire, so the item can lean well off the wire's direction and stay threaded.
+  const up = new THREE.Vector3(0, 1, 0); let n = t.dot(up) < 0 ? t.clone().negate() : t.clone();
+  const off = n.angleTo(up), lean = Math.min(off, tip);
+  if (off > 1e-4) { const ax = new THREE.Vector3().crossVectors(n, up).normalize(); n.applyAxisAngle(ax, lean); }
+  const q1 = new THREE.Quaternion().setFromUnitVectors(axisLocal.clone().normalize(), n);
+  const L1 = longLocal.clone().normalize().applyQuaternion(q1);
+  const proj = (v) => v.clone().addScaledVector(n, -v.dot(n)).normalize();
+  const a = proj(L1), b = proj(hint);
+  const ang = Math.atan2(new THREE.Vector3().crossVectors(a, b).dot(n), a.dot(b));
+  const q = new THREE.Quaternion().setFromAxisAngle(n, ang).multiply(q1);
+  obj.quaternion.copy(q);
+  obj.position.copy(p).sub(holeLocal.clone().applyQuaternion(q));
+  return q;
 }
 function makeKeys() {
   const g = new THREE.Group();
-  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.3, 0.09, 12, 48), steel);
-  ring.rotation.x = Math.PI / 2; ring.position.y = 0.1; g.add(ring);
-  [[0.15, brass], [1.2, steel], [-0.9, brass]].forEach(([ang, mat], i) => {
-    const k = new THREE.Mesh(new THREE.ExtrudeGeometry(keyShape(), { depth: 0.12, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2 }), mat);
-    k.geometry.translate(1.75, 0, 0); k.geometry.rotateX(-Math.PI / 2);
-    k.position.set(0, 0.06 + i * 0.13, 0); k.rotation.y = ang; g.add(k);   // each key's hole sits on the ring
-  });
-  const fob = slab(rr(-0.8, -1.9, 0.8, 1.9, 0.8), 0.2, 0.02, [leatherMat, edgeMat]);
-  fob.position.set(-2.6, 0, 0.6); fob.rotation.y = 1.2; g.add(fob);
-  return g;
+  const V = (x, y, z) => new THREE.Vector3(x, y, z);
+  // Split ring, tilted
+  const RR = 1.45, m = V(0.3, 0.75, 0.35).normalize();
+  const e1 = V(1, 0, 0).addScaledVector(m, -m.x).normalize(), e2 = new THREE.Vector3().crossVectors(m, e1);
+  const ringQ = new THREE.Quaternion().setFromUnitVectors(V(0, 0, 1), m);
+  for (const off of [-0.075, 0.075]) {
+    const ring = new THREE.Mesh(new THREE.TorusGeometry(RR, 0.07, 10, 64), steel); ring.quaternion.copy(ringQ); ring.position.copy(m).multiplyScalar(off); g.add(ring);
+  }
+  const onRing = (hint) => {                          // ring point facing the hint direction, plus its tangent
+    const th = Math.atan2(hint.dot(e2), hint.dot(e1));
+    return { p: e1.clone().multiplyScalar(RR * Math.cos(th)).addScaledVector(e2, RR * Math.sin(th)),
+             t: e1.clone().multiplyScalar(-Math.sin(th)).addScaledVector(e2, Math.cos(th)).normalize() };
+  };
+  const hang = (obj, hole, axis, long, hint, tip, lift = 0) => { const { p, t } = onRing(hint); threadOn(obj, hole, axis, long, p, t, hint, tip); obj.position.y += lift; g.add(obj); };
+
+  // Screw-gate carabiner clipped straight onto the ring
+  const cara = new THREE.Group(); const a = 0.9, len = 2.9;
+  const ell = (cy, s, e) => new THREE.CatmullRomCurve3(new THREE.EllipseCurve(0, cy, a, a * 1.1, s, e, false).getPoints(18).map((pt) => V(pt.x, 0, pt.y)));
+  const cur = new THREE.CurvePath();
+  cur.add(new THREE.LineCurve3(V(-a, 0, len / 2), V(-a, 0, -len / 2))); cur.add(ell(-len / 2, Math.PI, Math.PI * 2));
+  cur.add(new THREE.LineCurve3(V(a, 0, -len / 2), V(a, 0, len / 2))); cur.add(ell(len / 2, 0, Math.PI));
+  cara.add(new THREE.Mesh(new THREE.TubeGeometry(cur, 140, 0.14, 12, true), steel));
+  const sleeve = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 1.0, 16), steel); sleeve.rotation.x = Math.PI / 2; sleeve.position.set(-a, 0, 0.2); cara.add(sleeve);
+  for (let i = 0; i < 5; i++) { const r = new THREE.Mesh(new THREE.TorusGeometry(0.25, 0.028, 6, 16), steel); r.position.set(-a, 0, -0.2 + i * 0.2); cara.add(r); }
+  hang(cara, V(0, 0, len / 2 + a * 1.1), V(1, 0, 0), V(0, 0, -1), V(-0.3, -0.08, -1).normalize(), 1.35);
+
+  // Old skeleton key: round bow, round shank with a collar, notched bit
+  const sk = new THREE.Group();
+  const bow = new THREE.Shape(); bow.absarc(0, 0, 1.25, 0, Math.PI * 2, false); bow.holes.push(circlePath(0, 0, 0.45));
+  const bowM = flat(bow, 0.18, nickel); bowM.position.y = -0.09; sk.add(bowM);
+  const shank = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 5.4, 16), nickel); shank.rotation.z = Math.PI / 2; shank.position.set(3.85, 0, 0); sk.add(shank);
+  const collar = new THREE.Mesh(new THREE.CylinderGeometry(0.32, 0.32, 0.35, 16), nickel); collar.rotation.z = Math.PI / 2; collar.position.set(4.8, 0, 0); sk.add(collar);
+  const bit = new THREE.Shape(); bit.moveTo(0, 0); bit.lineTo(1.0, 0); bit.lineTo(1.0, -1.35); bit.lineTo(0.72, -1.35); bit.lineTo(0.72, -0.95); bit.lineTo(0.5, -0.95); bit.lineTo(0.5, -1.35); bit.lineTo(0, -1.35); bit.lineTo(0, 0);
+  const bm = flat(bit, 0.2, nickel); bm.position.set(5.5, -0.1, 0.15); sk.add(bm);
+  hang(sk, V(0, 0, 0), V(0, 1, 0), V(1, 0, 0), V(-1, -0.12, 0.3).normalize(), 1.15, 0.05);
+
+  // Flat cylinder key
+  const yk = new THREE.Shape();
+  yk.moveTo(-1.3, 0.4); yk.lineTo(-1.3, 2.5); yk.quadraticCurveTo(-1.3, 2.9, -0.9, 2.9); yk.lineTo(0.9, 2.9); yk.quadraticCurveTo(1.3, 2.9, 1.3, 2.5);
+  yk.lineTo(1.3, 0.4); yk.quadraticCurveTo(1.3, 0, 0.9, 0); yk.lineTo(0.75, 0); yk.lineTo(0.75, -0.5); yk.lineTo(0.45, -0.5);
+  [[-0.9, 0.18], [-1.4, 0.05], [-1.9, 0.22], [-2.5, 0.08], [-3.1, 0.24], [-3.7, 0.12]].forEach(([yy, d]) => { yk.lineTo(0.45 - d, yy); yk.lineTo(0.45, yy - 0.25); });
+  yk.lineTo(0.45, -4.3); yk.lineTo(0.05, -4.6); yk.lineTo(-0.45, -4.3); yk.lineTo(-0.45, -0.3); yk.lineTo(-0.9, 0); yk.quadraticCurveTo(-1.3, 0, -1.3, 0.4);
+  yk.holes.push(circlePath(0, 2.3, 0.36));
+  hang(flat(yk, 0.2, nickel), V(0, 0.1, -2.3), V(0, 1, 0), V(0, 0, 1), V(-0.15, -0.12, 1).normalize(), 0.9, 0.25);
+
+  // Black teardrop fob
+  const fob = new THREE.Shape(); fob.moveTo(0, 2.5);
+  fob.bezierCurveTo(1.0, 2.1, 1.65, 0.7, 1.6, -0.4); fob.absarc(0, -0.4, 1.6, 0, Math.PI, true); fob.bezierCurveTo(-1.65, 0.7, -1.0, 2.1, 0, 2.5);
+  fob.holes.push(circlePath(0, 1.8, 0.3));
+  hang(flat(fob, 0.3, blackPlastic), V(0, 0.15, -1.8), V(0, 1, 0), V(0, 0, 1), V(0.55, -0.12, 0.85).normalize(), 0.75, 0.0);
+
+  // Round tracker in a black holder with a tab
+  const tracker = new THREE.Group();
+  const holder = new THREE.Shape(); holder.absarc(0, 0, 1.85, 0, Math.PI * 2, false); tracker.add(flat(holder, 0.55, blackPlastic));
+  const tab = new THREE.Shape(); tab.moveTo(-0.6, 1.2); tab.lineTo(0.6, 1.2); tab.lineTo(0.6, 2.4); tab.absarc(0, 2.4, 0.6, 0, Math.PI, false); tab.lineTo(-0.6, 1.2);
+  tab.holes.push(circlePath(0, 2.4, 0.28)); const tabM = flat(tab, 0.3, blackPlastic); tabM.position.y = 0.12; tracker.add(tabM);
+  const face = new THREE.Mesh(new THREE.CylinderGeometry(1.48, 1.48, 0.12, 48), new THREE.MeshStandardMaterial({ color: 0xd8d9d6, metalness: 0.6, roughness: 0.3 }));
+  face.position.y = 0.62; tracker.add(face);
+  hang(tracker, V(0, 0.27, -2.4), V(0, 1, 0), V(0, 0, 1), V(1, -0.1, 0.1).normalize(), 1.2, -0.1);
+
+  // Small white plastic tag
+  const pl = new THREE.Shape(); pl.moveTo(-0.75, -1.5); pl.lineTo(0.75, -1.5); pl.lineTo(0.75, 1.2); pl.quadraticCurveTo(0.75, 1.6, 0.35, 1.6); pl.lineTo(-0.35, 1.6); pl.quadraticCurveTo(-0.75, 1.6, -0.75, 1.2); pl.lineTo(-0.75, -1.5);
+  pl.holes.push(circlePath(0, 1.05, 0.28));
+  hang(flat(pl, 0.35, whitePlastic), V(0, 0.17, -1.05), V(0, 1, 0), V(0, 0, 1), V(-0.65, -0.12, 0.75).normalize(), 0.7, -0.15);
+
+  g.scale.setScalar(0.6);
+  g.updateMatrixWorld(true);                          // rest the whole bunch on the table
+  const box = new THREE.Box3().setFromObject(g); g.position.y = -box.min.y;
+  const wrap = new THREE.Group(); wrap.add(g); return wrap;
 }
+
+// A standard clear Bic: hexagonal clear barrel, ink tube inside, blue cap with clip, blue end plug.
 function makePen() {
   const g = new THREE.Group();
-  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 12, 32), new THREE.MeshStandardMaterial({ color: 0x1f1f1f, roughness: 0.35, metalness: 0.2 }));
-  barrel.rotation.z = Math.PI / 2; barrel.position.y = 0.42; g.add(barrel);
-  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.1, 32), steel); tip.rotation.z = -Math.PI / 2; tip.position.set(6.55, 0.42, 0); g.add(tip);
-  const clip = new THREE.Mesh(new THREE.BoxGeometry(4, 0.08, 0.22), steel); clip.position.set(-3.6, 0.88, 0); g.add(clip);
+  const clear = new THREE.MeshPhysicalMaterial({ color: 0xf4f8fa, transmission: 1, thickness: 0.35, roughness: 0.12, ior: 1.5, transparent: true });
+  const blue = new THREE.MeshStandardMaterial({ color: 0x1d3fa0, roughness: 0.4 });
+  const R = 0.46;
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(R, R, 11.6, 6), clear); barrel.rotation.set(0, 0, Math.PI / 2); barrel.rotation.order = 'ZXY'; barrel.position.set(-0.6, R * 0.87, 0); g.add(barrel);
+  const tube = new THREE.Mesh(new THREE.CylinderGeometry(0.13, 0.13, 11.2, 16), new THREE.MeshPhysicalMaterial({ color: 0xf2f2f2, transmission: 0.6, roughness: 0.3, transparent: true, opacity: 0.9 }));
+  tube.rotation.z = Math.PI / 2; tube.position.set(-0.6, R * 0.87, 0); g.add(tube);
+  const ink = new THREE.Mesh(new THREE.CylinderGeometry(0.1, 0.1, 7.5, 12), new THREE.MeshStandardMaterial({ color: 0x163a9c, roughness: 0.3 }));
+  ink.rotation.z = Math.PI / 2; ink.position.set(1.0, R * 0.87, 0); g.add(ink);
+  const plug = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.3, 0.7, 16), blue); plug.rotation.z = Math.PI / 2; plug.position.set(-6.6, R * 0.87, 0); g.add(plug);
+  const cap = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.42, 3.4, 24), blue); cap.rotation.z = Math.PI / 2; cap.position.set(6.3, R * 0.87, 0); g.add(cap);
+  const capEnd = new THREE.Mesh(new THREE.SphereGeometry(0.42, 20, 12, 0, Math.PI * 2, 0, Math.PI / 2), blue); capEnd.rotation.z = -Math.PI / 2; capEnd.position.set(8.0, R * 0.87, 0); g.add(capEnd);
+  const clip = new THREE.Mesh(new THREE.BoxGeometry(3.0, 0.12, 0.28), blue); clip.position.set(5.9, R * 0.87 + 0.55, 0); g.add(clip);
+  const clipTip = new THREE.Mesh(new THREE.BoxGeometry(0.3, 0.3, 0.28), blue); clipTip.position.set(4.5, R * 0.87 + 0.42, 0); g.add(clipTip);
   return g;
+}
+
+// Stoneware mug: speckled green glaze, lighter rim where the glaze breaks, bare clay foot, coffee that sloshes.
+function glazeCanvas() {
+  const c = document.createElement('canvas'); c.width = 1024; c.height = 512; const g = c.getContext('2d');
+  g.fillStyle = '#6f9168'; g.fillRect(0, 0, 1024, 512);
+  for (let i = 0; i < 60; i++) {                       // pooled glaze, slightly darker and lighter patches
+    const x = Math.random() * 1024, y = Math.random() * 512, r = 20 + Math.random() * 90, gr = g.createRadialGradient(x, y, 0, x, y, r);
+    const tone = Math.random() < 0.5 ? '70,105,66' : '150,178,140';
+    gr.addColorStop(0, `rgba(${tone},.22)`); gr.addColorStop(1, `rgba(${tone},0)`); g.fillStyle = gr; g.fillRect(x - r, y - r, 2 * r, 2 * r);
+  }
+  for (let i = 0; i < 2600; i++) {                     // iron speckles
+    const x = Math.random() * 1024, y = Math.random() * 512, r = Math.random() < 0.9 ? 0.6 + Math.random() * 1.2 : 1.8 + Math.random() * 1.6;
+    g.fillStyle = Math.random() < 0.8 ? `rgba(48,36,24,${0.35 + Math.random() * 0.5})` : `rgba(235,232,215,${0.3 + Math.random() * 0.4})`;
+    g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+  }
+  return c;
 }
 function makeMug() {
   const g = new THREE.Group();
-  const profile = [[0, 0], [2.6, 0], [2.7, 0.15], [2.7, 6.4], [2.42, 6.4], [2.42, 0.5], [0, 0.5]].map(([x, y]) => new THREE.Vector2(x, y));
-  const glaze = new THREE.MeshStandardMaterial({ color: 0x73956f, roughness: 0.35 });
-  const body = new THREE.Mesh(new THREE.LatheGeometry(profile, 64), glaze); g.add(body);
-  const handle = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.32, 16, 32, Math.PI), glaze);
+  const gt = new THREE.CanvasTexture(glazeCanvas()); gt.colorSpace = THREE.SRGBColorSpace; gt.wrapS = gt.wrapT = THREE.RepeatWrapping; gt.anisotropy = maxAniso;
+  const glaze = new THREE.MeshPhysicalMaterial({ map: gt, roughness: 0.3, clearcoat: 0.5, clearcoatRoughness: 0.2 });
+  const pts = []; const P = (x, y) => pts.push(new THREE.Vector2(x, y));
+  P(0, 0.35); P(2.45, 0.35); P(2.6, 0.45);
+  for (let i = 0; i <= 20; i++) P(2.7, 0.6 + i * (5.75 / 20));            // even rows so the glaze is not stretched
+  P(2.62, 6.48); P(2.48, 6.48); P(2.42, 6.3);
+  for (let i = 0; i <= 10; i++) P(2.42, 6.2 - i * (5.7 / 10));
+  P(0, 0.5);
+  const body = new THREE.Mesh(new THREE.LatheGeometry(pts, 72), glaze); g.add(body);
+  const rim = new THREE.Mesh(new THREE.TorusGeometry(2.56, 0.1, 10, 72), new THREE.MeshStandardMaterial({ color: 0xb9c9ac, roughness: 0.35 }));
+  rim.rotation.x = Math.PI / 2; rim.position.y = 6.45; g.add(rim);
+  const foot = new THREE.Mesh(new THREE.CylinderGeometry(2.55, 2.45, 0.38, 72), new THREE.MeshStandardMaterial({ color: 0xc9b89a, roughness: 0.95 }));
+  foot.position.y = 0.19; g.add(foot);
+  const handle = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.32, 16, 40, Math.PI), glaze);
   handle.rotation.z = -Math.PI / 2; handle.position.set(2.6, 3.3, 0); g.add(handle);
-  const coffee = new THREE.Mesh(new THREE.CircleGeometry(2.42, 48), new THREE.MeshStandardMaterial({ color: 0x2b1d14, roughness: 0.15 }));
-  coffee.rotation.x = -Math.PI / 2; coffee.position.y = 5.7; g.add(coffee);
+  // Coffee surface with enough rings to ripple
+  const sg = new THREE.RingGeometry(0.001, 2.42, 64, 14); sg.rotateX(-Math.PI / 2);
+  const coffee = new THREE.Mesh(sg, new THREE.MeshPhysicalMaterial({ color: 0x2a1a10, roughness: 0.08, clearcoat: 1 }));
+  coffee.position.y = 5.5; g.add(coffee);
+  const base = sg.attributes.position.array.slice();
+  const drops = [];
+  const dropMat = coffee.material;
+  for (let i = 0; i < 10; i++) { const d = new THREE.Mesh(new THREE.SphereGeometry(0.09 + Math.random() * 0.07, 8, 6), dropMat); d.visible = false; g.add(d); drops.push({ m: d, v: new THREE.Vector3(), life: 0 }); }
+  let amp = 0, t = 0, dir = 0;
+  g.userData.splash = () => {
+    amp = 0.32; dir = Math.random() * Math.PI * 2;
+    for (const d of drops) {                             // a few droplets flick up and fall back in
+      const r = 1.2 + Math.random() * 1.1, a = Math.random() * Math.PI * 2;
+      d.m.position.set(Math.cos(a) * r, 5.6, Math.sin(a) * r);
+      d.v.set(Math.cos(a) * (0.8 + Math.random()), 5 + Math.random() * 4, Math.sin(a) * (0.8 + Math.random()));
+      d.life = 1; d.m.visible = true;
+    }
+  };
+  g.userData.tick = (dt) => {
+    t += dt; amp *= Math.exp(-dt * 2.2);
+    const p = sg.attributes.position;
+    for (let i = 0; i < p.count; i++) {
+      const x = base[i * 3], z = base[i * 3 + 2], r = Math.hypot(x, z);
+      const slosh = (x * Math.cos(dir) + z * Math.sin(dir)) / 2.42 * Math.sin(t * 9) * amp;
+      const ripple = Math.sin(r * 5 - t * 14) * amp * 0.35 * (1 - r / 2.6);
+      p.setY(i, slosh + ripple);
+    }
+    p.needsUpdate = true; if (amp > 0.002) sg.computeVertexNormals();
+    for (const d of drops) {
+      if (!d.life) continue;
+      d.v.y -= 30 * dt; d.m.position.addScaledVector(d.v, dt);
+      if (d.m.position.y < 5.5 && d.v.y < 0) { d.life = 0; d.m.visible = false; }
+    }
+  };
   return g;
 }
 function addProp(obj, x, z, rotY) {
@@ -632,9 +776,9 @@ function addProp(obj, x, z, rotY) {
   holder.add(obj); scene.add(holder);
   props.push({ holder, obj, wobble: 0 });
 }
-addProp(makeKeys(), -12.2, 4.8, 2.2);
-addProp(makePen(), 10.5, 8.6, -0.35);
-addProp(makeMug(), 12.6, -8.2, 0.4);
+addProp(makeKeys(), -12.6, 1.4, 1.0);
+addProp(makePen(), 7.2, 8.6, -0.2);
+addProp(makeMug(), 11.0, -5.8, 0.4);
 const propMeshes = []; for (const p of props) p.obj.traverse((m) => { if (m.isMesh) propMeshes.push(m); });
 function pickProp(ev) {
   const r = renderer.domElement.getBoundingClientRect();
@@ -643,11 +787,13 @@ function pickProp(ev) {
   const hit = ray.intersectObjects(propMeshes, false)[0];
   return hit ? props.find((p) => p.holder === hit.object.userData.prop) : null;
 }
+function jiggle(p) { if (p.wobble < 0.3) { p.wobble = 1; if (p.obj.userData.splash) p.obj.userData.splash(); } }
 function wobbleProps(dt) {
   for (const p of props) {
     p.wobble = Math.max(0, p.wobble - dt);
     const t = p.wobble, a = t > 0 ? Math.sin(t * 28) * 0.09 * t : 0;
     p.obj.rotation.z = a; p.obj.rotation.x = a * 0.6; p.obj.position.y = Math.abs(a) * 1.2;
+    if (p.obj.userData.tick) p.obj.userData.tick(dt);
   }
 }
 
@@ -764,7 +910,7 @@ el.addEventListener('pointermove', (e) => {
     down.lx = e.clientX; down.ly = e.clientY; el.style.cursor = 'grabbing'; return;
   }
   if (active || e.pointerType === 'touch') return;
-  const pp = pickProp(e); if (pp) { if (pp.wobble < 0.3) pp.wobble = 1; setHover(null); renderer.domElement.style.cursor = 'default'; return; }
+  const pp = pickProp(e); if (pp) { jiggle(pp); setHover(null); renderer.domElement.style.cursor = 'default'; return; }
   const t = pick(e);
   if (openVal < 1) { setHover(t === 'wallet' || (t && t.id) ? 'wallet' : null); return; }
   setHover(t && t.id ? t : null);
@@ -833,7 +979,7 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
-window.__wallet = { openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
+window.__wallet = { jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
