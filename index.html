@@ -111,11 +111,11 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 /* ---------- Real-world sizes, in centimetres ---------- */
-const W = 6.4;        // one panel's width (x): cards fill it with a thin border
+const W = 8.2;        // one half's width (x), measured from the product photo
 const H = 11.0;       // wallet height (z, top of wallet = -z)
-const PT = 0.1;       // panel thickness: a flat, thin card wallet
+const PT = 0.12;      // outer leather thickness
 const LAYER = 0.02;   // thickness of each inner leather layer
-const RAD_OUT = 0.8, RAD_SPINE = 0.12; // corner radii: rounded outer corners, near-square at the fold
+const RAD_OUT = 0.45, RAD_SPINE = 0.08; // corner radii: rounded outer corners, near-square at the fold
 const CARD = { w: 8.56, h: 5.4, t: 0.076 };   // ID-1 / CR80 card
 const SLIDE_DIR = new THREE.Vector3(0, 0, -1);
 
@@ -177,7 +177,7 @@ renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
 renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
-renderer.toneMappingExposure = 1.0;
+renderer.toneMappingExposure = 0.82;
 stage.appendChild(renderer.domElement);
 const maxAniso = renderer.capabilities.getMaxAnisotropy();
 
@@ -201,8 +201,8 @@ controls.maxDistance = 90;
 const VIEW_DIR = new THREE.Vector3(0, 31, 21).normalize();
 function fitCamera() {
   const halfFov = THREE.MathUtils.degToRad(camera.fov / 2);
-  const needW = 24 / (2 * Math.tan(halfFov) * camera.aspect);
-  const needH = 17 / (2 * Math.tan(halfFov));
+  const needW = 30 / (2 * Math.tan(halfFov) * camera.aspect);
+  const needH = 19 / (2 * Math.tan(halfFov));
   const d = Math.max(34, needW, needH);
   controls.maxDistance = Math.max(90, d * 1.4);
   camera.position.copy(controls.target).addScaledVector(VIEW_DIR, d);
@@ -211,11 +211,11 @@ function fitCamera() {
 
 /* ---------- Light ---------- */
 scene.add(new THREE.HemisphereLight(0xf2f2f0, 0xc9c9c5, 0.7));
-const sun = new THREE.DirectionalLight(0xf6f4ef, 2.4);
+const sun = new THREE.DirectionalLight(0xf6f4ef, 2.1);
 sun.position.set(-14, 30, -12);
 sun.castShadow = true;
 sun.shadow.mapSize.set(2048, 2048);
-Object.assign(sun.shadow.camera, { left: -18, right: 18, top: 18, bottom: -18, near: 1, far: 90 });
+Object.assign(sun.shadow.camera, { left: -26, right: 26, top: 22, bottom: -22, near: 1, far: 90 });
 sun.shadow.bias = -0.0004;
 sun.shadow.normalBias = 0.02;
 scene.add(sun);
@@ -304,7 +304,7 @@ const leatherMat = new THREE.MeshPhysicalMaterial({
 });
 const edgeMat = new THREE.MeshPhysicalMaterial({ color: 0x1c1c1c, roughness: 0.5, clearcoat: 0.25, clearcoatRoughness: 0.45, envMapIntensity: 0.45 });
 const stitchMat = new THREE.MeshStandardMaterial({ color: 0x1b1b1c, roughness: 0.7 });
-const paneMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.1, roughness: 0.06, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.05, depthWrite: false, envMapIntensity: 1.4 });
+const paneMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.05, roughness: 0.1, metalness: 0, clearcoat: 0.6, clearcoatRoughness: 0.1, depthWrite: false, envMapIntensity: 0.5 });
 
 // Table: warm linen, matched to the product photos.
 const tableCanvas = document.createElement('canvas'); tableCanvas.width = tableCanvas.height = 512;
@@ -425,7 +425,7 @@ function makeItemMesh(cfg) {
   const bodyGeo = new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false, curveSegments: 12 });
   bodyGeo.translate(0, 0, -t / 2);
   const body = new THREE.Mesh(bodyGeo, new THREE.MeshStandardMaterial({ color: isReceipt ? 0xf4f2ec : 0xf1eee7, roughness: 0.6 }));
-  const surface = isReceipt ? { roughness: 0.92 } : isPaper ? { roughness: 0.62, sheen: 0.3, sheenRoughness: 0.8 } : { roughness: 0.32, clearcoat: 0.55, clearcoatRoughness: 0.22 };
+  const surface = isReceipt ? { roughness: 0.92, envMapIntensity: 0.5 } : isPaper ? { roughness: 0.7, envMapIntensity: 0.25 } : { roughness: 0.55, envMapIntensity: 0.25 };
   const frontMat = new THREE.MeshPhysicalMaterial({ map: tex(drawArt(cfg.art, 'front')), ...surface });
   const backMat = new THREE.MeshPhysicalMaterial({ map: tex(drawArt(cfg.art, 'back')), ...surface });
   const fg = faceGeo(shape, w, h);
@@ -458,7 +458,7 @@ const linePath = (x0, z0, x1, z1) => { const p = new THREE.Path(); p.moveTo(x0, 
 
 // Real sizes. Cards stand portrait in their slots and nearly fill the wallet, as in the product photo.
 for (const cfg of ITEMS) {
-  if (cfg.kind === 'receipt') Object.assign(cfg, { w: 13.6, h: 6.8, t: 0.014 });
+  if (cfg.kind === 'receipt') Object.assign(cfg, { w: 15.0, h: 6.5, t: 0.012 });
   else if (cfg.kind === 'biz') Object.assign(cfg, { w: 8.5, h: 5.5, t: 0.02 });
   else Object.assign(cfg, { w: CARD.w, h: CARD.w * 650 / 1004, t: CARD.t });
   cfg.rotated = cfg.kind !== 'receipt';
@@ -468,60 +468,74 @@ for (const cfg of ITEMS) {
 }
 
 // Which pocket each project card lives in: four stepped in the right pocket, four behind the licence window.
-// All eight project cards live in the right pocket, stepped like the real wallet.
-const RIGHT_IDS = ['stack', 'folio', 'quotable', 'pat', 'brandomizer', 'big-brother', 'fly', 'rolla'];
-const CARD_STEP = 0.285, CARD_TOPS = RIGHT_IDS.map((_, k) => -5.25 + k * CARD_STEP);
+// Layout measured from the product photo (about 47 px per cm).
+// Right half: a strip by the fold holding one card upright in a hidden slot (only a sliver shows), then the card
+// section: a backing layer with seven cards stepped behind one plain pocket front.
+const STRIP = 0.96;                                   // width of the centre strip on each side of the fold
+const SIDE_ID = 'rolla';
+const RIGHT_IDS = ['stack', 'folio', 'quotable', 'pat', 'brandomizer', 'big-brother', 'fly'];
+const CARD_STEP = 0.32, CARD_TOPS = RIGHT_IDS.map((_, k) => -5.13 + k * CARD_STEP);
 const CARD_LIFT = 0.008; // cards overlap almost flat, so the pocket keeps one slim thickness however full it is
+const POCKET_EDGE = -1.83;
 
-// Right side, bottom to top: the money slot (runs the full width), lining, four stepped cards,
-// then one plain pocket front, so the edge reads as a single thickness.
 let y = PT + 0.002;
 const receiptCfg = ITEMS.find((i) => i.kind === 'receipt');
-receiptCfg.home = { parent: 'right', y: y + 0.007, x: 0, zTop: -H / 2 - 0.8 };
-y += 0.016;
+receiptCfg.home = { parent: 'right', y: y + 0.006, x: -0.1, zTop: -H / 2 - 0.55 };   // the note peeks out of the top
+y += 0.014;
 const lining = slab(rightShape, LAYER, y); wallet.add(lining); addPick(lining, 'wallet');
 y += LAYER + 0.002;
 const liningTop = y;
+const sideCfg = ITEMS.find((i) => i.id === SIDE_ID);
+sideCfg.home = { parent: 'right', y: y + sideCfg.t / 2, x: 0.32 + sideCfg.xLen / 2, zTop: -4.23 };
+y += sideCfg.t + 0.002;
+const R_SECTION = [0.06, RAD_OUT, RAD_OUT, 0.06];
+const backing = slab(rr(STRIP, -H / 2, W, H / 2, R_SECTION), LAYER, y); wallet.add(backing); addPick(backing, 'wallet');
+y += LAYER + 0.002;
+const backingTop = y;
 RIGHT_IDS.forEach((id, k) => {
   const cfg = ITEMS.find((i) => i.id === id);
-  cfg.home = { parent: 'right', y: y + cfg.t / 2 + k * CARD_LIFT, x: W / 2, zTop: CARD_TOPS[k] };
+  cfg.home = { parent: 'right', y: y + cfg.t / 2 + k * CARD_LIFT, x: 4.4, zTop: CARD_TOPS[k] };
 });
 y += 0.02 + RIGHT_IDS.length * CARD_LIFT + 0.004;
-const POCKET_EDGE = CARD_TOPS[CARD_TOPS.length - 1] + 0.6;
-const pocket = slab(rr(0, -H / 2, W, -POCKET_EDGE, [RAD_SPINE, RAD_OUT, 0, 0]), LAYER, y);
+const pocket = slab(rr(STRIP, -H / 2, W, -POCKET_EDGE, [0.06, RAD_OUT, 0, 0]), LAYER, y);
 wallet.add(pocket); addPick(pocket, ITEMS.find((i) => i.id === RIGHT_IDS[RIGHT_IDS.length - 1]));
 const pocketTop = y + LAYER;
 y += LAYER + 0.003;
 const rightStack = y - PT;
-const rightTopAt = (x, z) => (z >= POCKET_EDGE ? pocketTop : liningTop);
-const rightStitch = rr(0.2, -H / 2 + 0.2, W - 0.2, H / 2 - 0.2, [0.04, RAD_OUT - 0.18, RAD_OUT - 0.18, 0.04]);
-wallet.add(stitches(rightStitch, rightTopAt), stitches(rightStitch, () => 0, true));
+const rightTopAt = (x, z) => (x < STRIP + 0.05 ? liningTop : z >= POCKET_EDGE ? pocketTop : backingTop);
+const rightStitch = rr(0.18, -H / 2 + 0.18, W - 0.18, H / 2 - 0.18, [0.04, RAD_OUT - 0.12, RAD_OUT - 0.12, 0.04]);
+wallet.add(
+  stitches(rightStitch, rightTopAt), stitches(rightStitch, () => 0, true),
+  stitches(linePath(STRIP + 0.16, -H / 2 + 0.3, STRIP + 0.16, POCKET_EDGE), () => backingTop),
+  stitches(linePath(STRIP + 0.16, POCKET_EDGE + 0.1, STRIP + 0.16, H / 2 - 0.3), () => pocketTop),
+);
 
 // Left panel on a hinge at the fold. Pivot height lets it close flat over both stacks.
 const licenceCfg = ITEMS.find((i) => i.id === 'licence');
-const leftStack = 0.016 + LAYER + 0.002 + CARD.t + 0.003 + LAYER;
+const leftStack = 0.014 + LAYER + 0.002 + CARD.t + 0.003 + LAYER;
 const HP = PT + (rightStack + leftStack) / 2 + 0.01;
 const leftPivot = new THREE.Group(); leftPivot.position.set(0, HP, 0); wallet.add(leftPivot);
 const leftContent = new THREE.Group(); leftContent.position.set(0, -HP, 0); leftPivot.add(leftContent);
 const R_LEFT = [RAD_OUT, RAD_SPINE, RAD_SPINE, RAD_OUT];
 const leftShape = rr(-W, -H / 2, 0, H / 2, R_LEFT);
 const leftPanel = slab(leftShape, PT, 0); leftContent.add(leftPanel); addPick(leftPanel, 'wallet');
-const lLiningY = PT + 0.018;
+const lLiningY = PT + 0.016;
 const leftLining = slab(leftShape, LAYER, lLiningY); leftContent.add(leftLining); addPick(leftLining, 'wallet');
 const lLiningTop = lLiningY + LAYER + 0.002;
 
 // ID window: the licence stands portrait and fills the window. The window layer is open at the side
 // by the fold, so the licence slides out to the right.
-const winX = -W / 2 - 0.08, winZ = 0.15, holeW = 5.2, holeL = 8.3, FRAME_X1 = -0.35, FRAME_TOP = -H / 2;
+const winX = -4.43, winZ = 0.16, holeW = 4.9, holeL = 8.3, FRAME_X1 = -STRIP, FRAME_TOP = -H / 2;
 licenceCfg.home = { parent: 'left', y: lLiningTop + CARD.t / 2, x: winX, zTop: winZ - licenceCfg.zLen / 2 };
 const frameY = lLiningTop + CARD.t + 0.003;
-const fs = rr(-W, -H / 2, FRAME_X1, H / 2, [RAD_OUT, 0, 0, RAD_OUT]);
+const fs = rr(-W, -H / 2, FRAME_X1, H / 2, [RAD_OUT, 0.06, 0.06, RAD_OUT]);
 fs.holes.push(rr(winX - holeW / 2, -(winZ + holeL / 2), winX + holeW / 2, -(winZ - holeL / 2), 0.3, THREE.Path));
 const winFrame = slab(fs, LAYER, frameY); leftContent.add(winFrame); addPick(winFrame, licenceCfg);
 const frameTop = frameY + LAYER;
-const leftStitch = rr(-W + 0.2, -H / 2 + 0.2, -0.2, H / 2 - 0.2, [RAD_OUT - 0.18, 0.04, 0.04, RAD_OUT - 0.18]);
+const leftStitch = rr(-W + 0.18, -H / 2 + 0.18, -0.18, H / 2 - 0.18, [RAD_OUT - 0.12, 0.04, 0.04, RAD_OUT - 0.12]);
 leftContent.add(
-  stitches(leftStitch, (x, z) => (x < FRAME_X1 - 0.05 ? frameTop : lLiningTop)), stitches(leftStitch, () => 0, true),
+  stitches(leftStitch, (x) => (x < FRAME_X1 - 0.05 ? frameTop : lLiningTop)), stitches(leftStitch, () => 0, true),
+  stitches(linePath(FRAME_X1 - 0.16, -H / 2 + 0.3, FRAME_X1 - 0.16, H / 2 - 0.3), () => frameTop),
   stitches(rr(winX - holeW / 2 - 0.22, -(winZ + holeL / 2 + 0.22), winX + holeW / 2 + 0.22, -(winZ - holeL / 2 - 0.22), 0.5), () => frameTop),
 );
 const pane = new THREE.Mesh(new THREE.PlaneGeometry(holeW, holeL), paneMat);
@@ -567,6 +581,76 @@ function clipReceipt(on) {
   receiptCfg.group.traverse((m) => { if (m.isMesh) { m.material.clippingPlanes = on ? foldClip : null; m.material.clipShadows = true; m.material.needsUpdate = true; } });
 }
 
+/* ---------- The desk: everyday things beside the wallet. They jiggle when you hover; only the wallet opens. ---------- */
+const props = [];
+const brass = new THREE.MeshStandardMaterial({ color: 0xc9a85c, metalness: 1, roughness: 0.32 });
+const steel = new THREE.MeshStandardMaterial({ color: 0xc9ccd0, metalness: 1, roughness: 0.28 });
+function keyShape() {
+  const s = new THREE.Shape();
+  s.absarc(0, 0, 1.15, Math.PI * 0.3, Math.PI * 1.7, false);           // round head
+  s.lineTo(0.95, -0.3); s.lineTo(4.4, -0.3);                            // blade underside
+  s.lineTo(4.4, 0.05); s.lineTo(4.0, 0.3); s.lineTo(3.7, 0.05); s.lineTo(3.4, 0.3); s.lineTo(3.1, 0.05);
+  s.lineTo(2.8, 0.3); s.lineTo(2.5, 0.12); s.lineTo(2.2, 0.3); s.lineTo(0.95, 0.3);   // teeth
+  const hole = new THREE.Path(); hole.absarc(-0.45, 0, 0.32, 0, Math.PI * 2, true); s.holes.push(hole);
+  return s;
+}
+function makeKeys() {
+  const g = new THREE.Group();
+  const ring = new THREE.Mesh(new THREE.TorusGeometry(1.3, 0.09, 12, 48), steel);
+  ring.rotation.x = Math.PI / 2; ring.position.y = 0.1; g.add(ring);
+  [[0.15, brass], [1.2, steel], [-0.9, brass]].forEach(([ang, mat], i) => {
+    const k = new THREE.Mesh(new THREE.ExtrudeGeometry(keyShape(), { depth: 0.12, bevelEnabled: true, bevelThickness: 0.02, bevelSize: 0.02, bevelSegments: 2 }), mat);
+    k.geometry.translate(1.75, 0, 0); k.geometry.rotateX(-Math.PI / 2);
+    k.position.set(0, 0.06 + i * 0.13, 0); k.rotation.y = ang; g.add(k);   // each key's hole sits on the ring
+  });
+  const fob = slab(rr(-0.8, -1.9, 0.8, 1.9, 0.8), 0.2, 0.02, [leatherMat, edgeMat]);
+  fob.position.set(-2.6, 0, 0.6); fob.rotation.y = 1.2; g.add(fob);
+  return g;
+}
+function makePen() {
+  const g = new THREE.Group();
+  const barrel = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 12, 32), new THREE.MeshStandardMaterial({ color: 0x1f1f1f, roughness: 0.35, metalness: 0.2 }));
+  barrel.rotation.z = Math.PI / 2; barrel.position.y = 0.42; g.add(barrel);
+  const tip = new THREE.Mesh(new THREE.ConeGeometry(0.42, 1.1, 32), steel); tip.rotation.z = -Math.PI / 2; tip.position.set(6.55, 0.42, 0); g.add(tip);
+  const clip = new THREE.Mesh(new THREE.BoxGeometry(4, 0.08, 0.22), steel); clip.position.set(-3.6, 0.88, 0); g.add(clip);
+  return g;
+}
+function makeMug() {
+  const g = new THREE.Group();
+  const profile = [[0, 0], [2.6, 0], [2.7, 0.15], [2.7, 6.4], [2.42, 6.4], [2.42, 0.5], [0, 0.5]].map(([x, y]) => new THREE.Vector2(x, y));
+  const glaze = new THREE.MeshStandardMaterial({ color: 0x73956f, roughness: 0.35 });
+  const body = new THREE.Mesh(new THREE.LatheGeometry(profile, 64), glaze); g.add(body);
+  const handle = new THREE.Mesh(new THREE.TorusGeometry(1.5, 0.32, 16, 32, Math.PI), glaze);
+  handle.rotation.z = -Math.PI / 2; handle.position.set(2.6, 3.3, 0); g.add(handle);
+  const coffee = new THREE.Mesh(new THREE.CircleGeometry(2.42, 48), new THREE.MeshStandardMaterial({ color: 0x2b1d14, roughness: 0.15 }));
+  coffee.rotation.x = -Math.PI / 2; coffee.position.y = 5.7; g.add(coffee);
+  return g;
+}
+function addProp(obj, x, z, rotY) {
+  const holder = new THREE.Group(); holder.position.set(x, 0, z); holder.rotation.y = rotY;
+  obj.traverse((m) => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true; m.userData.prop = holder; } });
+  holder.add(obj); scene.add(holder);
+  props.push({ holder, obj, wobble: 0 });
+}
+addProp(makeKeys(), -12.2, 4.8, 2.2);
+addProp(makePen(), 10.5, 8.6, -0.35);
+addProp(makeMug(), 12.6, -8.2, 0.4);
+const propMeshes = []; for (const p of props) p.obj.traverse((m) => { if (m.isMesh) propMeshes.push(m); });
+function pickProp(ev) {
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(propMeshes, false)[0];
+  return hit ? props.find((p) => p.holder === hit.object.userData.prop) : null;
+}
+function wobbleProps(dt) {
+  for (const p of props) {
+    p.wobble = Math.max(0, p.wobble - dt);
+    const t = p.wobble, a = t > 0 ? Math.sin(t * 28) * 0.09 * t : 0;
+    p.obj.rotation.z = a; p.obj.rotation.x = a * 0.6; p.obj.position.y = Math.abs(a) * 1.2;
+  }
+}
+
 /* ---------- Backdrop that dims the table while an item is out ---------- */
 const backdrop = new THREE.Mesh(new THREE.PlaneGeometry(400, 400), new THREE.MeshBasicMaterial({ color: 0x1f1f1f, transparent: true, opacity: 0, depthWrite: false }));
 backdrop.position.z = -19; camera.add(backdrop);
@@ -585,9 +669,7 @@ function applyOpen() {
   leftPivot.rotation.z = theta;
   clipReceipt(openVal < 0.999);
   updateSpine(theta);
-  const tgt = closedTarget.clone().lerp(openTargetV, e);
-  const delta = tgt.sub(controls.target);
-  controls.target.add(delta); camera.position.add(delta);
+  wallet.position.x = -(W / 2) * (1 - e);   // keep the wallet centred on the desk, open or closed
 }
 function setOpen(v) {
   if (active) return;
@@ -682,6 +764,7 @@ el.addEventListener('pointermove', (e) => {
     down.lx = e.clientX; down.ly = e.clientY; el.style.cursor = 'grabbing'; return;
   }
   if (active || e.pointerType === 'touch') return;
+  const pp = pickProp(e); if (pp) { if (pp.wobble < 0.3) pp.wobble = 1; setHover(null); renderer.domElement.style.cursor = 'default'; return; }
   const t = pick(e);
   if (openVal < 1) { setHover(t === 'wallet' || (t && t.id) ? 'wallet' : null); return; }
   setHover(t && t.id ? t : null);
@@ -724,6 +807,7 @@ function frame() {
     if (active.dir === 1 && before < 2 && active.p === 2) showSheet(active.item);
     if (active.dir === -1 && active.p === 0) finishReturn();
   }
+  wobbleProps(dt);
   if (controls.enabled) controls.update();
   renderer.render(scene, camera);
   requestAnimationFrame(frame);
@@ -735,7 +819,7 @@ addEventListener('resize', () => {
 });
 
 /* ---------- Start ---------- */
-controls.target.copy(closedTarget);
+controls.target.set(0, 0, 0);
 applyOpen();
 fitCamera();
 updateUI();
@@ -749,6 +833,7 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
+window.__wallet = { openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
