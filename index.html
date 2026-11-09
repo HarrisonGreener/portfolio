@@ -111,7 +111,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 /* ---------- Real-world sizes, in centimetres ---------- */
-const W = 7.4;        // one panel's width (x): cards nearly fill it
+const W = 6.4;        // one panel's width (x): cards fill it with a thin border
 const H = 11.0;       // wallet height (z, top of wallet = -z)
 const PT = 0.1;       // panel thickness: a flat, thin card wallet
 const LAYER = 0.02;   // thickness of each inner leather layer
@@ -171,7 +171,7 @@ const $ = (s) => document.querySelector(s);
 
 /* ---------- Renderer, scene, camera ---------- */
 const stage = $('#stage');
-const renderer = new THREE.WebGLRenderer({ antialias: true });
+const renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true });
 renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
 renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
@@ -186,7 +186,7 @@ scene.background = new THREE.Color(0xe3e3e0);
 const pmrem = new THREE.PMREMGenerator(renderer);
 scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
 
-const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 0.1, 400);
+const camera = new THREE.PerspectiveCamera(32, innerWidth / innerHeight, 1, 400);
 scene.add(camera);
 
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -262,11 +262,47 @@ const leatherTex = new THREE.TextureLoader().load('assets/leather.jpg', (t) => {
 leatherTex.colorSpace = THREE.SRGBColorSpace; leatherTex.anisotropy = maxAniso;
 leatherTex.wrapS = leatherTex.wrapT = THREE.RepeatWrapping; leatherTex.repeat.set(1 / 7.6, 1 / 7.6);
 const leatherBump = leatherTex.clone(); leatherBump.colorSpace = THREE.NoColorSpace;
+// Wear: soft lighter patches and faint scuffs, at a much larger scale than the grain so nothing visibly repeats.
+function wearCanvas(size) {
+  const c = document.createElement('canvas'); c.width = c.height = size; const g = c.getContext('2d');
+  g.fillStyle = '#000'; g.fillRect(0, 0, size, size);
+  const wrap = (fn) => { for (const dx of [-size, 0, size]) for (const dy of [-size, 0, size]) fn(dx, dy); }; // tile seamlessly
+  for (let i = 0; i < 90; i++) {                        // worn patches, mostly small, a few broad
+    const x = Math.random() * size, y = Math.random() * size;
+    const r = size * (Math.random() < 0.75 ? 0.02 + Math.random() * 0.06 : 0.08 + Math.random() * 0.14), a = 0.15 + Math.random() * 0.5;
+    wrap((dx, dy) => { const gr = g.createRadialGradient(x + dx, y + dy, 0, x + dx, y + dy, r);
+      gr.addColorStop(0, `rgba(255,255,255,${a})`); gr.addColorStop(0.6, `rgba(255,255,255,${a * 0.35})`); gr.addColorStop(1, 'rgba(255,255,255,0)');
+      g.fillStyle = gr; g.fillRect(x + dx - r, y + dy - r, 2 * r, 2 * r); });
+  }
+  g.lineCap = 'round';
+  for (let i = 0; i < 14; i++) {                        // soft creases
+    let x = Math.random() * size, y = Math.random() * size, ang = Math.random() * Math.PI * 2;
+    g.strokeStyle = `rgba(255,255,255,${0.12 + Math.random() * 0.15})`; g.lineWidth = 1.5 + Math.random() * 2.5;
+    const pts = [[x, y]];
+    for (let k = 0; k < 6; k++) { ang += (Math.random() - 0.5) * 0.6; x += Math.cos(ang) * 22; y += Math.sin(ang) * 22; pts.push([x, y]); }
+    wrap((dx, dy) => { g.beginPath(); g.moveTo(pts[0][0] + dx, pts[0][1] + dy); for (const [px, py] of pts) g.lineTo(px + dx, py + dy); g.stroke(); });
+  }
+  for (let i = 0; i < 160; i++) {                       // fine scuffs
+    const x = Math.random() * size, y = Math.random() * size, len = 6 + Math.random() * 40, ang = Math.random() * Math.PI;
+    g.strokeStyle = `rgba(255,255,255,${0.08 + Math.random() * 0.2})`; g.lineWidth = 0.5 + Math.random() * 1.2;
+    wrap((dx, dy) => { g.beginPath(); g.moveTo(x + dx, y + dy); g.lineTo(x + dx + Math.cos(ang) * len, y + dy + Math.sin(ang) * len); g.stroke(); });
+  }
+  const out = document.createElement('canvas'); out.width = out.height = size;
+  const o = out.getContext('2d'); o.filter = 'blur(1.2px)'; o.drawImage(c, 0, 0); o.filter = 'none';
+  // Break the wear up with grain, so it catches the tops of the pebbles instead of sitting on the surface like a smudge.
+  const img = o.getImageData(0, 0, size, size), d = img.data;
+  for (let i = 0; i < d.length; i += 4) { const n = 0.25 + Math.random() * 0.95; d[i] = d[i + 1] = d[i + 2] = Math.min(255, d[i] * n); }
+  o.putImageData(img, 0, 0);
+  return out;
+}
+const wearTex = new THREE.CanvasTexture(wearCanvas(1024));
+wearTex.colorSpace = THREE.SRGBColorSpace; wearTex.wrapS = wearTex.wrapT = THREE.RepeatWrapping; wearTex.repeat.set(1 / 23, 1 / 23); wearTex.offset.set(0.31, 0.57);
 const leatherMat = new THREE.MeshPhysicalMaterial({
   color: 0xffffff, map: leatherTex, bumpMap: leatherBump, bumpScale: 0.35,
-  roughness: 0.82, sheen: 0.25, sheenColor: new THREE.Color(0x2a2a2a), sheenRoughness: 0.8, envMapIntensity: 0.3,
+  emissive: new THREE.Color(0x4a4a46), emissiveMap: wearTex, emissiveIntensity: 1,
+  roughness: 0.8, sheen: 0.3, sheenColor: new THREE.Color(0x3a3a3a), sheenRoughness: 0.75, envMapIntensity: 0.3,
 });
-const edgeMat = new THREE.MeshPhysicalMaterial({ color: 0x141414, roughness: 0.5, clearcoat: 0.25, clearcoatRoughness: 0.45, envMapIntensity: 0.45 });
+const edgeMat = new THREE.MeshPhysicalMaterial({ color: 0x1c1c1c, roughness: 0.5, clearcoat: 0.25, clearcoatRoughness: 0.45, envMapIntensity: 0.45 });
 const stitchMat = new THREE.MeshStandardMaterial({ color: 0x1b1b1c, roughness: 0.7 });
 const paneMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.1, roughness: 0.06, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.05, depthWrite: false, envMapIntensity: 1.4 });
 
@@ -435,7 +471,7 @@ for (const cfg of ITEMS) {
 // All eight project cards live in the right pocket, stepped like the real wallet.
 const RIGHT_IDS = ['stack', 'folio', 'quotable', 'pat', 'brandomizer', 'big-brother', 'fly', 'rolla'];
 const CARD_STEP = 0.285, CARD_TOPS = RIGHT_IDS.map((_, k) => -5.25 + k * CARD_STEP);
-const CARD_LIFT = 0.005; // cards overlap almost flat, so the pocket keeps one slim thickness however full it is
+const CARD_LIFT = 0.008; // cards overlap almost flat, so the pocket keeps one slim thickness however full it is
 
 // Right side, bottom to top: the money slot (runs the full width), lining, four stepped cards,
 // then one plain pocket front, so the edge reads as a single thickness.
@@ -476,7 +512,7 @@ const lLiningTop = lLiningY + LAYER + 0.002;
 
 // ID window: the licence stands portrait and fills the window. The window layer is open at the side
 // by the fold, so the licence slides out to the right.
-const winX = -W / 2 - 0.05, winZ = 0.15, holeW = 4.9, holeL = 8.1, FRAME_X1 = -0.5, FRAME_TOP = -H / 2;
+const winX = -W / 2 - 0.08, winZ = 0.15, holeW = 5.2, holeL = 8.3, FRAME_X1 = -0.35, FRAME_TOP = -H / 2;
 licenceCfg.home = { parent: 'left', y: lLiningTop + CARD.t / 2, x: winX, zTop: winZ - licenceCfg.zLen / 2 };
 const frameY = lLiningTop + CARD.t + 0.003;
 const fs = rr(-W, -H / 2, FRAME_X1, H / 2, [RAD_OUT, 0, 0, RAD_OUT]);
