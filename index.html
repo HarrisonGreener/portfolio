@@ -423,7 +423,7 @@ const linePath = (x0, z0, x1, z1) => { const p = new THREE.Path(); p.moveTo(x0, 
 // Real sizes. Cards stand portrait in their slots and nearly fill the wallet, as in the product photo.
 for (const cfg of ITEMS) {
   if (cfg.kind === 'receipt') Object.assign(cfg, { w: 13.6, h: 6.8, t: 0.014 });
-  else if (cfg.kind === 'biz') Object.assign(cfg, { w: 8.5, h: 5.5, t: 0.03 });
+  else if (cfg.kind === 'biz') Object.assign(cfg, { w: 8.5, h: 5.5, t: 0.02 });
   else Object.assign(cfg, { w: CARD.w, h: CARD.w * 650 / 1004, t: CARD.t });
   cfg.rotated = cfg.kind !== 'receipt';
   cfg.zLen = cfg.rotated ? cfg.w : cfg.h;
@@ -432,9 +432,10 @@ for (const cfg of ITEMS) {
 }
 
 // Which pocket each project card lives in: four stepped in the right pocket, four behind the licence window.
-const RIGHT_IDS = ['stack', 'folio', 'quotable', 'pat'], LEFT_IDS = ['brandomizer', 'big-brother', 'fly', 'rolla'];
-const CARD_TOPS = [-5.25, -4.7, -4.15, -3.6];          // right pocket: stepped like the photo
-const LEFT_TOPS = [-5.25, -4.87, -4.49, -4.11];        // left pocket, above the window
+// All eight project cards live in the right pocket, stepped like the real wallet.
+const RIGHT_IDS = ['stack', 'folio', 'quotable', 'pat', 'brandomizer', 'big-brother', 'fly', 'rolla'];
+const CARD_STEP = 0.285, CARD_TOPS = RIGHT_IDS.map((_, k) => -5.25 + k * CARD_STEP);
+const CARD_LIFT = 0.005; // cards overlap almost flat, so the pocket keeps one slim thickness however full it is
 
 // Right side, bottom to top: the money slot (runs the full width), lining, four stepped cards,
 // then one plain pocket front, so the edge reads as a single thickness.
@@ -447,10 +448,10 @@ y += LAYER + 0.002;
 const liningTop = y;
 RIGHT_IDS.forEach((id, k) => {
   const cfg = ITEMS.find((i) => i.id === id);
-  cfg.home = { parent: 'right', y: y + cfg.t / 2, x: W / 2, zTop: CARD_TOPS[k] };
-  y += cfg.t + 0.002;
+  cfg.home = { parent: 'right', y: y + cfg.t / 2 + k * CARD_LIFT, x: W / 2, zTop: CARD_TOPS[k] };
 });
-const POCKET_EDGE = -2.9;
+y += 0.02 + RIGHT_IDS.length * CARD_LIFT + 0.004;
+const POCKET_EDGE = CARD_TOPS[CARD_TOPS.length - 1] + 0.6;
 const pocket = slab(rr(0, -H / 2, W, -POCKET_EDGE, [RAD_SPINE, RAD_OUT, 0, 0]), LAYER, y);
 wallet.add(pocket); addPick(pocket, ITEMS.find((i) => i.id === RIGHT_IDS[RIGHT_IDS.length - 1]));
 const pocketTop = y + LAYER;
@@ -462,7 +463,7 @@ wallet.add(stitches(rightStitch, rightTopAt), stitches(rightStitch, () => 0, tru
 
 // Left panel on a hinge at the fold. Pivot height lets it close flat over both stacks.
 const licenceCfg = ITEMS.find((i) => i.id === 'licence');
-const leftStack = 0.016 + LAYER + 0.002 + 4 * 0.032 + CARD.t + 0.003 + LAYER;
+const leftStack = 0.016 + LAYER + 0.002 + CARD.t + 0.003 + LAYER;
 const HP = PT + (rightStack + leftStack) / 2 + 0.01;
 const leftPivot = new THREE.Group(); leftPivot.position.set(0, HP, 0); wallet.add(leftPivot);
 const leftContent = new THREE.Group(); leftContent.position.set(0, -HP, 0); leftPivot.add(leftContent);
@@ -471,26 +472,20 @@ const leftShape = rr(-W, -H / 2, 0, H / 2, R_LEFT);
 const leftPanel = slab(leftShape, PT, 0); leftContent.add(leftPanel); addPick(leftPanel, 'wallet');
 const lLiningY = PT + 0.018;
 const leftLining = slab(leftShape, LAYER, lLiningY); leftContent.add(leftLining); addPick(leftLining, 'wallet');
-let lY = lLiningY + LAYER + 0.002;
-LEFT_IDS.forEach((id, k) => {
-  const cfg = ITEMS.find((i) => i.id === id);
-  cfg.home = { parent: 'left', y: lY + cfg.t / 2, x: -W / 2, zTop: LEFT_TOPS[k] };
-  lY += cfg.t + 0.002;
-});
-const lLiningTop = lY;
+const lLiningTop = lLiningY + LAYER + 0.002;
 
-// ID window: the licence stands portrait and fills the window, over the left pocket's cards.
-// The window layer is open at the top (that pocket's mouth) and at the side by the fold (the licence's slot).
-const winX = -W / 2 - 0.05, winZ = 0.6, holeW = 4.9, holeL = 8.1, FRAME_X1 = -0.5, FRAME_TOP = -3.75;
+// ID window: the licence stands portrait and fills the window. The window layer is open at the side
+// by the fold, so the licence slides out to the right.
+const winX = -W / 2 - 0.05, winZ = 0.15, holeW = 4.9, holeL = 8.1, FRAME_X1 = -0.5, FRAME_TOP = -H / 2;
 licenceCfg.home = { parent: 'left', y: lLiningTop + CARD.t / 2, x: winX, zTop: winZ - licenceCfg.zLen / 2 };
 const frameY = lLiningTop + CARD.t + 0.003;
-const fs = rr(-W, -H / 2, FRAME_X1, -FRAME_TOP, [RAD_OUT, 0, 0, 0]);
+const fs = rr(-W, -H / 2, FRAME_X1, H / 2, [RAD_OUT, 0, 0, RAD_OUT]);
 fs.holes.push(rr(winX - holeW / 2, -(winZ + holeL / 2), winX + holeW / 2, -(winZ - holeL / 2), 0.3, THREE.Path));
 const winFrame = slab(fs, LAYER, frameY); leftContent.add(winFrame); addPick(winFrame, licenceCfg);
 const frameTop = frameY + LAYER;
 const leftStitch = rr(-W + 0.2, -H / 2 + 0.2, -0.2, H / 2 - 0.2, [RAD_OUT - 0.18, 0.04, 0.04, RAD_OUT - 0.18]);
 leftContent.add(
-  stitches(leftStitch, (x, z) => (x < FRAME_X1 - 0.05 && z > FRAME_TOP ? frameTop : lLiningTop)), stitches(leftStitch, () => 0, true),
+  stitches(leftStitch, (x, z) => (x < FRAME_X1 - 0.05 ? frameTop : lLiningTop)), stitches(leftStitch, () => 0, true),
   stitches(rr(winX - holeW / 2 - 0.22, -(winZ + holeL / 2 + 0.22), winX + holeW / 2 + 0.22, -(winZ - holeL / 2 - 0.22), 0.5), () => frameTop),
 );
 const pane = new THREE.Mesh(new THREE.PlaneGeometry(holeW, holeL), paneMat);
