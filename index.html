@@ -135,7 +135,8 @@ import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 /* ---------- Real-world sizes, in centimetres ---------- */
 const W = 9.4;        // one panel's width (x)
 const H = 12.4;       // wallet height (z, top of wallet = -z)
-const PT = 0.32;      // panel thickness
+const PT = 0.14;      // panel thickness (two glued layers of thin leather)
+const RAD_OUT = 0.9, RAD_SPINE = 0.12; // corner radii: rounded outer corners, near-square at the fold
 const CARD = { w: 8.56, h: 5.4, t: 0.076 };   // ID-1 / CR80 card
 const SLIDE_DIR = new THREE.Vector3(0, 0, -1);
 
@@ -262,19 +263,31 @@ function tex(canvas, { srgb = true, repeat = 0 } = {}) {
   return t;
 }
 
-// Leather: mottled near-black colour + fine pebble grain for bump and roughness.
-const leatherCol = noiseCanvas(1024, [[4, .6], [14, .45], [48, .3]]);
-{ const g = leatherCol.getContext('2d'); g.globalCompositeOperation = 'multiply'; g.fillStyle = 'rgb(52,49,47)'; g.fillRect(0, 0, 1024, 1024); }
-const leatherGrain = noiseCanvas(2048, [[96, .35], [384, .5], [1400, .55]]);
+// Leather: matte black with a fine pebble grain (round pebbles, not a woven noise) driving bump and roughness.
+function pebbleCanvas(size) {
+  const c = document.createElement('canvas'); c.width = c.height = size;
+  const g = c.getContext('2d');
+  g.fillStyle = 'rgb(128,128,128)'; g.fillRect(0, 0, size, size);
+  const n = Math.round(size * size / 55);
+  for (let i = 0; i < n; i++) {
+    const x = Math.random() * size, y = Math.random() * size, r = 2.5 + Math.random() * 3.5;
+    const v = (105 + Math.random() * 70) | 0;
+    g.fillStyle = `rgb(${v},${v},${v})`; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+  }
+  const out = document.createElement('canvas'); out.width = out.height = size;
+  const o = out.getContext('2d'); o.filter = 'blur(1px)'; o.drawImage(c, 0, 0);
+  return out;
+}
+const leatherGrain = pebbleCanvas(2048);
 const LEATHER_REPEAT = 1 / 20; // UVs are in cm; one tile covers 20 cm, so no seams show on the panels.
 const leatherMat = new THREE.MeshPhysicalMaterial({
-  color: 0xffffff, map: tex(leatherCol, { repeat: LEATHER_REPEAT }),
-  bumpMap: tex(leatherGrain, { srgb: false, repeat: LEATHER_REPEAT }), bumpScale: 0.5,
-  roughnessMap: tex(leatherGrain, { srgb: false, repeat: LEATHER_REPEAT }), roughness: 1.45,
-  sheen: 1, sheenColor: new THREE.Color(0x3a3734), sheenRoughness: 0.55, envMapIntensity: 0.6,
+  color: 0x0f0f10,
+  bumpMap: tex(leatherGrain, { srgb: false, repeat: LEATHER_REPEAT }), bumpScale: 0.15,
+  roughnessMap: tex(leatherGrain, { srgb: false, repeat: LEATHER_REPEAT }), roughness: 1.5,
+  sheen: 0.35, sheenColor: new THREE.Color(0x1c1c1e), sheenRoughness: 0.7, envMapIntensity: 0.35,
 });
-const edgeMat = new THREE.MeshPhysicalMaterial({ color: 0x0b0b0b, roughness: 0.42, clearcoat: 0.3, clearcoatRoughness: 0.4, envMapIntensity: 0.8 });
-const stitchMat = new THREE.MeshStandardMaterial({ color: 0x2c2b2a, roughness: 0.65 });
+const edgeMat = new THREE.MeshPhysicalMaterial({ color: 0x080808, roughness: 0.5, clearcoat: 0.25, clearcoatRoughness: 0.45, envMapIntensity: 0.45 });
+const stitchMat = new THREE.MeshStandardMaterial({ color: 0x1b1b1c, roughness: 0.7 });
 const paneMat = new THREE.MeshPhysicalMaterial({ color: 0xffffff, transparent: true, opacity: 0.1, roughness: 0.06, metalness: 0, clearcoat: 1, clearcoatRoughness: 0.05, depthWrite: false, envMapIntensity: 1.4 });
 
 // Table: warm linen, matched to the product photos.
@@ -297,21 +310,24 @@ function rr(x0, y0, x1, y1, r, PathType = THREE.Shape) {
 }
 // A flat leather piece lying on the table: shape x → world x, shape y → world -z, thickness → world y.
 function slab(shape, thick, y0, mats = [leatherMat, edgeMat]) {
-  const bev = Math.min(0.035, thick * 0.3);
-  const g = new THREE.ExtrudeGeometry(shape, { depth: Math.max(thick - 2 * bev, 0.002), bevelEnabled: true, bevelThickness: bev, bevelSize: bev * 0.7, bevelOffset: -bev * 0.7, bevelSegments: 2, curveSegments: 20 });
+  // Rounded, sanded edge: the bevel takes most of the thickness so the edge reads as one soft curve.
+  const bev = Math.min(0.06, thick * 0.45);
+  const g = new THREE.ExtrudeGeometry(shape, { depth: Math.max(thick - 2 * bev, 0.002), bevelEnabled: true, bevelThickness: bev, bevelSize: bev, bevelOffset: -bev, bevelSegments: 5, curveSegments: 28 });
   g.translate(0, 0, bev); g.rotateX(-Math.PI / 2);
   const m = new THREE.Mesh(g, mats); m.position.y = y0; m.castShadow = true; m.receiveShadow = true; return m;
 }
 // Saddle-style stitch run along an inset outline, on the top or bottom face of a panel.
-function stitches(shape, y, flip = false) {
-  const len = shape.getLength(); const n = Math.max(8, Math.round(len / 0.14));
+// yAt(z) gives the surface height under each stitch, so the thread sits on whichever layer is on top there.
+function stitches(shape, yAt, flip = false) {
+  const len = shape.getLength(); const n = Math.max(8, Math.round(len / 0.12));
   const pts = shape.getSpacedPoints(n);
   const count = Math.floor(pts.length / 2);
-  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.1, 0.022, 0.026), stitchMat, count);
+  const mesh = new THREE.InstancedMesh(new THREE.BoxGeometry(0.085, 0.012, 0.018), stitchMat, count);
   const d = new THREE.Object3D(); let k = 0;
   for (let i = 0; i + 1 < pts.length && k < count; i += 2, k++) {
     const p = pts[i], q = pts[i + 1];
-    d.position.set((p.x + q.x) / 2, y + (flip ? -0.004 : 0.004), -(p.y + q.y) / 2);
+    const z = -(p.y + q.y) / 2;
+    d.position.set((p.x + q.x) / 2, yAt(z) + (flip ? -0.003 : 0.003), z);
     d.rotation.set(0, Math.atan2(q.y - p.y, q.x - p.x), 0); d.updateMatrix(); mesh.setMatrixAt(k, d.matrix);
   }
   mesh.count = k; mesh.castShadow = false; mesh.receiveShadow = true; return mesh;
@@ -422,16 +438,19 @@ const pickables = [];
 function addPick(mesh, target) { mesh.userData.target = target; pickables.push(mesh); }
 
 // Right panel (stays on the table)
-const rightShape = rr(0, -H / 2, W, H / 2, [0.15, 0.7, 0.7, 0.15]);
+const R_RIGHT = [RAD_SPINE, RAD_OUT, RAD_OUT, RAD_SPINE];
+const rightShape = rr(0, -H / 2, W, H / 2, R_RIGHT);
 const rightPanel = slab(rightShape, PT, 0); wallet.add(rightPanel); addPick(rightPanel, 'wallet');
-const rightStitch = rr(0.3, -H / 2 + 0.3, W - 0.3, H / 2 - 0.3, [0.05, 0.42, 0.42, 0.05]);
-wallet.add(stitches(rightStitch, PT), stitches(rightStitch, 0, true));
+const rightStitch = rr(0.22, -H / 2 + 0.22, W - 0.22, H / 2 - 0.22, [0.04, RAD_OUT - 0.2, RAD_OUT - 0.2, 0.04]);
+wallet.add(stitches(rightStitch, () => 0, true));
 
 // Real sizes: the licence is PVC (CR80, matching its artwork's ratio), project cards are 85 × 55 mm card stock.
 for (const cfg of ITEMS) {
   if (cfg.kind === 'receipt') Object.assign(cfg, { w: 7.2, h: 13.4, t: 0.014 });
   else if (cfg.kind === 'biz') Object.assign(cfg, { w: 8.5, h: 5.5, t: 0.045 });
   else Object.assign(cfg, { w: CARD.w, h: CARD.w * 650 / 1004, t: CARD.t });
+  cfg.rotated = cfg.id === 'licence'; // the ID window holds the licence portrait, as in the real wallet
+  cfg.zLen = cfg.rotated ? cfg.w : cfg.h;
 }
 
 // Right inner layers, bottom to top: receipt, lining, then four stepped pockets holding two cards each.
@@ -439,8 +458,12 @@ let y = PT + 0.002;
 const receiptCfg = ITEMS.find((i) => i.id === 'receipt');
 receiptCfg.home = { parent: 'right', y: y + 0.007, x: W / 2 - 0.25, zTop: -H / 2 - 1.5 };
 y += 0.016;
-const lining = slab(rr(0.25, -(H / 2 - 0.25), W - 0.25, H / 2 - 0.25, [0.1, 0.5, 0.5, 0.1]), 0.05, y); wallet.add(lining); addPick(lining, 'wallet');
-y += 0.052;
+// Every inner layer shares the panel's outline, so the edges sit flush like glued, sanded leather.
+const LAYER = 0.03;
+const lining = slab(rr(0, -H / 2, W, H / 2, R_RIGHT), LAYER, y); wallet.add(lining); addPick(lining, 'wallet');
+y += LAYER + 0.002;
+const liningTop = y;
+const pocketTops = [];
 const pocketEdges = [-H / 2 + 2.2, -H / 2 + 3.2, -H / 2 + 4.2, -H / 2 + 5.2];
 pocketEdges.forEach((edge, k) => {
   const inSlot = ITEMS.filter((i) => i.side === 'right' && i.slot === k);
@@ -449,31 +472,35 @@ pocketEdges.forEach((edge, k) => {
     cfg.home = { parent: 'right', y: y + cfg.t / 2, x: W / 2 + (j ? 0.14 : -0.14), zTop: edge - 1.35 + j * 0.5 };
     y += cfg.t + 0.002;
   });
-  const pocket = slab(rr(0.28, -(H / 2 - 0.28), W - 0.28, -edge, [0.1, 0.45, 0.06, 0.06]), 0.05, y);
+  const pocket = slab(rr(0, -H / 2, W, -edge, [RAD_SPINE, RAD_OUT, 0.04, 0.04]), LAYER, y);
   wallet.add(pocket); addPick(pocket, inSlot[inSlot.length - 1]);
-  y += 0.053;
+  pocketTops.push([edge, y + LAYER]);
+  y += LAYER + 0.003;
 });
 const rightStack = y - PT;
+wallet.add(stitches(rightStitch, (z) => { let top = liningTop; for (const [edge, t] of pocketTops) if (z >= edge) top = t; return top; }));
 
 // Left panel on a hinge at the spine. Pivot height lets it fold over both stacks when closed.
 const licenceCfg = ITEMS.find((i) => i.id === 'licence');
-const leftStack = 0.002 + CARD.t + 0.003 + 0.05;
-const HP = PT + (rightStack + leftStack) / 2 + 0.05;
+const leftStack = 0.002 + CARD.t + 0.003 + LAYER;
+const HP = PT + (rightStack + leftStack) / 2 + 0.015;
 const leftPivot = new THREE.Group(); leftPivot.position.set(0, HP, 0); wallet.add(leftPivot);
 const leftContent = new THREE.Group(); leftContent.position.set(0, -HP, 0); leftPivot.add(leftContent);
-const leftShape = rr(-W, -H / 2, 0, H / 2, [0.7, 0.15, 0.15, 0.7]);
+const R_LEFT = [RAD_OUT, RAD_SPINE, RAD_SPINE, RAD_OUT];
+const leftShape = rr(-W, -H / 2, 0, H / 2, R_LEFT);
 const leftPanel = slab(leftShape, PT, 0); leftContent.add(leftPanel); addPick(leftPanel, 'wallet');
-const leftStitch = rr(-W + 0.3, -H / 2 + 0.3, -0.3, H / 2 - 0.3, [0.42, 0.05, 0.05, 0.42]);
-leftContent.add(stitches(leftStitch, PT), stitches(leftStitch, 0, true));
+const leftStitch = rr(-W + 0.22, -H / 2 + 0.22, -0.22, H / 2 - 0.22, [RAD_OUT - 0.2, 0.04, 0.04, RAD_OUT - 0.2]);
 
-// ID window: frame with a cut-out, a clear pane, the licence behind it.
-const winZ = 0.9;
-licenceCfg.home = { parent: 'left', y: PT + 0.002 + CARD.t / 2, x: -W / 2, zTop: winZ - licenceCfg.h / 2 };
-const frameShape = rr(-W + 0.25, -(H / 2 - 0.25), -0.25, H / 2 - 0.25, [0.5, 0.1, 0.1, 0.5]);
-frameShape.holes.push(rr(-W / 2 - 3.9, -(winZ + 2.35), -W / 2 + 3.9, -(winZ - 2.35), 0.28, THREE.Path));
-const winFrame = slab(frameShape, 0.05, PT + 0.002 + CARD.t + 0.003); leftContent.add(winFrame); addPick(winFrame, licenceCfg);
-const pane = new THREE.Mesh(new THREE.PlaneGeometry(7.8, 4.7), paneMat);
-pane.rotation.x = -Math.PI / 2; pane.position.set(-W / 2, PT + CARD.t + 0.03, winZ); pane.renderOrder = 2; leftContent.add(pane);
+// ID window: a full-size front layer with a portrait cut-out, a clear pane, and the licence behind it on its side.
+const winZ = 0.6;
+licenceCfg.home = { parent: 'left', y: PT + 0.002 + CARD.t / 2, x: -W / 2, zTop: winZ - licenceCfg.zLen / 2 };
+const frameShape = rr(-W, -H / 2, 0, H / 2, R_LEFT);
+frameShape.holes.push(rr(-W / 2 - 2.45, -(winZ + 3.95), -W / 2 + 2.45, -(winZ - 3.95), 0.28, THREE.Path));
+const frameY = PT + 0.002 + CARD.t + 0.003;
+const winFrame = slab(frameShape, LAYER, frameY); leftContent.add(winFrame); addPick(winFrame, licenceCfg);
+leftContent.add(stitches(leftStitch, () => frameY + LAYER), stitches(leftStitch, () => 0, true));
+const pane = new THREE.Mesh(new THREE.PlaneGeometry(4.9, 7.9), paneMat);
+pane.rotation.x = -Math.PI / 2; pane.position.set(-W / 2, frameY + LAYER * 0.5, winZ); pane.renderOrder = 2; leftContent.add(pane);
 
 // Subtle embossed monogram on the outside cover.
 {
@@ -504,7 +531,8 @@ for (const cfg of ITEMS) {
   const g = makeItemMesh(cfg);
   const h = cfg.home;
   const parent = h.parent === 'left' ? leftContent : wallet;
-  g.position.set(h.x, h.y, h.zTop + cfg.h / 2);
+  if (cfg.rotated) g.rotation.set(-Math.PI / 2, 0, -Math.PI / 2); // artwork top faces the fold, like the photo
+  g.position.set(h.x, h.y, h.zTop + cfg.zLen / 2);
   cfg.group = g; cfg.parent = parent;
   cfg.homePos = g.position.clone(); cfg.homeQuat = g.quaternion.clone();
   cfg.hover = 0;
@@ -561,7 +589,7 @@ function pull(cfg) {
   cfg.group.updateMatrixWorld(true);
   const homePos = new THREE.Vector3(), homeQuat = new THREE.Quaternion();
   cfg.group.getWorldPosition(homePos); cfg.group.getWorldQuaternion(homeQuat);
-  const bottomZ = homePos.z + cfg.h / 2;
+  const bottomZ = homePos.z + cfg.zLen / 2;
   const dist = bottomZ + H / 2 + 0.6;
   scene.attach(cfg.group);
   yaw = yawT = 0; pitch = pitchT = 0;
