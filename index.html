@@ -1,4 +1,6 @@
 <meta charset="utf-8">
+<link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <title>Wallet CV</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -214,18 +216,56 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mp-form .mp-btn{align-self:flex-start}
 .mp-note{margin:0;font-size:14px;opacity:.7}
 .mp-foot{padding-top:80px}
-.mp-detail{position:fixed;inset:0;z-index:2;background:var(--green);overflow-y:auto;padding:84px clamp(16px,4vw,48px) 48px;display:grid;grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:clamp(24px,5vw,64px);align-items:start}
+.mp-detail{position:fixed;inset:0;z-index:2;background:var(--green);overflow-y:auto;padding:84px clamp(16px,4vw,48px) 64px}
 .mp-detail[hidden],.menu[hidden]{display:none}
 .mp-detail-close{all:unset;position:absolute;top:24px;left:clamp(16px,4vw,48px);cursor:inherit;font-size:34px;font-weight:700}
 .mp-detail-close:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
-.mp-detail-art{display:flex;flex-direction:column;gap:24px}
-.mp-detail-art img{width:100%;border-radius:14px;box-shadow:0 16px 34px rgba(31,31,31,.3)}
+.pd{max-width:1100px;margin:0 auto}
 .mp-eyebrow{margin:0 0 8px;font-size:14px;letter-spacing:0;opacity:.65;font-weight:700}
-.mp-detail h3{margin:0 0 16px;font-size:clamp(34px,5vw,60px);line-height:1}
-.mp-detail-text p{font-size:18px;line-height:1.45;max-width:40ch}
-.mp-detail dl{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:16px}
-.mp-detail dt{font-weight:700;opacity:.65}.mp-detail dd{margin:0}
-@media (max-width:760px){.mp-cv,.mp-contact,.mp-detail{grid-template-columns:1fr}.mp-cv-side{position:static}}
+.pd h3{margin:0 0 16px;font-size:clamp(40px,7vw,84px);line-height:.95}
+.pd-desc{font-size:clamp(18px,1.8vw,22px);line-height:1.45;max-width:46ch;margin:0 0 24px}
+.pd-links{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:40px}
+.pd-links a{font-weight:700;font-size:16px;text-decoration:none;border-radius:999px;padding:12px 22px;border:2px solid var(--ink);color:var(--ink);transition:transform .2s ease}
+.pd-links a:first-child{background:var(--ink);color:var(--paper)}
+.pd-links a:hover{transform:translateY(-2px)}
+.pd-links a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+/* live preview: the real site, running inside a phone or a browser window */
+.pd-preview{display:flex;justify-content:center;margin-bottom:48px}
+.pd-browser{width:100%;border-radius:14px;overflow:hidden;background:#1F1F1F;box-shadow:0 22px 50px rgba(31,31,31,.35)}
+.pd-bar{display:flex;align-items:center;gap:8px;padding:10px 14px;color:#F2F2F0;font-size:13px}
+.pd-bar i{width:11px;height:11px;border-radius:50%;background:rgba(242,242,240,.25)}
+.pd-bar span{flex:1;margin-left:8px;padding:5px 12px;border-radius:8px;background:rgba(242,242,240,.1);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pd-screen{position:relative;width:100%;overflow:hidden;background:#F2F2F0}
+.pd-screen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;background:transparent}
+.pd-screen.loaded .pd-hint{display:none}
+.pd-browser .pd-screen{aspect-ratio:16/10}
+.pd-phone{width:min(330px,80vw);padding:12px;border-radius:52px;background:#1F1F1F;box-shadow:0 22px 50px rgba(31,31,31,.35)}
+.pd-phone .pd-screen{aspect-ratio:390/844;border-radius:40px}
+.pd-hint{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:24px;font-size:15px;color:rgba(31,31,31,.6)}
+.pd-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);gap:clamp(24px,4vw,48px);align-items:start;margin-bottom:48px}
+.pd-cards{display:flex;flex-direction:column;gap:18px}
+.pd-cards img{width:100%;border-radius:12px;box-shadow:0 14px 30px rgba(31,31,31,.3)}
+.pd-cards dl{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:16px;margin:8px 0 0}
+.pd-cards dt{font-weight:700;opacity:.65}.pd-cards dd{margin:0}
+/* repo preview, styled after a GitHub repo card */
+.pd-repo{background:var(--paper);border-radius:16px;padding:22px 24px;box-shadow:0 14px 30px rgba(31,31,31,.18)}
+.pd-repo:empty{display:none}
+.pd-repo-head{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;margin-bottom:6px;word-break:break-all}
+.pd-repo-head svg{width:20px;height:20px;flex:none;fill:currentColor;opacity:.7}
+.pd-repo-head a{color:var(--ink)}
+.pd-repo-meta{font-size:14px;opacity:.65;margin:0 0 16px}
+.pd-langbar{display:flex;height:9px;border-radius:5px;overflow:hidden;margin-bottom:10px}
+.pd-langs{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin:0 0 18px;padding:0;list-style:none}
+.pd-langs li{display:flex;align-items:center;gap:6px}.pd-langs i{width:10px;height:10px;border-radius:50%}
+.pd-files{list-style:none;margin:0;padding:0;border:1px solid rgba(31,31,31,.12);border-radius:10px;overflow:hidden;font-size:14px}
+.pd-files li{display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid rgba(31,31,31,.08)}
+.pd-files li:first-child{border-top:0}
+.pd-files svg{width:16px;height:16px;flex:none}
+.pd-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;align-items:start}
+.pd-gallery figure{margin:0}
+.pd-gallery img{width:100%;height:auto;display:block;border-radius:12px;box-shadow:0 12px 26px rgba(31,31,31,.25)}
+.pd-gallery figcaption{font-size:14px;margin-top:8px;opacity:.8}
+@media (max-width:760px){.mp-cv,.mp-contact,.pd-cols{grid-template-columns:1fr}.mp-cv-side{position:static}}
 @media (prefers-reduced-motion:reduce){.menu,.menu-btn i,.mp-wrap>*,.mp-flip>div{transition:none}}
 </style>
 
@@ -291,8 +331,18 @@ canvas.can-grab{cursor:var(--hand-grab)}
 
   <div class="mp-detail" id="mpDetail" hidden>
     <button type="button" class="mp-detail-close" id="mpDetailClose" aria-label="Back to projects">←</button>
-    <div class="mp-detail-art"><img id="mpdFront" alt=""><img id="mpdBack" alt=""></div>
-    <div class="mp-detail-text"><p class="mp-eyebrow" id="mpdEyebrow"></p><h3 id="mpdTitle"></h3><p id="mpdBody"></p><dl id="mpdFacts"></dl></div>
+    <article class="pd">
+      <p class="mp-eyebrow" id="mpdEyebrow"></p>
+      <h3 id="mpdTitle"></h3>
+      <p class="pd-desc" id="mpdBody"></p>
+      <div class="pd-links" id="pdLinks"></div>
+      <div class="pd-preview" id="pdPreview"></div>
+      <div class="pd-cols">
+        <div class="pd-cards"><img id="mpdFront" alt=""><img id="mpdBack" alt=""><dl id="mpdFacts"></dl></div>
+        <div class="pd-repo" id="pdRepo"></div>
+      </div>
+      <div class="pd-gallery" id="pdGallery"></div>
+    </article>
   </div>
 </div>
 <div class="phone-ui" id="phoneUI" role="dialog" aria-label="Message Harry" data-step="lock">
@@ -401,7 +451,7 @@ const ITEMS = [
   { id: 'fly', side: 'right', slot: 3, kind: 'biz', label: 'Fly × Tetris',
     eyebrow: 'Project card', title: 'Can a fly play Tetris?',
     body: 'A slice of the real FlyWire fruit-fly connectome, given a controller and a block-stacking game. It plays badly.',
-    facts: [['Data', 'FlyWire Consortium, CC BY 4.0']], ...art('fly'), art: 'biz-paper' },
+    facts: [['Data', 'MaleCNS connectome (Janelia), CC BY 4.0']], ...art('fly'), art: 'biz-paper' },
   { id: 'rolla', side: 'right', slot: 3, kind: 'biz', label: 'Rolla',
     eyebrow: 'Project card', title: 'Rolla',
     body: 'Swipe into work. A gamified, swipe-style recruitment app concept.',
@@ -1434,7 +1484,7 @@ function hideSheet() {}
 function updateUI() {}
 el_leave: { renderer.domElement.addEventListener('pointerleave', () => { overStage = false; hoverProp = hoverPick = null; }); }
 addEventListener('keydown', (e) => {
-  if (e.key === 'Escape' && menuBtn.getAttribute('aria-expanded') === 'true') { if (!detail.hidden) detail.hidden = true; else { setMenu(false); menuBtn.focus(); } return; }
+  if (e.key === 'Escape' && menuBtn.getAttribute('aria-expanded') === 'true') { if (!detail.hidden) closeDetail(); else { setMenu(false); menuBtn.focus(); } return; }
   if (e.key === 'Escape') { if (phoneTarget) closePhone(); else if (active) putBack(); else setOpen(false); }
   if (active && active.item.kind === 'receipt' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) receiptScrollT = Math.max(0, Math.min(1, receiptScrollT + (e.key === 'ArrowDown' ? 0.08 : -0.08)));
 });
@@ -1597,19 +1647,63 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg) => {
   b.querySelector('b').textContent = cfg.title; b.querySelector('span').textContent = cfg.body;
   b.addEventListener('click', () => openDetail(cfg)); grid.appendChild(b);
 });
+// Each project's GitHub repo and live site. Previews load only while a project page is open.
+const PROJECTS = {"stack": {"repo": "HarrisonGreener/stack", "url": "https://github.com/HarrisonGreener/stack", "live": "https://harrisongreener.github.io/stack/", "extra": [["Pitch site", "https://harrisongreener.github.io/stackPitch/"], ["Pitch repo", "https://github.com/HarrisonGreener/stackPitch"]], "langs": [["HTML", 100.0]], "updated": "2026-10-22", "commit": "README: DJ Selector naming", "files": [["docs", true], ["listing", true], ["shop", true], ["apple-touch-icon.png", false], ["index.html", false], ["README.md", false], ["stack-icon-sunset.png", false], ["stack-icon-v3.png", false], ["three.min.js", false]], "shots": [["assets/projects/stack/01.jpg", "The opening film: DJ Selector runs along a spinning record", 600, 1300], ["assets/projects/stack/02.jpg", "My Stack: your records, with search and Liked songs", 600, 1300], ["assets/projects/stack/03.jpg", "The turntable player", 600, 1300], ["assets/projects/stack/04.jpg", "Two decks and a crossfader", 600, 1300], ["assets/projects/stack/05.jpg", "DJ Selector, your robot DJ", 600, 1300], ["assets/projects/stack/06.jpg", "Family Stack, in crate view", 600, 1298], ["assets/projects/stack/07.jpg", "The Puck, the turntable accessory", 648, 648]], "desc": "Stack is a prototype app for people who collect vinyl and CDs. Add the records you own and Stack turns that shelf into the way you listen: browse your covers, drop the needle on a record, share your collection with family and friends, and take it with you on your phone.", "device": "phone"}, "folio": {"repo": "HarrisonGreener/folio", "url": "https://github.com/HarrisonGreener/folio", "live": "https://harrisongreener.github.io/folio/", "extra": [], "langs": [["TypeScript", 95.8], ["CSS", 3.2], ["JavaScript", 0.7]], "updated": "2026-10-16", "commit": "Update README.md", "files": [["docs", true], ["public", true], ["src", true], ["index.html", false], ["package.json", false], ["postcss.config.js", false], ["README.md", false], ["tailwind.config.js", false], ["tsconfig.json", false], ["vite.config.ts", false]], "shots": [["assets/projects/folio/01.jpg", "Folio on desktop, with demo shortcuts beside the phone", 800, 937], ["assets/projects/folio/02.jpg", "Home: net value across every account", 390, 844], ["assets/projects/folio/03.jpg", "Vault Spaces: one container per intention", 390, 844], ["assets/projects/folio/04.jpg", "Connecting a bank with read-only access", 390, 844], ["assets/projects/folio/05.jpg", "Scope: plan a goal", 390, 844], ["assets/projects/folio/06.jpg", "Holdings", 390, 844]], "desc": "Folio is a prototype money app for people whose savings are spread across too many places. It sits over the banks and accounts you already use, splits every payday into purpose-built Vault Spaces, and shows you in one calm view where your money is and where it's heading.", "device": "phone"}, "quotable": {"repo": "HarrisonGreener/quotable", "url": "https://github.com/HarrisonGreener/quotable", "live": "https://harrisongreener.github.io/quotable/", "extra": [["Website", "https://quotable-it.co.uk"]], "langs": [["TypeScript", 95.2], ["PLpgSQL", 3.8], ["CSS", 0.6]], "updated": "2026-11-06", "commit": "Legal pages for Quotable Ltd, security fixes", "files": [["public", true], ["scripts", true], ["src", true], ["supabase", true], ["components.json", false], ["eslint.config.js", false], ["index.html", false], ["package-lock.json", false], ["package.json", false], ["postcss.config.js", false], ["README.md", false], ["SETUP.md", false], ["tailwind.config.ts", false], ["tsconfig.app.json", false]], "shots": [["assets/projects/quotable/01.jpg", "Quotable", 1200, 630]], "desc": "AI-powered quoting, invoicing and tax for tradespeople and freelancers. Describe a job and its location, and Quotable produces a quote broken down into materials, labour and overheads, ready to tweak, save, turn into an invoice and export as a PDF. A launched product, run as my own limited company.", "device": "desktop"}, "brandomizer": {"repo": "HarrisonGreener/TheGreatBrandomizer", "url": "https://github.com/HarrisonGreener/TheGreatBrandomizer", "live": "https://harrisongreener.github.io/TheGreatBrandomizer/", "extra": [], "langs": [["HTML", 100.0]], "updated": "2026-10-17", "commit": "Download the brand card as PNG or JPEG", "files": [["screenshots", true], ["index.html", false], ["prototype-1.html", false], ["README.md", false]], "shots": [["assets/projects/brandomizer/01.jpg", "The fruit machine", 800, 500], ["assets/projects/brandomizer/02.jpg", "Eighties theme after a spin", 800, 500], ["assets/projects/brandomizer/03.jpg", "Two colour reels held", 800, 500], ["assets/projects/brandomizer/04.jpg", "A brand card in the payout tray", 800, 600], ["assets/projects/brandomizer/05.jpg", "The payout screen", 800, 500]], "desc": "A 3D vintage fruit machine that spins up brand profiles. Pull the handle and the reels land on a theme-based colour palette and a Google Fonts pairing, all checked for WCAG contrast. Hold the reels you like, spin again, and cash out a printed brand card.", "device": "desktop"}, "big-brother": {"repo": "HarrisonGreener/big-brother-inc", "url": "https://github.com/HarrisonGreener/big-brother-inc", "live": "https://harrisongreener.github.io/big-brother-inc/", "extra": [], "langs": [["HTML", 69.9], ["Python", 20.2], ["JavaScript", 9.6]], "updated": "2026-10-15", "commit": "Point the demo link at the new GitHub username", "files": [["docs", true], ["static", true], ["housemates.json", false], ["index.html", false], ["README.md", false], ["server.py", false], ["start_house.bat", false]], "shots": [["assets/projects/big-brother/01.jpg", "The Big Brother Inc. building", 1200, 750], ["assets/projects/big-brother/02.jpg", "The assembly room", 1112, 640], ["assets/projects/big-brother/03.jpg", "The Thought Police", 1200, 750], ["assets/projects/big-brother/04.jpg", "The Ministry of Love", 1112, 640], ["assets/projects/big-brother/05.jpg", "Live preview", 1200, 750], ["assets/projects/big-brother/06.jpg", "The minigame", 1200, 750]], "desc": "A pixel-art experiment in multi-agent AI, inspired by Orwell's Nineteen Eighty-Four. You play Big Brother. Beneath you is a small company of AI staff, each a language model running locally through Ollama. Every message is relayed, every draft inspected, and nothing reaches you without passing the Thought Police.", "device": "desktop"}, "fly": {"repo": "HarrisonGreener/can-a-fly-play-tetris-", "url": "https://github.com/HarrisonGreener/can-a-fly-play-tetris-", "live": "https://harrisongreener.github.io/can-a-fly-play-tetris-/", "extra": [], "langs": [["JavaScript", 98.1], ["CSS", 0.6], ["HTML", 0.6], ["Python", 0.6]], "updated": "2026-10-14", "commit": "README: drop the bunker detail", "files": [["data", true], ["docs", true], ["js", true], ["licenses", true], ["tools", true], ["index.html", false], ["LICENSE", false], ["README.md", false], ["style.css", false]], "shots": [["assets/projects/fly/01.jpg", "A real fly body pressing an arrow key", 1200, 675], ["assets/projects/fly/02.jpg", "The setup: one desk, one old computer, one fly", 1200, 675], ["assets/projects/fly/03.jpg", "Over the shoulder: the game runs live on the CRT", 1200, 675], ["assets/projects/fly/04.jpg", "On the keys", 1200, 675], ["assets/projects/fly/05.jpg", "From above", 1200, 675], ["assets/projects/fly/06.jpg", "The live brain readout", 1200, 750]], "desc": "I gave a fruit fly a keyboard. 318 real neurons from a mapped fly brain, wired to the arrow keys. A real fly body. An old box computer. Nothing is trained, so it plays badly.", "device": "desktop"}, "rolla": {"repo": "HarrisonGreener/Rolla", "url": "https://github.com/HarrisonGreener/Rolla", "live": "https://harrisongreener.github.io/Rolla/", "extra": [], "langs": [["JavaScript", 78.0], ["CSS", 20.8], ["Python", 0.6], ["HTML", 0.6]], "updated": "2026-10-30", "commit": "Fix the Rolodex loading animation", "files": [["css", true], ["js", true], ["tools", true], ["index.html", false], ["README.md", false]], "shots": [], "desc": "Swipe into work. A concept recruitment app that works like a dating app, with a social layer to rival LinkedIn. Swipe up to apply, read the full listing to unlock Apply, and send a few Standouts to jump to the top of an employer's list.", "device": "phone"}};
+const LANG_COLOURS = { JavaScript: '#f1e05a', TypeScript: '#3178c6', HTML: '#e34c26', CSS: '#563d7c', Python: '#3572A5', PLpgSQL: '#336790', Batchfile: '#C1F12E', Shell: '#89e051' };
+const ICON = {
+  repo: '<svg viewBox="0 0 16 16"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.71 1.71.75.75 0 0 1-1.07 1.05A2.5 2.5 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.71A2.5 2.5 0 0 1 4.5 9h8ZM5 12.25a.25.25 0 0 1 .25-.25h3.5a.25.25 0 0 1 .25.25v3.25a.25.25 0 0 1-.4.2l-1.45-1.09a.25.25 0 0 0-.3 0L5.4 15.7a.25.25 0 0 1-.4-.2Z"/></svg>',
+  dir: '<svg viewBox="0 0 16 16" fill="#54aeff"><path d="M1.75 1A1.75 1.75 0 0 0 0 2.75v10.5C0 14.22.78 15 1.75 15h12.5A1.75 1.75 0 0 0 16 13.25v-8.5A1.75 1.75 0 0 0 14.25 3H7.5a.25.25 0 0 1-.2-.1l-.9-1.2C6.07 1.26 5.55 1 5 1H1.75Z"/></svg>',
+  file: '<svg viewBox="0 0 16 16" fill="rgba(31,31,31,.5)"><path d="M2 1.75C2 .78 2.78 0 3.75 0h6.59c.46 0 .9.18 1.23.51l2.92 2.92c.33.33.51.77.51 1.23v9.59A1.75 1.75 0 0 1 13.25 16h-9.5A1.75 1.75 0 0 1 2 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .14.11.25.25.25h9.5a.25.25 0 0 0 .25-.25V6h-2.75A1.75 1.75 0 0 1 9 4.25V1.5Zm6.75.06V4.25c0 .14.11.25.25.25h2.69Z"/></svg>',
+};
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const fmtDay = (iso) => new Date(iso + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+let previewFit = null;
+function buildPreview(pr) {
+  const box = document.getElementById('pdPreview'); box.innerHTML = '';
+  if (!pr) return;
+  const phone = pr.device === 'phone', VW = phone ? 390 : 1280, VH = phone ? 844 : 800;
+  const shell = document.createElement('div'); shell.className = phone ? 'pd-phone' : 'pd-browser';
+  shell.innerHTML = (phone ? '' : `<div class="pd-bar"><i></i><i></i><i></i><span>${esc(pr.live.replace('https://', ''))}</span></div>`) +
+    `<div class="pd-screen"><div class="pd-hint">Loading the live site…<br>If it doesn't appear, use “Live demo” above.</div><iframe title="Live preview of ${esc(pr.repo)}" loading="lazy" referrerpolicy="no-referrer" allow="fullscreen" width="${VW}" height="${VH}"></iframe></div>`;
+  box.appendChild(shell);
+  const screen = shell.querySelector('.pd-screen'), frame = shell.querySelector('iframe');
+  previewFit = () => { const k = screen.clientWidth / VW; frame.style.transform = `scale(${k})`; };
+  frame.addEventListener('load', () => screen.classList.add('loaded'));
+  previewFit(); frame.src = pr.live;                       // the real site, scaled to fit the frame
+}
+function buildRepo(pr) {
+  const el = document.getElementById('pdRepo');
+  if (!pr) { el.innerHTML = ''; return; }
+  const bar = pr.langs.map(([l, v]) => `<span style="width:${v}%;background:${LANG_COLOURS[l] || '#999'}"></span>`).join('');
+  const legend = pr.langs.map(([l, v]) => `<li><i style="background:${LANG_COLOURS[l] || '#999'}"></i><b>${esc(l)}</b> ${v}%</li>`).join('');
+  const files = pr.files.map(([n, d]) => `<li>${d ? ICON.dir : ICON.file}${esc(n)}</li>`).join('');
+  el.innerHTML = `<div class="pd-repo-head">${ICON.repo}<a href="${pr.url}" target="_blank" rel="noopener">${esc(pr.repo)}</a></div>
+    <p class="pd-repo-meta">Public · updated ${fmtDay(pr.updated)} · “${esc(pr.commit)}”</p>
+    <div class="pd-langbar">${bar}</div><ul class="pd-langs">${legend}</ul><ul class="pd-files">${files}</ul>`;
+}
 function openDetail(cfg) {
+  const pr = PROJECTS[cfg.id];
   document.getElementById('mpdFront').src = cfg.front; document.getElementById('mpdFront').alt = `${cfg.title} card, front`;
   document.getElementById('mpdBack').src = cfg.back; document.getElementById('mpdBack').alt = `${cfg.title} card, back`;
   document.getElementById('mpdEyebrow').textContent = 'Portfolio project';
-  document.getElementById('mpdTitle').textContent = cfg.title; document.getElementById('mpdBody').textContent = cfg.body;
+  document.getElementById('mpdTitle').textContent = cfg.title;
+  document.getElementById('mpdBody').textContent = (pr && pr.desc) || cfg.body;
   const dl = document.getElementById('mpdFacts'); dl.innerHTML = '';
   for (const [k, v] of cfg.facts || []) { const dt = document.createElement('dt'), dd = document.createElement('dd'); dt.textContent = k; dd.textContent = v; dl.append(dt, dd); }
-  detail.hidden = false; detail.scrollTop = 0; document.getElementById('mpDetailClose').focus({ preventScroll: true });
+  const links = document.getElementById('pdLinks');
+  links.innerHTML = pr ? [['Live demo ↗', pr.live], ['View on GitHub ↗', pr.url], ...pr.extra.map(([t, u]) => [t + ' ↗', u])]
+    .map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join('') : '<p class="mp-note">Code coming soon.</p>';
+  document.getElementById('pdGallery').innerHTML = pr ? pr.shots.map(([src, cap, w, h]) => `<figure><img src="${src}" alt="${esc(cap)}" width="${w}" height="${h}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('') : '';
+  buildRepo(pr);
+  detail.hidden = false; detail.scrollTop = 0; buildPreview(pr);
+  document.getElementById('mpDetailClose').focus({ preventScroll: true });
 }
-document.getElementById('mpDetailClose').addEventListener('click', () => { detail.hidden = true; });
+function closeDetail() { detail.hidden = true; document.getElementById('pdPreview').innerHTML = ''; previewFit = null; }   // drop the live site when you leave
+addEventListener('resize', () => previewFit && previewFit());
+document.getElementById('mpDetailClose').addEventListener('click', closeDetail);
 function setMenu(open) {
   menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
-  if (open) { menu.hidden = false; menu.scrollTop = 0; detail.hidden = true; requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('open'))); }
+  if (open) { menu.hidden = false; menu.scrollTop = 0; closeDetail(); requestAnimationFrame(() => requestAnimationFrame(() => menu.classList.add('open'))); }
   else { menu.classList.remove('open'); setTimeout(() => { if (!menu.classList.contains('open')) menu.hidden = true; }, 1100); }
 }
 menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
