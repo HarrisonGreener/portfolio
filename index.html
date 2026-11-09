@@ -92,6 +92,11 @@ body{background:var(--table);color:var(--ink);font-family:var(--display);overflo
 .tag.down .tag-line{bottom:auto;top:0;transform-origin:top}
 .tag.down .tag-dot{bottom:auto;top:-3px}
 @media (prefers-reduced-motion:reduce){.tag,.tag-line,.tag-text{transition:none}}
+/* Harry's own hand as the cursor: pointing by default, open to grab over anything you can pick up */
+:root{--hand-point:image-set(url("assets/cursor/hand-point.png") 1x,url("assets/cursor/hand-point@2x.png") 2x) 17 1,url("assets/cursor/hand-point.png") 17 1,auto;
+  --hand-grab:image-set(url("assets/cursor/hand-grab.png") 1x,url("assets/cursor/hand-grab@2x.png") 2x) 32 13,url("assets/cursor/hand-grab.png") 32 13,grab}
+html,body,canvas{cursor:var(--hand-point)}
+canvas.can-grab{cursor:var(--hand-grab)}
 </style>
 
 <div id="stage" aria-label="Interactive 3D wallet. Use the buttons below to open it and pull out each item."></div>
@@ -1032,7 +1037,7 @@ function pick(ev) {
   return hit.object.userData.item || hit.object.userData.target || null;
 }
 let hovered = null, walletWobble = 0, hoverProp = null, hoverPick = null, overStage = false, hasOpened = false;
-function setHover(cfg) { hovered = cfg; renderer.domElement.style.cursor = cfg ? 'pointer' : ''; }
+function setHover(cfg) { hovered = cfg; renderer.domElement.classList.toggle('can-grab', !!cfg); }
 let down = null, dragging = false;
 const el = renderer.domElement;
 el.addEventListener('pointerdown', (e) => {
@@ -1042,18 +1047,18 @@ el.addEventListener('pointerdown', (e) => {
 el.addEventListener('pointermove', (e) => {
   if (dragging && down) {
     yawT += (e.clientX - down.lx) * 0.009; pitchT = Math.max(-0.9, Math.min(0.9, pitchT + (e.clientY - down.ly) * 0.009));
-    down.lx = e.clientX; down.ly = e.clientY; el.style.cursor = 'grabbing'; return;
+    down.lx = e.clientX; down.ly = e.clientY; el.classList.add('can-grab'); return;
   }
   if (active || e.pointerType === 'touch') return;
   overStage = true; const pp = pickProp(e); hoverProp = pp; hoverPick = pp ? null : pick(e);
-  if (pp) { jiggle(pp); setHover(null); renderer.domElement.style.cursor = 'default'; return; }
+  if (pp) { jiggle(pp); setHover(null); return; }
   const t = pick(e);
   if (openVal < 1) { const on = t === 'wallet' || (t && t.id); if (on && hovered !== 'wallet' && openTarget === 0 && walletWobble < 0.3) walletWobble = 1; setHover(on ? 'wallet' : null); return; }
   setHover(t && t.id ? t : null);
 });
 el.addEventListener('pointerup', (e) => {
   const moved = down ? Math.hypot(e.clientX - down.x, e.clientY - down.y) : 99;
-  const wasDragging = dragging; dragging = false; el.style.cursor = '';
+  const wasDragging = dragging; dragging = false; el.classList.toggle('can-grab', !!hovered);
   down = null;
   if (moved > 6) return;
   if (active) { if (active.p >= 2) { const t = pick(e); if (t && t === active.item) yawT += Math.PI; else putBack(); } return; }
