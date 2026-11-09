@@ -92,9 +92,9 @@ body{background:var(--table);color:var(--ink);font-family:var(--display);overflo
 .tag.down .tag-line{bottom:auto;top:0;transform-origin:top}
 .tag.down .tag-dot{bottom:auto;top:-3px}
 @media (prefers-reduced-motion:reduce){.tag,.tag-line,.tag-text{transition:none}}
-/* Harry's own hand as the cursor: pointing by default, open to grab over anything you can pick up */
-:root{--hand-point:image-set(url("assets/cursor/hand-point.png") 1x,url("assets/cursor/hand-point@2x.png") 2x) 17 1,url("assets/cursor/hand-point.png") 17 1,auto;
-  --hand-grab:image-set(url("assets/cursor/hand-grab.png") 1x,url("assets/cursor/hand-grab@2x.png") 2x) 32 13,url("assets/cursor/hand-grab.png") 32 13,grab}
+/* Harry's own hands, pixelated, as the cursor: pointing by default, grab over anything you can pick up */
+:root{--hand-point:image-set(url("assets/cursor/hand-point.png") 1x,url("assets/cursor/hand-point@2x.png") 2x) 35 2,url("assets/cursor/hand-point.png") 35 2,auto;
+  --hand-grab:image-set(url("assets/cursor/hand-grab.png") 1x,url("assets/cursor/hand-grab@2x.png") 2x) 28 22,url("assets/cursor/hand-grab.png") 28 22,grab}
 html,body,canvas{cursor:var(--hand-point)}
 canvas.can-grab{cursor:var(--hand-grab)}
 </style>
