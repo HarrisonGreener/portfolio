@@ -545,7 +545,7 @@ function monogram() {
   const S = 512, pad = 70, sc = (S - 2 * pad) / 150, mk = (blur, fill) => {
     const c = document.createElement('canvas'); c.width = c.height = S; const g = c.getContext('2d');
     g.fillStyle = fill[0]; g.fillRect(0, 0, S, S); g.filter = `blur(${blur}px)`;
-    const F = window.__G_FLIP || [-1, 1];   // the cover is seen from its underside once folded, so the letter is drawn mirrored g.translate(S / 2, S / 2); g.scale(F[0], F[1]); g.translate(-S / 2, -S / 2);
+    const F = [1, 1]; g.translate(S / 2, S / 2); g.scale(F[0], F[1]); g.translate(-S / 2, -S / 2);
     g.translate(pad + (150 - 146) / 2 * sc, pad); g.scale(sc, sc); g.fillStyle = fill[1]; g.fill(new Path2D(G_PATH), 'evenodd'); return c;
   };
   const bump = new THREE.CanvasTexture(mk(5, ['#fff', '#000']));          // pressed in: the letter sits lower than the leather
@@ -554,7 +554,7 @@ function monogram() {
     transparent: true, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 });
   const SIZE = 1.9, m = new THREE.Mesh(new THREE.PlaneGeometry(SIZE, SIZE), mat);
   m.geometry.rotateX(Math.PI / 2);                                         // face down: this side is the cover once closed
-  m.position.set(-W + 1.55, -0.004, H / 2 - 1.55);
+  m.position.set(-W + 1.55, -0.004, H / 2 - 1.55); m.rotation.y = Math.PI;   // turned so the G reads upright once the cover folds over
   return m;
 }
 leftContent.add(monogram());
@@ -613,25 +613,40 @@ for (const cfg of ITEMS) {
 
 // A fiver tucked in the money slot, peeking out above the receipt. Stylised artwork, not a reproduction of a real note.
 function noteCanvas() {
+  // In the style of the polymer fiver (aqua and turquoise, clear window, script lettering), but our own artwork:
+  // no portrait, no issuer name, no serial numbers.
   const c = document.createElement('canvas'); c.width = 1250; c.height = 650; const g = c.getContext('2d');
-  const bg = g.createLinearGradient(0, 0, 1250, 650); bg.addColorStop(0, '#3f9c94'); bg.addColorStop(0.55, '#6fb7a8'); bg.addColorStop(1, '#2f7f86');
+  const bg = g.createLinearGradient(0, 0, 1250, 0); bg.addColorStop(0, '#e4f4f4'); bg.addColorStop(0.35, '#bfe6ea'); bg.addColorStop(0.7, '#7fcad6'); bg.addColorStop(1, '#bfe6ea');
   g.fillStyle = bg; g.fillRect(0, 0, 1250, 650);
-  g.strokeStyle = 'rgba(255,255,255,.22)'; g.lineWidth = 1.4;                     // guilloche-style wave lines
-  for (let k = 0; k < 26; k++) { g.beginPath(); for (let x = 0; x <= 1250; x += 8) { const y = 40 + k * 22 + Math.sin(x / 38 + k * 0.6) * 9 + Math.sin(x / 110) * 6; x ? g.lineTo(x, y) : g.moveTo(x, y); } g.stroke(); }
-  g.strokeStyle = 'rgba(20,70,70,.35)'; for (let r = 30; r < 240; r += 12) { g.beginPath(); g.arc(930, 330, r, 0, Math.PI * 2); g.stroke(); }
-  g.fillStyle = 'rgba(255,255,255,.55)'; g.fillRect(0, 0, 1250, 70);              // pale band along the top edge
-  g.fillStyle = '#1f5c5f'; g.font = '700 58px Archivo, Arial, sans-serif'; g.textBaseline = 'middle';
-  g.fillText('£5', 40, 36); g.textAlign = 'right'; g.fillText('£5', 1210, 36);
-  g.textAlign = 'center'; g.font = '600 30px "IBM Plex Mono", monospace'; g.fillText('F I V E   P O U N D S', 625, 36);
-  g.font = '800 260px Archivo, Arial, sans-serif'; g.fillStyle = 'rgba(255,255,255,.75)'; g.fillText('5', 320, 360);
-  g.font = '500 22px "IBM Plex Mono", monospace'; g.fillStyle = 'rgba(20,60,60,.7)'; g.fillText('PROP NOTE  ·  NOT LEGAL TENDER', 625, 610);
+  g.lineWidth = 1.2;                                                             // fine wave patterning
+  for (let k = 0; k < 40; k++) { g.strokeStyle = `rgba(${k % 2 ? '40,140,150' : '255,255,255'},.28)`; g.beginPath();
+    for (let x = 300; x <= 1250; x += 6) { const y = 20 + k * 16 + Math.sin(x / 30 + k * 0.5) * 7 + Math.sin(x / 140 + k) * 10; x === 300 ? g.moveTo(x, y) : g.lineTo(x, y); } g.stroke(); }
+  g.strokeStyle = 'rgba(30,110,125,.35)'; for (let r = 20; r < 300; r += 9) { g.beginPath(); g.ellipse(560, 300, r * 1.4, r * 0.7, 0.2, 0, Math.PI * 2); g.stroke(); }
+  // Clear window with an ornate dark frame
+  g.save(); g.translate(170, 400);
+  g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.ellipse(0, 0, 105, 125, 0, 0, Math.PI * 2); g.fill();
+  g.strokeStyle = '#1d2b33'; g.lineWidth = 14; g.stroke();
+  for (const sx of [-1, 1]) { g.lineWidth = 7; g.beginPath(); g.arc(sx * 95, -128, 26, Math.PI * 0.2, Math.PI * 1.6); g.stroke(); g.beginPath(); g.arc(sx * 95, 128, 26, -Math.PI * 1.6, -Math.PI * 0.2); g.stroke(); }
+  g.fillStyle = '#d9b45a'; g.fillRect(-14, -90, 28, 170); g.beginPath(); g.moveTo(-14, -90); g.lineTo(0, -120); g.lineTo(14, -90); g.fill();   // gold foil tower
+  g.fillStyle = 'rgba(29,43,51,.6)'; g.beginPath(); g.arc(0, -40, 9, 0, Math.PI * 2); g.fill();
+  g.restore();
+  // £5 in the corner, script "Five Pounds", big outlined 5
+  const band = g.createLinearGradient(0, 0, 0, 170); band.addColorStop(0, '#5fb9c6'); band.addColorStop(1, 'rgba(95,185,198,0)');
+  g.fillStyle = band; g.fillRect(0, 0, 1250, 170);                                  // richer colour along the edge that shows
+  g.fillStyle = '#2f5d73'; g.textBaseline = 'alphabetic';
+  g.font = '700 100px Georgia, "Times New Roman", serif'; g.fillText('£5', 40, 100); g.textAlign = 'right'; g.fillText('£5', 1210, 100); g.textAlign = 'left';
+  g.font = 'italic 64px Georgia, "Times New Roman", serif'; g.fillText('Five', 420, 470); g.fillText('Pounds', 470, 540);
+  g.font = '700 420px Georgia, serif'; g.strokeStyle = 'rgba(30,90,120,.55)'; g.lineWidth = 5; g.strokeText('5', 980, 470);
+  g.font = '600 20px "IBM Plex Mono", monospace'; g.fillStyle = 'rgba(30,90,110,.8)';
+  for (let i = 0; i < 9; i++) g.fillText('5', 860 + i * 38, 610);
+  g.fillStyle = 'rgba(30,60,70,.55)'; g.font = '500 16px "IBM Plex Mono", monospace'; g.fillText('PROP  ·  NOT LEGAL TENDER', 420, 625);
   return c;
 }
 const noteGroup = (() => {
   const t = tex(noteCanvas()), w = 12.5, h = 6.5;
   const m = new THREE.Mesh(new THREE.PlaneGeometry(w, h), new THREE.MeshStandardMaterial({ map: t, roughness: 0.85, side: THREE.DoubleSide }));
   m.rotation.x = -Math.PI / 2; m.receiveShadow = true; m.castShadow = true;
-  m.position.set(0.9, PT + 0.004, -H / 2 - 1.15 + h / 2); m.rotation.z = 0.025;    // slightly askew, a touch higher than the receipt
+  m.position.set(0.9, PT + 0.004, -H / 2 - 1.75 + h / 2); m.rotation.z = 0.025;    // slightly askew, a touch higher than the receipt
   m.userData.baseZ = m.position.z; addPick(m, 'note'); wallet.add(m); return m;
 })();
 
@@ -921,7 +936,7 @@ function applyOpen() {
   clipReceipt(openVal < 0.999);
   updateSpine(theta);
   wallet.position.x = -(W / 2) * (1 - e);
-  noteGroup.position.z = noteGroup.userData.baseZ + (1 - e) * 1.4;   // keep the wallet centred on the desk, open or closed
+  noteGroup.position.z = noteGroup.userData.baseZ + (1 - e) * 2.0;   // keep the wallet centred on the desk, open or closed
 }
 function setOpen(v) {
   if (active) return;
