@@ -89,6 +89,8 @@ body{background:var(--table);color:var(--ink);font-family:var(--display);overflo
 .tag-text{position:absolute;left:0;transform:translate(-50%,4px);white-space:nowrap;transition:transform .22s cubic-bezier(.2,.7,.2,1);
   font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;font-weight:700;font-size:15px;letter-spacing:-.025em;line-height:1;color:#1F1F1F}
 .tag.on .tag-text{transform:translate(-50%,0)}
+.tag.down .tag-line{bottom:auto;top:0;transform-origin:top}
+.tag.down .tag-dot{bottom:auto;top:-3px}
 @media (prefers-reduced-motion:reduce){.tag,.tag-line,.tag-text{transition:none}}
 </style>
 
@@ -847,7 +849,7 @@ function glazeCanvas() {
 function makeMug() {
   const g = new THREE.Group();
   const gt = new THREE.CanvasTexture(glazeCanvas()); gt.colorSpace = THREE.SRGBColorSpace; gt.wrapS = gt.wrapT = THREE.RepeatWrapping; gt.anisotropy = maxAniso;
-  const glaze = new THREE.MeshPhysicalMaterial({ map: gt, roughness: 0.3, clearcoat: 0.5, clearcoatRoughness: 0.2 });
+  const glaze = new THREE.MeshPhysicalMaterial({ map: gt, roughness: 0.45, clearcoat: 0.12, clearcoatRoughness: 0.4, envMapIntensity: 0.55 });   // satin glaze
   const pts = []; const P = (x, y) => pts.push(new THREE.Vector2(x, y));
   P(0, 0.35); P(2.45, 0.35); P(2.6, 0.45);
   for (let i = 0; i <= 20; i++) P(2.7, 0.6 + i * (5.75 / 20));            // even rows so the glaze is not stretched
@@ -863,7 +865,7 @@ function makeMug() {
   handle.rotation.z = -Math.PI / 2; handle.position.set(2.6, 3.3, 0); g.add(handle);
   // Coffee surface with enough rings to ripple
   const sg = new THREE.RingGeometry(0.001, 2.42, 64, 14); sg.rotateX(-Math.PI / 2);
-  const coffee = new THREE.Mesh(sg, new THREE.MeshPhysicalMaterial({ color: 0x8a5a30, roughness: 0.12, clearcoat: 0.8 }));
+  const coffee = new THREE.Mesh(sg, new THREE.MeshStandardMaterial({ color: 0x8a5a30, roughness: 0.38, envMapIntensity: 0.25 }));
   coffee.position.y = 5.5; g.add(coffee);
   const base = sg.attributes.position.array.slice();
   const drops = [];
@@ -1084,6 +1086,18 @@ function placeTag() {
   else { const g = tagFor.item.group; anchor = _ta.copy(g.position); anchor.z += -tagFor.item.zLen / 2 + 0.25; if (tagFor.item.kind === 'licence') anchor.copy(g.position); g.parent.localToWorld(anchor); }
   const [ax, ay] = toScreen(anchor.clone());
   let top = ay - lift;
+  if (tagFor.prop) {                                        // run the line clear of the whole object, up if there's room, else down
+    let lo = Infinity, hi = -Infinity;
+    for (const c of tagFor.prop.corners) { const [, sy] = toScreen(tagFor.prop.holder.localToWorld(_tb.copy(c))); lo = Math.min(lo, sy); hi = Math.max(hi, sy); }
+    const down = lo - 22 < 40;
+    tagEl.classList.toggle('down', down);
+    const h = down ? hi + 18 - ay : ay - (lo - 18);
+    tagEl.style.transform = `translate(${ax}px, ${ay}px)`;
+    tagLineEl.style.height = h + 'px';
+    if (down) { tagTextEl.style.bottom = 'auto'; tagTextEl.style.top = (h + 8) + 'px'; } else { tagTextEl.style.top = 'auto'; tagTextEl.style.bottom = (h + 8) + 'px'; }
+    return;
+  }
+  tagEl.classList.remove('down'); tagTextEl.style.top = 'auto';
   if (tagFor.item || tagFor.note) {                         // labels for things in the wallet sit just above its top edge
     const [, ey] = toScreen(wallet.localToWorld(_tb.set(0, 0, -H / 2 - 2.2)));
     top = Math.min(top, ey - 10);
