@@ -98,6 +98,23 @@ body.item-out .brand .logo{color:var(--ink)}   /* black while an item is out ove
   --hand-grab:image-set(url("assets/cursor/hand-grab.png") 1x,url("assets/cursor/hand-grab@2x.png") 2x) 9 8,url("assets/cursor/hand-grab.png") 9 8,grab}
 html,body,canvas{cursor:var(--hand-point)}
 canvas.can-grab{cursor:var(--hand-grab)}
+.phone-ui{position:fixed;z-index:6;display:flex;flex-direction:column;overflow:hidden;background:#1F1F1F;color:#F2F2F0;
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.02em;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.phone-ui.on{opacity:1;pointer-events:auto}
+.pu-bar{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;padding:2.6em .9em .7em;border-bottom:1px solid rgba(242,242,240,.12)}
+.pu-bar b{font-size:1.05em}
+.pu-cancel{justify-self:start;background:none;border:0;padding:0;font:inherit;color:#73956F;cursor:pointer}
+.pu-form{display:flex;flex-direction:column;gap:.55em;padding:.9em;flex:1;min-height:0}
+.pu-to{padding-bottom:.4em;border-bottom:1px solid rgba(242,242,240,.12);color:rgba(242,242,240,.6)}
+.pu-to b{color:#F2F2F0}
+.pu-form input,.pu-form textarea{font:inherit;color:#F2F2F0;background:#2a2a2a;border:1px solid transparent;border-radius:.6em;padding:.6em .7em;outline:none;width:100%}
+.pu-form input:focus,.pu-form textarea:focus{border-color:#73956F}
+.pu-form textarea{flex:1;min-height:4em;resize:none}
+.pu-form ::placeholder{color:rgba(242,242,240,.4)}
+.pu-send{font:inherit;font-weight:700;color:#F2F2F0;background:#73956F;border:0;border-radius:.7em;padding:.7em;cursor:pointer}
+.pu-send:focus-visible,.pu-cancel:focus-visible{outline:2px solid #F2F2F0;outline-offset:2px}
+.pu-note{margin:0;font-size:.72em;text-align:center;color:rgba(242,242,240,.5)}
+@media (prefers-reduced-motion:reduce){.phone-ui{transition:none}}
 </style>
 
 <div id="stage" aria-label="Interactive 3D wallet. Use the buttons below to open it and pull out each item."></div>
@@ -108,6 +125,18 @@ canvas.can-grab{cursor:var(--hand-grab)}
 </header>
 
 <div class="tag" id="tag" aria-hidden="true"><span class="tag-text" id="tagText"></span><i class="tag-line" id="tagLine"></i><i class="tag-dot"></i></div>
+<div class="phone-ui" id="phoneUI" role="dialog" aria-label="Message Harry">
+  <div class="pu-bar"><button type="button" class="pu-cancel" id="puCancel">Cancel</button><b>New Message</b><span></span></div>
+  <form class="pu-form" id="puForm">
+    <div class="pu-to"><span>To:</span> <b>Harry Greener</b></div>
+    <input name="name" placeholder="Your name" autocomplete="name" required>
+    <input name="email" type="email" placeholder="Your email" autocomplete="email" required>
+    <input name="subject" placeholder="Subject">
+    <textarea name="message" placeholder="Message" required></textarea>
+    <button type="submit" class="pu-send">Send</button>
+    <p class="pu-note" id="puNote">Opens your email app with this ready to send.</p>
+  </form>
+</div>
 <div class="veil" id="veil"><p id="veilText"></p></div>
 
 <script type="importmap">
@@ -177,7 +206,7 @@ const ITEMS = [
     eyebrow: 'Project card', title: 'Rolla',
     body: 'Swipe into work. A gamified, swipe-style recruitment app concept.',
     facts: [], ...art('rolla'), art: 'biz-ink' },
-  { id: 'receipt', side: 'right', kind: 'receipt', label: 'CV',
+  { id: 'receipt', side: 'right', kind: 'receipt', label: 'Receipt',
     eyebrow: 'Note compartment', title: 'Receipt',
     body: 'An itemised receipt of skills and experience, tucked in where the cash would go.',
     facts: [], front: 'assets/receipt.png', back: null, art: 'receipt' },
@@ -975,6 +1004,107 @@ function addProp(obj, x, z, rotY, name = '') {
 addProp(makeKeys(), -14.8, 2.0, 2.16, 'Keys');
 addProp((() => { const m = makePen(); m.scale.setScalar(0.97); return m; })(), 7.2, 8.6, -0.2, 'Pen');
 addProp((() => { const m = makeMug(); m.scale.setScalar(1.45); return m; })(), 13.6, -7.6, 0.4, 'Cup of tea');
+
+/* ---------- The phone: the contact section. Click it and it comes up to you with a message form on screen. ---------- */
+const PH = { W: 7.15, L: 14.67, T: 0.74, R: 1.0, INSET: 0.2 };   // a modern 6.1-inch phone, in cm
+function phoneScreenCanvas() {
+  const CW = 600, CH = Math.round(CW * (PH.L - 2 * PH.INSET) / (PH.W - 2 * PH.INSET));
+  const c = document.createElement('canvas'); c.width = CW; c.height = CH; const g = c.getContext('2d');
+  const HV = '"Helvetica Neue", Helvetica, Arial, sans-serif';
+  const bg = g.createLinearGradient(0, 0, 0, CH); bg.addColorStop(0, '#2a2a2a'); bg.addColorStop(1, '#161616'); g.fillStyle = bg; g.fillRect(0, 0, CW, CH);
+  const glow = g.createRadialGradient(CW * 0.7, CH * 0.25, 10, CW * 0.7, CH * 0.25, CW * 0.9); glow.addColorStop(0, 'rgba(115,149,111,.28)'); glow.addColorStop(1, 'rgba(115,149,111,0)');
+  g.fillStyle = glow; g.fillRect(0, 0, CW, CH);
+  const now = new Date(), hh = String(now.getHours()).padStart(2, '0'), mm = String(now.getMinutes()).padStart(2, '0');
+  g.fillStyle = '#000'; g.beginPath(); g.roundRect(CW / 2 - 85, 22, 170, 46, 23); g.fill();                  // camera pill
+  g.fillStyle = '#F2F2F0'; g.font = `600 26px ${HV}`; g.fillText(`${hh}:${mm}`, 46, 56);
+  g.textAlign = 'center';
+  g.font = `500 30px ${HV}`; g.fillText(now.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long' }), CW / 2, 190);
+  g.font = `700 150px ${HV}`; g.fillText(`${hh}:${mm}`, CW / 2, 330);
+  // notification from Harry
+  const nx = 28, ny = 470, nw = CW - 56, nh = 150;
+  g.fillStyle = 'rgba(242,242,240,.9)'; g.beginPath(); g.roundRect(nx, ny, nw, nh, 30); g.fill();
+  g.fillStyle = '#73956F'; g.beginPath(); g.roundRect(nx + 22, ny + 26, 64, 64, 15); g.fill();
+  g.save(); g.translate(nx + 22 + 9, ny + 26 + 9); g.scale(46 / 150, 46 / 150); g.fillStyle = '#F2F2F0'; g.fill(new Path2D(G_PATH), 'evenodd'); g.restore();
+  g.textAlign = 'left'; g.fillStyle = '#1F1F1F';
+  g.font = `700 28px ${HV}`; g.fillText('Harry Greener', nx + 106, ny + 54);
+  g.font = `400 22px ${HV}`; g.fillStyle = 'rgba(31,31,31,.55)'; g.textAlign = 'right'; g.fillText('now', nx + nw - 26, ny + 54); g.textAlign = 'left';
+  g.fillStyle = '#1F1F1F'; g.font = `400 26px ${HV}`; g.fillText('Got a role in mind?', nx + 106, ny + 92); g.fillText('Tap to message me.', nx + 106, ny + 124);
+  g.textAlign = 'center'; g.fillStyle = 'rgba(242,242,240,.7)'; g.font = `500 24px ${HV}`; g.fillText('Tap to contact', CW / 2, CH - 70);
+  g.fillStyle = 'rgba(242,242,240,.85)'; g.beginPath(); g.roundRect(CW / 2 - 70, CH - 30, 140, 8, 4); g.fill();   // home bar
+  return c;
+}
+function makePhone() {
+  const g = new THREE.Group(), { W: PW, L: PL, T, R: RAD, INSET } = PH;
+  const frameMat = new THREE.MeshPhysicalMaterial({ color: 0x2c2c2e, metalness: 0.85, roughness: 0.32 });
+  const glassMat = new THREE.MeshPhysicalMaterial({ color: 0x0c0c0d, roughness: 0.08, clearcoat: 1, clearcoatRoughness: 0.05, envMapIntensity: 0.9 });
+  const bodyG = new THREE.ExtrudeGeometry(rr(-PW / 2, -PL / 2, PW / 2, PL / 2, RAD), { depth: T - 0.08, bevelEnabled: true, bevelThickness: 0.04, bevelSize: 0.03, bevelOffset: -0.03, bevelSegments: 2, curveSegments: 24 });
+  bodyG.translate(0, 0, 0.04); bodyG.rotateX(-Math.PI / 2);
+  g.add(new THREE.Mesh(bodyG, [glassMat, frameMat]));
+  const sx = PW - 2 * INSET, sy = PL - 2 * INSET;
+  const scrG = new THREE.ShapeGeometry(rr(-sx / 2, -sy / 2, sx / 2, sy / 2, RAD - INSET), 24);
+  const pos = scrG.attributes.position, uv = scrG.attributes.uv;
+  for (let k = 0; k < pos.count; k++) uv.setXY(k, (pos.getX(k) + sx / 2) / sx, (pos.getY(k) + sy / 2) / sy);
+  scrG.rotateX(-Math.PI / 2);
+  const st = tex(phoneScreenCanvas());
+  const screen = new THREE.Mesh(scrG, new THREE.MeshStandardMaterial({ map: st, emissive: 0xffffff, emissiveMap: st, emissiveIntensity: 0.85, roughness: 0.12 }));
+  screen.position.y = T + 0.003; g.add(screen);
+  for (const [x, z, len] of [[-PW / 2 - 0.02, -PL / 2 + 3.2, 0.5], [-PW / 2 - 0.02, -PL / 2 + 4.3, 0.9], [-PW / 2 - 0.02, -PL / 2 + 5.5, 0.9], [PW / 2 + 0.02, -PL / 2 + 4.6, 1.5]]) {
+    const b = new THREE.Mesh(new THREE.BoxGeometry(0.07, 0.3, len), frameMat); b.position.set(x, T / 2, z); g.add(b);   // side buttons
+  }
+  return g;
+}
+addProp(makePhone(), -2.6, -13.1, -1.35, 'Contact me');
+const phoneProp = props[props.length - 1];
+let phoneP = 0, phoneTarget = 0, phoneHome = null;
+const _pq = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1, 0, 0), Math.PI / 2);   // screen to face you, top of the phone up
+function phonePose() {
+  const D = 14, visH = 2 * D * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)), visW = visH * camera.aspect;
+  const s = Math.min(0.84 * visH / PH.L, 0.86 * visW / PH.W);
+  const q = camera.quaternion;
+  const pos = camera.position.clone().addScaledVector(new THREE.Vector3(0, 0, -1).applyQuaternion(q), D)
+    .addScaledVector(new THREE.Vector3(0, 0, -1).applyQuaternion(q.clone().multiply(_pq)), 0);
+  return { pos, quat: q.clone().multiply(_pq), scale: s };
+}
+function openPhone() {
+  if (phoneTarget === 1 || active) return;
+  if (phoneP === 0) phoneHome = { pos: phoneProp.holder.position.clone(), quat: phoneProp.holder.quaternion.clone() };
+  phoneProp.wobble = 0; phoneTarget = 1; controls.enabled = false; setHover(null);
+  document.body.classList.add('item-out');
+}
+function closePhone() {
+  if (phoneTarget === 0) return;
+  phoneTarget = 0; phoneUI.classList.remove('on'); document.activeElement && document.activeElement.blur && document.activeElement.blur();
+  document.body.classList.remove('item-out');
+}
+function posePhone() {
+  const f = ease(phoneP), t = phonePose(), h = phoneProp.holder;
+  h.position.lerpVectors(phoneHome.pos, t.pos, f); h.position.y += Math.sin(Math.PI * f) * 3;
+  h.quaternion.slerpQuaternions(phoneHome.quat, t.quat, f);
+  h.scale.setScalar(1 + (t.scale - 1) * f);
+  backdrop.material.opacity = 0.45 * f;
+}
+const phoneUI = document.getElementById('phoneUI');
+const _pc = [new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()];
+function placePhoneUI() {
+  const sx = PH.W / 2 - PH.INSET, sy = PH.L / 2 - PH.INSET, o = phoneProp.obj;
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  [[-sx, -sy], [sx, -sy], [-sx, sy], [sx, sy]].forEach(([a, b], i) => {
+    const v = o.localToWorld(_pc[i].set(a, PH.T + 0.01, b)).project(camera);
+    const X = (v.x + 1) / 2 * innerWidth, Y = (1 - v.y) / 2 * innerHeight;
+    x0 = Math.min(x0, X); x1 = Math.max(x1, X); y0 = Math.min(y0, Y); y1 = Math.max(y1, Y);
+  });
+  const w = x1 - x0;
+  Object.assign(phoneUI.style, { left: x0 + 'px', top: y0 + 'px', width: w + 'px', height: (y1 - y0) + 'px', fontSize: (w / 19) + 'px', borderRadius: (w * 0.11) + 'px' });
+}
+function phoneTick(dt) {
+  if (phoneP !== phoneTarget) {
+    phoneP = phoneTarget > phoneP ? Math.min(1, phoneP + dt / (1.1 * SPEED)) : Math.max(0, phoneP - dt / (0.9 * SPEED));
+    posePhone();
+    if (phoneP === 1) { placePhoneUI(); phoneUI.classList.add('on'); }
+    if (phoneP === 0) { const h = phoneProp.holder; h.position.copy(phoneHome.pos); h.quaternion.copy(phoneHome.quat); h.scale.setScalar(1); backdrop.material.opacity = 0; controls.enabled = true; }
+  } else if (phoneP === 1) { posePhone(); placePhoneUI(); }
+}
+
 const propMeshes = []; for (const p of props) p.obj.traverse((m) => { if (m.isMesh) propMeshes.push(m); });
 function pickProp(ev) {
   const r = renderer.domElement.getBoundingClientRect();
@@ -1100,7 +1230,7 @@ function hideSheet() {}
 function updateUI() {}
 el_leave: { renderer.domElement.addEventListener('pointerleave', () => { overStage = false; hoverProp = hoverPick = null; }); }
 addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') { if (active) putBack(); else setOpen(false); }
+  if (e.key === 'Escape') { if (phoneTarget) closePhone(); else if (active) putBack(); else setOpen(false); }
   if (active && active.item.kind === 'receipt' && (e.key === 'ArrowDown' || e.key === 'ArrowUp')) receiptScrollT = Math.max(0, Math.min(1, receiptScrollT + (e.key === 'ArrowDown' ? 0.08 : -0.08)));
 });
 addEventListener('wheel', (e) => {
@@ -1132,7 +1262,7 @@ el.addEventListener('pointermove', (e) => {
     else { yawT += (e.clientX - down.lx) * 0.009; pitchT = Math.max(-0.9, Math.min(0.9, pitchT + (e.clientY - down.ly) * 0.009)); }
     down.lx = e.clientX; down.ly = e.clientY; el.classList.add('can-grab'); return;
   }
-  if (active || e.pointerType === 'touch') return;
+  if (active || phoneTarget || phoneP > 0 || e.pointerType === 'touch') return;
   overStage = true; const pp = pickProp(e); hoverProp = pp; hoverPick = pp ? null : pick(e);
   if (pp) { jiggle(pp); setHover(null); return; }
   const t = pick(e);
@@ -1140,10 +1270,12 @@ el.addEventListener('pointermove', (e) => {
   setHover(t && t.id ? t : null);
 });
 el.addEventListener('pointerup', (e) => {
+  if (phoneTarget === 1 || phoneP > 0) { closePhone(); down = null; return; }   // click off the phone to put it down
   const moved = down ? Math.hypot(e.clientX - down.x, e.clientY - down.y) : 99;
   const wasDragging = dragging; dragging = false; el.classList.toggle('can-grab', !!hovered);
   down = null;
   if (moved > 6) return;
+  if (!active) { const pp = pickProp(e); if (pp && pp === phoneProp) { openPhone(); return; } }
   if (active) { if (active.p >= 2) { const t = pick(e); if (t && t === active.item) { if (t.kind !== 'receipt') yawT += Math.PI; } else putBack(); } return; }
   const t = pick(e);
   if (!t) { if (openTarget === 1) setOpen(false); return; }  // click the table to close
@@ -1155,8 +1287,9 @@ el.addEventListener('pointerup', (e) => {
 const tagEl = document.getElementById('tag'), tagTextEl = document.getElementById('tagText'), tagLineEl = document.getElementById('tagLine');
 let tagFor = null;                                        // what the label is attached to right now
 const _ta = new THREE.Vector3(), _tb = new THREE.Vector3();
-const PROP_ANCHOR = { Keys: [0, 0.6, 0], Pen: [0, 1.2, 0], 'Cup of tea': [-3.9, 6.5, 1.2] };   // a point on each object for its label
+const PROP_ANCHOR = { 'Contact me': [0, 0.8, 0], Keys: [0, 0.6, 0], Pen: [0, 1.2, 0], 'Cup of tea': [-3.9, 6.5, 1.2] };   // a point on each object for its label
 function tagTarget(e) {
+  if (phoneTarget || phoneP > 0) return null;
   if (e.pointerType === 'touch' || active || dragging) return null;
   if (hoverProp) return { name: hoverProp.name, prop: hoverProp };
   if (openTarget === 0 || openVal < 1) return hoverPick ? { name: 'Wallet', wallet: true } : null;
@@ -1206,6 +1339,17 @@ el.addEventListener('pointermove', (e) => {
 el.addEventListener('pointerleave', () => { tagFor = null; tagEl.classList.remove('on'); });
 el.addEventListener('pointerdown', () => { tagFor = null; tagEl.classList.remove('on'); });
 
+/* ---------- Contact form: hands the message to the visitor's email app ---------- */
+document.getElementById('puCancel').addEventListener('click', closePhone);
+document.getElementById('puForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = new FormData(e.target), name = f.get('name').trim(), from = f.get('email').trim();
+  const subject = f.get('subject').trim() || `Hello from ${name}`;
+  const body = `${f.get('message').trim()}\n\n${name}\n${from}`;
+  location.href = `mailto:harrygreener@hotmail.co.uk?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+  document.getElementById('puNote').textContent = 'Your email app should now be open with the message ready. Just press send.';
+});
+
 /* ---------- Loop ---------- */
 const clock = new THREE.Clock();
 function frame() {
@@ -1237,6 +1381,7 @@ function frame() {
     if (active.dir === -1 && active.p === 0) finishReturn();
   }
   wobbleProps(dt);
+  phoneTick(dt);
   placeTag();
   { const tgt = hoverPick === 'note' && openTarget === 1 && !active ? 1 : 0; if (Math.abs(tgt - noteHover) > 0.001) { noteHover += (tgt - noteHover) * Math.min(1, dt * 10); applyOpen(); } }
   // The closed wallet gives the same little shake as everything else on the desk when you first point at it
@@ -1268,7 +1413,7 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
-window.__wallet = { holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
+window.__wallet = { phoneNow: () => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); phoneUI.classList.add('on'); }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
