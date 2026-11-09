@@ -133,8 +133,8 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 
 /* ---------- Real-world sizes, in centimetres ---------- */
-const W = 9.4;        // one panel's width (x)
-const H = 12.4;       // wallet height (z, top of wallet = -z)
+const W = 9.3;        // one panel's width (x)
+const H = 12.5;       // wallet height (z, top of wallet = -z)
 const PT = 0.14;      // panel thickness (two glued layers of thin leather)
 const RAD_OUT = 0.9, RAD_SPINE = 0.12; // corner radii: rounded outer corners, near-square at the fold
 const CARD = { w: 8.56, h: 5.4, t: 0.076 };   // ID-1 / CR80 card
@@ -152,31 +152,31 @@ const ITEMS = [
     eyebrow: 'Project card', title: 'Stack',
     body: 'Own it. Play it everywhere. An app of mine, with its own brand and mascot.',
     facts: [], ...art('stack'), art: 'biz-paper' },
-  { id: 'folio', side: 'right', slot: 0, kind: 'biz', label: 'Folio',
+  { id: 'folio', side: 'right', slot: 1, kind: 'biz', label: 'Folio',
     eyebrow: 'Project card', title: 'Folio',
     body: 'A clear lens for your money. A concept digital bank for investing, with a full pitch deck and brand identity guide.',
     facts: [['Status', 'Concept and prototype']], ...art('folio'), art: 'biz-ink' },
-  { id: 'quotable', side: 'right', slot: 1, kind: 'biz', label: 'Quotable',
+  { id: 'quotable', side: 'right', slot: 3, kind: 'biz', label: 'Quotable',
     eyebrow: 'Project card', title: 'Quotable',
     body: 'Quoting, invoicing and scheduling built for tradespeople. A launched product, run as my own limited company.',
     facts: [['Site', 'quotable-it.co.uk'], ['Status', 'Live']], ...art('quotable'), art: 'biz-paper' },
-  { id: 'pat', side: 'right', slot: 1, kind: 'biz', label: 'Pat',
+  { id: 'pat', side: 'right', slot: 2, kind: 'biz', label: 'Pat',
     eyebrow: 'Project card', title: 'Pat',
     body: 'Smart networking. A smart business card company concept, with marketing material and a working simulator website.',
     facts: [], ...art('pat'), art: 'biz-paper' },
-  { id: 'brandomizer', side: 'right', slot: 2, kind: 'biz', label: 'Brandomizer',
+  { id: 'brandomizer', side: 'right', slot: 4, kind: 'biz', label: 'Brandomizer',
     eyebrow: 'Project card', title: 'The Great Brandomizer',
     body: 'A slot machine for designers. Pull the handle to spin up a colour palette and font pairing for a brand, and hold the reels you like.',
     facts: [], ...art('brandomizer'), art: 'biz-ink' },
-  { id: 'big-brother', side: 'right', slot: 2, kind: 'biz', label: 'Big Brother Inc.',
+  { id: 'big-brother', side: 'right', slot: 5, kind: 'biz', label: 'Big Brother Inc.',
     eyebrow: 'Project card', title: 'Big Brother Inc.',
     body: 'A locally hosted team of AI agents, themed on Orwell’s 1984, with me as Big Brother.',
     facts: [], ...art('big-brother'), art: 'biz-ink' },
-  { id: 'fly', side: 'right', slot: 3, kind: 'biz', label: 'Fly × Tetris',
+  { id: 'fly', side: 'right', slot: 6, kind: 'biz', label: 'Fly × Tetris',
     eyebrow: 'Project card', title: 'Can a fly play Tetris?',
     body: 'A slice of the real FlyWire fruit-fly connectome, given a controller and a block-stacking game. It plays badly.',
     facts: [['Data', 'FlyWire Consortium, CC BY 4.0']], ...art('fly'), art: 'biz-paper' },
-  { id: 'rolla', side: 'right', slot: 3, kind: 'biz', label: 'Rolla',
+  { id: 'rolla', side: 'right', slot: 'side', kind: 'biz', label: 'Rolla',
     eyebrow: 'Project card', title: 'Rolla',
     body: 'Swipe into work. A gamified, swipe-style recruitment app concept.',
     facts: [], ...art('rolla'), art: 'biz-ink' },
@@ -327,7 +327,7 @@ function stitches(shape, yAt, flip = false) {
   for (let i = 0; i + 1 < pts.length && k < count; i += 2, k++) {
     const p = pts[i], q = pts[i + 1];
     const z = -(p.y + q.y) / 2;
-    d.position.set((p.x + q.x) / 2, yAt(z) + (flip ? -0.003 : 0.003), z);
+    d.position.set((p.x + q.x) / 2, yAt((p.x + q.x) / 2, z) + (flip ? -0.003 : 0.003), z);
     d.rotation.set(0, Math.atan2(q.y - p.y, q.x - p.x), 0); d.updateMatrix(); mesh.setMatrixAt(k, d.matrix);
   }
   mesh.count = k; mesh.castShadow = false; mesh.receiveShadow = true; return mesh;
@@ -348,22 +348,19 @@ function placeholderTag(g, w, h, dark) {
 }
 function drawArt(kind, side) {
   if (kind === 'receipt') {
-    const [c, g] = artCanvas(720, 1340);
-    g.fillStyle = '#fbfaf6'; g.fillRect(0, 0, 720, 1340);
-    if (side === 'back') { g.fillStyle = 'rgba(0,0,0,.05)'; for (let y = 0; y < 1340; y += 6) g.fillRect(0, y, 720, 1); return c; }
-    g.fillStyle = '#26231f'; g.textAlign = 'center';
-    g.font = `600 40px ${F.m}`; g.fillText('HARRISON GREENER', 360, 110);
-    g.font = `400 26px ${F.m}`; g.fillText('DESIGN · EST. MANCHESTER', 360, 154);
-    const rule = (y) => { g.setLineDash([10, 8]); g.strokeStyle = '#26231f'; g.lineWidth = 2; g.beginPath(); g.moveTo(50, y); g.lineTo(670, y); g.stroke(); g.setLineDash([]); };
-    rule(200);
-    g.textAlign = 'left'; g.font = `400 28px ${F.m}`;
-    const rows = [['ITEM', 'QTY'], ['Graphic design', '1'], ['Web design', '1'], ['UX / UI design', '1'], ['Agency campaigns', '1'], ['Physical making', '1']];
-    rows.forEach(([a, b], i) => { const y = 260 + i * 56; g.font = `${i ? 400 : 600} 28px ${F.m}`; g.fillText(a, 60, y); g.textAlign = 'right'; g.fillText(b, 660, y); g.textAlign = 'left'; });
-    rule(610);
-    g.font = `600 32px ${F.m}`; g.fillText('TOTAL', 60, 670); g.textAlign = 'right'; g.fillText('HIRE ME', 660, 670);
-    g.textAlign = 'center'; g.font = `400 24px ${F.m}`; g.fillText('THANK YOU FOR VISITING', 360, 760);
-    for (let i = 0; i < 46; i++) { const x = 120 + i * 10.5; g.fillRect(x, 820, (i % 3 === 0 ? 6 : 3), 110); }
-    g.font = `500 22px ${F.m}`; g.fillStyle = 'rgba(0,0,0,.38)'; g.fillText('PLACEHOLDER ARTWORK', 360, 1270);
+    const [c, g] = artCanvas(1560, 680);
+    g.fillStyle = '#fbfaf6'; g.fillRect(0, 0, 1560, 680);
+    if (side === 'back') { g.fillStyle = 'rgba(0,0,0,.05)'; for (let y = 0; y < 680; y += 6) g.fillRect(0, y, 1560, 1); return c; }
+    g.fillStyle = '#26231f';
+    g.font = `600 44px ${F.m}`; g.fillText('HARRISON GREENER', 70, 110);
+    g.font = `400 26px ${F.m}`; g.fillText('DESIGN \u00b7 MANCHESTER / BRIGHTON', 72, 154);
+    g.setLineDash([10, 8]); g.strokeStyle = '#26231f'; g.lineWidth = 2; g.beginPath(); g.moveTo(70, 196); g.lineTo(1490, 196); g.stroke(); g.setLineDash([]);
+    const rows = [['Graphic design', '1'], ['Web design', '1'], ['UX / UI design', '1'], ['Agency campaigns', '1'], ['Physical making', '1']];
+    g.font = `400 28px ${F.m}`;
+    rows.forEach(([a, b], i) => { const y = 256 + i * 52; g.fillText(a, 70, y); g.textAlign = 'right'; g.fillText(b, 760, y); g.textAlign = 'left'; });
+    g.font = `600 34px ${F.m}`; g.fillText('TOTAL', 900, 300); g.textAlign = 'right'; g.fillText('HIRE ME', 1490, 300); g.textAlign = 'left';
+    for (let i = 0; i < 52; i++) g.fillRect(900 + i * 11.4, 380, i % 3 === 0 ? 6 : 3, 120);
+    g.font = `500 22px ${F.m}`; g.fillStyle = 'rgba(0,0,0,.38)'; g.fillText('PLACEHOLDER ARTWORK', 900, 600);
     return c;
   }
   const [c, g] = artCanvas(1024, 646);
@@ -441,74 +438,84 @@ function addPick(mesh, target) { mesh.userData.target = target; pickables.push(m
 const R_RIGHT = [RAD_SPINE, RAD_OUT, RAD_OUT, RAD_SPINE];
 const rightShape = rr(0, -H / 2, W, H / 2, R_RIGHT);
 const rightPanel = slab(rightShape, PT, 0); wallet.add(rightPanel); addPick(rightPanel, 'wallet');
-const rightStitch = rr(0.22, -H / 2 + 0.22, W - 0.22, H / 2 - 0.22, [0.04, RAD_OUT - 0.2, RAD_OUT - 0.2, 0.04]);
-wallet.add(stitches(rightStitch, () => 0, true));
+const linePath = (x0, z0, x1, z1) => { const p = new THREE.Path(); p.moveTo(x0, -z0); p.lineTo(x1, -z1); return p; };
 
-// Real sizes: the licence is PVC (CR80, matching its artwork's ratio), project cards are 85 × 55 mm card stock.
+// Real sizes. Cards stand portrait in their slots (artwork turned on its side), as in the product photo.
 for (const cfg of ITEMS) {
-  if (cfg.kind === 'receipt') Object.assign(cfg, { w: 7.2, h: 13.4, t: 0.014 });
+  if (cfg.kind === 'receipt') Object.assign(cfg, { w: 15.6, h: 6.8, t: 0.014 });
   else if (cfg.kind === 'biz') Object.assign(cfg, { w: 8.5, h: 5.5, t: 0.045 });
   else Object.assign(cfg, { w: CARD.w, h: CARD.w * 650 / 1004, t: CARD.t });
-  cfg.rotated = cfg.id === 'licence'; // the ID window holds the licence portrait, as in the real wallet
+  cfg.rotated = cfg.kind !== 'receipt';
   cfg.zLen = cfg.rotated ? cfg.w : cfg.h;
+  cfg.xLen = cfg.rotated ? cfg.h : cfg.w;
 }
 
-// Right inner layers, bottom to top: receipt, lining, then four stepped pockets holding two cards each.
+// Right side, bottom to top: money slot (runs the full width), lining, the hidden side-slot card,
+// the slot backing, seven stepped cards, then the front pocket. Every layer is flush with the edge.
+const RIGHT_STRIP = 1.0; // strip by the fold where the side-slot card peeks out
 let y = PT + 0.002;
-const receiptCfg = ITEMS.find((i) => i.id === 'receipt');
-receiptCfg.home = { parent: 'right', y: y + 0.007, x: W / 2 - 0.25, zTop: -H / 2 - 1.5 };
+const receiptCfg = ITEMS.find((i) => i.kind === 'receipt');
+receiptCfg.home = { parent: 'right', y: y + 0.007, x: 0, zTop: -H / 2 - 0.8 };
 y += 0.016;
-// Every inner layer shares the panel's outline, so the edges sit flush like glued, sanded leather.
-const LAYER = 0.03;
-const lining = slab(rr(0, -H / 2, W, H / 2, R_RIGHT), LAYER, y); wallet.add(lining); addPick(lining, 'wallet');
+const lining = slab(rightShape, LAYER, y); wallet.add(lining); addPick(lining, 'wallet');
 y += LAYER + 0.002;
 const liningTop = y;
-const pocketTops = [];
-const pocketEdges = [-H / 2 + 2.2, -H / 2 + 3.2, -H / 2 + 4.2, -H / 2 + 5.2];
-pocketEdges.forEach((edge, k) => {
-  const inSlot = ITEMS.filter((i) => i.side === 'right' && i.slot === k);
-  inSlot.forEach((cfg, j) => {
-    // The second card in a slot sits a little lower and to the right, so both top edges show.
-    cfg.home = { parent: 'right', y: y + cfg.t / 2, x: W / 2 + (j ? 0.14 : -0.14), zTop: edge - 1.35 + j * 0.5 };
-    y += cfg.t + 0.002;
-  });
-  const pocket = slab(rr(0, -H / 2, W, -edge, [RAD_SPINE, RAD_OUT, 0.04, 0.04]), LAYER, y);
-  wallet.add(pocket); addPick(pocket, inSlot[inSlot.length - 1]);
-  pocketTops.push([edge, y + LAYER]);
-  y += LAYER + 0.003;
+const sideCfg = ITEMS.find((i) => i.slot === 'side');
+sideCfg.home = { parent: 'right', y: y + sideCfg.t / 2, x: 0.35 + sideCfg.xLen / 2, zTop: -4.6 };
+y += sideCfg.t + 0.002;
+const backing = slab(rr(RIGHT_STRIP, -H / 2, W, H / 2, [0.06, RAD_OUT, RAD_OUT, 0.06]), LAYER, y);
+wallet.add(backing); addPick(backing, 'wallet');
+y += LAYER + 0.002;
+const backingTop = y;
+const stagger = ITEMS.filter((i) => typeof i.slot === 'number').sort((a, b) => a.slot - b.slot);
+stagger.forEach((cfg, k) => {
+  cfg.home = { parent: 'right', y: y + cfg.t / 2, x: 5.35, zTop: -5.85 + k * 0.52 };
+  y += cfg.t + 0.002;
 });
+const POCKET_EDGE = -1.9;
+const pocket = slab(rr(RIGHT_STRIP, -H / 2, W, -POCKET_EDGE, [0.06, RAD_OUT, 0.04, 0.04]), LAYER, y);
+wallet.add(pocket); addPick(pocket, stagger[stagger.length - 1]);
+const pocketTop = y + LAYER;
+y += LAYER + 0.003;
 const rightStack = y - PT;
-wallet.add(stitches(rightStitch, (z) => { let top = liningTop; for (const [edge, t] of pocketTops) if (z >= edge) top = t; return top; }));
+const rightTopAt = (x, z) => (x < RIGHT_STRIP + 0.05 ? liningTop : z >= POCKET_EDGE ? pocketTop : backingTop);
+const rightStitch = rr(0.22, -H / 2 + 0.22, W - 0.22, H / 2 - 0.22, [0.04, RAD_OUT - 0.2, RAD_OUT - 0.2, 0.04]);
+wallet.add(
+  stitches(rightStitch, rightTopAt), stitches(rightStitch, () => 0, true),
+  stitches(linePath(RIGHT_STRIP + 0.2, -H / 2 + 0.3, RIGHT_STRIP + 0.2, POCKET_EDGE), () => backingTop),
+  stitches(linePath(RIGHT_STRIP + 0.2, POCKET_EDGE + 0.15, RIGHT_STRIP + 0.2, H / 2 - 0.3), () => pocketTop),
+);
 
-// Left panel on a hinge at the spine. Pivot height lets it fold over both stacks when closed.
+// Left panel on a hinge at the fold. Pivot height lets it close flat over both stacks.
 const licenceCfg = ITEMS.find((i) => i.id === 'licence');
-const leftStack = 0.002 + CARD.t + 0.003 + LAYER;
+const LEFT_STRIP = 1.2;
+const leftStack = 0.016 + LAYER + 0.002 + CARD.t + 0.003 + LAYER;
 const HP = PT + (rightStack + leftStack) / 2 + 0.015;
 const leftPivot = new THREE.Group(); leftPivot.position.set(0, HP, 0); wallet.add(leftPivot);
 const leftContent = new THREE.Group(); leftContent.position.set(0, -HP, 0); leftPivot.add(leftContent);
 const R_LEFT = [RAD_OUT, RAD_SPINE, RAD_SPINE, RAD_OUT];
 const leftShape = rr(-W, -H / 2, 0, H / 2, R_LEFT);
 const leftPanel = slab(leftShape, PT, 0); leftContent.add(leftPanel); addPick(leftPanel, 'wallet');
-const leftStitch = rr(-W + 0.22, -H / 2 + 0.22, -0.22, H / 2 - 0.22, [RAD_OUT - 0.2, 0.04, 0.04, RAD_OUT - 0.2]);
+const lLiningY = PT + 0.018;
+const leftLining = slab(leftShape, LAYER, lLiningY); leftContent.add(leftLining); addPick(leftLining, 'wallet');
+const lLiningTop = lLiningY + LAYER + 0.002;
 
-// ID window: a full-size front layer with a portrait cut-out, a clear pane, and the licence behind it on its side.
-const winZ = 0.6;
-licenceCfg.home = { parent: 'left', y: PT + 0.002 + CARD.t / 2, x: -W / 2, zTop: winZ - licenceCfg.zLen / 2 };
-const frameShape = rr(-W, -H / 2, 0, H / 2, R_LEFT);
-frameShape.holes.push(rr(-W / 2 - 2.45, -(winZ + 3.95), -W / 2 + 2.45, -(winZ - 3.95), 0.28, THREE.Path));
-const frameY = PT + 0.002 + CARD.t + 0.003;
+// ID window: the licence stands portrait and fills the window, like the card in the photo.
+const winX = -5.15, winZ = 0.15, holeW = 5.1, holeL = 8.3;
+licenceCfg.home = { parent: 'left', y: lLiningTop + CARD.t / 2, x: winX, zTop: winZ - licenceCfg.zLen / 2 };
+const frameY = lLiningTop + CARD.t + 0.003;
+const frameShape = rr(-W, -H / 2, -LEFT_STRIP, H / 2, [RAD_OUT, 0.06, 0.06, RAD_OUT]);
+frameShape.holes.push(rr(winX - holeW / 2, -(winZ + holeL / 2), winX + holeW / 2, -(winZ - holeL / 2), 0.3, THREE.Path));
 const winFrame = slab(frameShape, LAYER, frameY); leftContent.add(winFrame); addPick(winFrame, licenceCfg);
-leftContent.add(stitches(leftStitch, () => frameY + LAYER), stitches(leftStitch, () => 0, true));
-const pane = new THREE.Mesh(new THREE.PlaneGeometry(4.9, 7.9), paneMat);
-pane.rotation.x = -Math.PI / 2; pane.position.set(-W / 2, frameY + LAYER * 0.5, winZ); pane.renderOrder = 2; leftContent.add(pane);
-
-// Subtle embossed monogram on the outside cover.
-{
-  const [c, g] = artCanvas(512, 256);
-  g.fillStyle = 'rgba(255,255,255,.16)'; g.font = `600 120px ${F.m}`; g.textAlign = 'center'; g.fillText('H·G', 256, 168);
-  const mono = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 1.3), new THREE.MeshStandardMaterial({ map: tex(c), transparent: true, roughness: 0.55, depthWrite: false, polygonOffset: true, polygonOffsetFactor: -2 }));
-  mono.rotation.set(Math.PI / 2, 0, Math.PI); mono.position.set(-W / 2, -0.003, 3.9); leftContent.add(mono);
-}
+const frameTop = frameY + LAYER;
+const leftStitch = rr(-W + 0.22, -H / 2 + 0.22, -0.22, H / 2 - 0.22, [RAD_OUT - 0.2, 0.04, 0.04, RAD_OUT - 0.2]);
+leftContent.add(
+  stitches(leftStitch, (x) => (x < -LEFT_STRIP - 0.05 ? frameTop : lLiningTop)), stitches(leftStitch, () => 0, true),
+  stitches(linePath(-LEFT_STRIP - 0.2, -H / 2 + 0.3, -LEFT_STRIP - 0.2, H / 2 - 0.3), () => frameTop),
+  stitches(rr(winX - holeW / 2 - 0.24, -(winZ + holeL / 2 + 0.24), winX + holeW / 2 + 0.24, -(winZ - holeL / 2 - 0.24), 0.5), () => frameTop),
+);
+const pane = new THREE.Mesh(new THREE.PlaneGeometry(holeW, holeL), paneMat);
+pane.rotation.x = -Math.PI / 2; pane.position.set(winX, frameY + LAYER * 0.5, winZ); pane.renderOrder = 2; leftContent.add(pane);
 
 // Spine: an arc of leather that appears as the wallet folds.
 let spine = null;
@@ -531,7 +538,7 @@ for (const cfg of ITEMS) {
   const g = makeItemMesh(cfg);
   const h = cfg.home;
   const parent = h.parent === 'left' ? leftContent : wallet;
-  if (cfg.rotated) g.rotation.set(-Math.PI / 2, 0, -Math.PI / 2); // artwork top faces the fold, like the photo
+  if (cfg.rotated) g.rotation.set(-Math.PI / 2, 0, -Math.PI / 2); // artwork turned on its side, as in the photo
   g.position.set(h.x, h.y, h.zTop + cfg.zLen / 2);
   cfg.group = g; cfg.parent = parent;
   cfg.homePos = g.position.clone(); cfg.homeQuat = g.quaternion.clone();
@@ -539,6 +546,15 @@ for (const cfg of ITEMS) {
   parent.add(g);
   g.traverse((m) => { if (m.isMesh) pickables.push(m); });
   loadArt(cfg);
+}
+
+// The money slot runs through the fold. While the wallet folds, hide the half that would pass through the cover.
+renderer.localClippingEnabled = true;
+const foldClip = [new THREE.Plane(new THREE.Vector3(1, 0, 0), 0)];
+let receiptClipped = null;
+function clipReceipt(on) {
+  if (receiptClipped === on) return; receiptClipped = on;
+  receiptCfg.group.traverse((m) => { if (m.isMesh) { m.material.clippingPlanes = on ? foldClip : null; m.material.clipShadows = true; m.material.needsUpdate = true; } });
 }
 
 /* ---------- Backdrop that dims the table while an item is out ---------- */
@@ -557,6 +573,7 @@ function applyOpen() {
   const e = ease(openVal);
   const theta = -Math.PI * (1 - e);
   leftPivot.rotation.z = theta;
+  clipReceipt(openVal < 0.999);
   updateSpine(theta);
   const tgt = closedTarget.clone().lerp(openTargetV, e);
   const delta = tgt.sub(controls.target);
