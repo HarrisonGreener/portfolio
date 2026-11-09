@@ -489,8 +489,8 @@ for (const cfg of ITEMS) {
 const STRIP = 0.96;                                   // width of the centre strip on each side of the fold
 const SIDE_ID = null;                                // the slot by the fold is kept free for a future card (it would slide out to the left)
 const RIGHT_IDS = ['stack', 'folio', 'quotable', 'pat', 'brandomizer', 'big-brother', 'fly', 'rolla'];
-const CARD_STEP = 0.32, CARD_TOPS = RIGHT_IDS.map((_, k) => -5.13 + k * CARD_STEP);
-const CARD_LIFT = 0.008; // cards overlap almost flat, so the pocket keeps one slim thickness however full it is
+const CARD_STEP = 0.28, CARD_TOPS = RIGHT_IDS.map((_, k) => -5.13 + k * CARD_STEP);
+const CARD_LIFT = 0.012; // cards overlap almost flat, so the pocket keeps one slim thickness however full it is
 const POCKET_EDGE = -1.83;
 
 let y = PT + 0.002;
@@ -509,11 +509,11 @@ y += LAYER + 0.002;
 const backingTop = y;
 RIGHT_IDS.forEach((id, k) => {
   const cfg = ITEMS.find((i) => i.id === id);
-  cfg.home = { parent: 'right', y: y + cfg.t / 2 + k * CARD_LIFT, x: 4.4, zTop: CARD_TOPS[k] };
+  cfg.home = { parent: 'right', y: y + 0.006 + cfg.t / 2 + k * CARD_LIFT, x: 4.4, zTop: CARD_TOPS[k] };   // clear air above the backing so nothing shimmers
 });
-y += 0.02 + RIGHT_IDS.length * CARD_LIFT + 0.004;
+y += 0.006 + 0.02 + RIGHT_IDS.length * CARD_LIFT + 0.011 + 0.008;   // room for the hover lift under the pocket front
 const pocket = slab(rr(STRIP, -H / 2, W, -POCKET_EDGE, [0.06, RAD_OUT, 0, 0]), LAYER, y);
-wallet.add(pocket); addPick(pocket, ITEMS.find((i) => i.id === RIGHT_IDS[RIGHT_IDS.length - 1]));
+wallet.add(pocket); addPick(pocket, 'wallet');
 const pocketTop = y + LAYER;
 y += LAYER + 0.003;
 const rightStack = y - PT;
