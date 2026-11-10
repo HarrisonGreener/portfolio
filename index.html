@@ -175,19 +175,19 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .menu-btn:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
 .menu{position:fixed;inset:0;z-index:8;background:var(--green);color:var(--ink);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
   font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.025em;
-  transform:translateY(100%);border-radius:36px 36px 0 0;transition:transform 1s cubic-bezier(.7,0,.15,1) .12s,border-radius 1s cubic-bezier(.7,0,.15,1) .12s}
+  transform:translateY(100%);border-radius:40px 40px 0 0;transition:transform 1.25s cubic-bezier(.65,0,.2,1) .14s,border-radius 1.25s cubic-bezier(.65,0,.2,1) .14s}
 .menu.open{transform:none;border-radius:0}
 .menu.closing{transition-delay:0s}
-.menu-under{position:fixed;inset:0;z-index:7;background:var(--ink);transform:translateY(100%);border-radius:36px 36px 0 0;pointer-events:none;transition:transform 1s cubic-bezier(.7,0,.15,1),border-radius 1s cubic-bezier(.7,0,.15,1)}
+.menu-under{position:fixed;inset:0;z-index:7;background:var(--ink);transform:translateY(100%);border-radius:36px 36px 0 0;pointer-events:none;transition:transform 1.25s cubic-bezier(.65,0,.2,1),border-radius 1.25s cubic-bezier(.65,0,.2,1)}
 .menu-under.open{transform:none;border-radius:0}
 .menu-under.closing{transition-delay:.14s}
 /* Everything on the page loads in once the sheet has landed, and again as you scroll to it */
-.menu [data-rv]{transition:opacity .7s ease,transform 1s cubic-bezier(.2,.75,.15,1),clip-path 1s cubic-bezier(.7,0,.15,1),color .2s ease;transition-delay:var(--d,0s)}
-.menu [data-rv=up]{opacity:0;transform:translateY(28px)}
+.menu [data-rv]{transition:opacity 1s ease,transform 1.3s cubic-bezier(.16,.8,.2,1),clip-path 1.3s cubic-bezier(.6,0,.2,1),color .2s ease;transition-delay:var(--d,0s)}
+.menu [data-rv=up]{opacity:0;transform:translateY(36px)}
 .menu [data-rv=rise]{clip-path:inset(-60% -30% 100% -30%);transform:translateY(60%)}
 .menu [data-rv=wipe]{clip-path:inset(-60% 100% -60% -30%)}
-.menu [data-rv=tile]{clip-path:inset(100% 0 0 0)}
-.menu [data-rv=tile]>*{transition:transform 1.3s cubic-bezier(.2,.75,.15,1) var(--d,0s),opacity .8s ease var(--d,0s)}
+.menu [data-rv=tile]{clip-path:inset(100% 0 0 0);opacity:0;transform:translateY(60px)}
+.menu [data-rv=tile]>*{transition:transform 1.6s cubic-bezier(.16,.8,.2,1) calc(var(--d,0s) + .15s),opacity 1s ease calc(var(--d,0s) + .2s)}
 .menu [data-rv=tile]:not(.in)>img{transform:scale(1.18)}
 .menu [data-rv=tile]:not(.in)>img.logo{transform:translate(-50%,-30%) scale(.9);opacity:0}
 .menu [data-rv=tile]:not(.in)>.fly-t{opacity:0;transform:translateY(20px)}
@@ -195,6 +195,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .menu [data-rv].in{opacity:1;transform:none;clip-path:inset(-60% -30% -60% -30%)}
 .menu .mp-receipt[data-rv].in{transform:rotate(-1.5deg)}
 .menu [data-rv=tile].in{clip-path:inset(0)}
+.menu [data-rv=tile].in:hover>*{transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .4s ease}
 .mp-wrap{max-width:1180px;margin:0 auto;padding:28px clamp(16px,4vw,48px) 0}
 .mp-logo{width:clamp(150px,18vw,220px);height:auto;color:var(--ink);display:block}
 .mp-nav{display:flex;flex-wrap:wrap;gap:12px 40px;margin:48px 0 24px}
@@ -205,7 +206,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mp-sec{padding-top:72px;scroll-margin-top:12px}
 .mp-sec h2{margin:0 0 10px;font-size:clamp(28px,4vw,44px);display:flex;gap:10px;align-items:flex-start}
 .mp-lede{margin:0 0 28px;font-size:17px;max-width:46ch}
-.mp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;width:100vw;margin-left:calc(50% - 50vw)}
+.mp-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0;--fw:calc(100vw - var(--sbw,0px));width:var(--fw);margin-left:calc(50% - var(--fw) / 2)}
 .mp-card{all:unset;box-sizing:border-box;cursor:inherit;position:relative;display:block;aspect-ratio:1008/643;overflow:hidden;background:var(--bg,#1F1F1F)}
 .mp-card>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.2,1)}
 .mp-card>img.logo{inset:auto;left:50%;top:50%;width:auto;height:auto;max-width:var(--w,40%);max-height:54%;object-fit:contain;transform:translate(-50%,-50%)}
@@ -1807,32 +1808,38 @@ document.getElementById('mpDetailClose').addEventListener('click', () => closeDe
 /* Reveals: once the sheet has landed, each piece loads in, in reading order; the rest follow as you scroll to them */
 const revealers = new Map();
 function revealIn(root, delay = 0) {
-  revealers.get(root)?.disconnect();
-  let batch = [], timer = 0, first = true;
-  const flush = () => {
-    batch.sort((a, b) => (a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING) ? -1 : 1);
+  revealers.get(root)?.();
+  let first = true, queued = false;
+  const pending = [...root.querySelectorAll('[data-rv]')].filter((el) => !el.closest('[hidden]') || el.closest('[hidden]') === root);
+  const check = () => {                                   // plain geometry: works however the item is clipped
+    queued = false;
+    const box = root.getBoundingClientRect(), bottom = box.top + root.clientHeight * 0.94;
+    const now = [];
+    for (let i = pending.length - 1; i >= 0; i--) {
+      const r = pending[i].getBoundingClientRect();
+      if (r.top < bottom && r.bottom > box.top) { now.unshift(pending[i]); pending.splice(i, 1); }
+    }
     const start = first ? delay : 0; first = false;
-    batch.forEach((el, i) => { el.style.setProperty('--d', (start + Math.min(i, 10) * 0.09).toFixed(2) + 's'); el.classList.add('in'); });
-    batch = [];
+    now.forEach((el, i) => { el.style.setProperty('--d', (start + Math.min(i, 8) * 0.12).toFixed(2) + 's'); el.classList.add('in'); });
+    if (!pending.length) stop();
   };
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); batch.push(e.target); }
-    clearTimeout(timer); timer = setTimeout(flush, 16);
-  }, { root, rootMargin: '0px 0px -6% 0px' });
-  root.querySelectorAll('[data-rv]').forEach((el) => { if (!el.closest('[hidden]') || el.closest('[hidden]') === root) io.observe(el); });
-  revealers.set(root, io);
+  const onScroll = () => { if (!queued) { queued = true; requestAnimationFrame(check); } };
+  const stop = () => { root.removeEventListener('scroll', onScroll); removeEventListener('resize', onScroll); revealers.delete(root); };
+  root.addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', onScroll);
+  revealers.set(root, stop);
+  check();
 }
 function resetReveal(root) {
-  revealers.get(root)?.disconnect(); revealers.delete(root);
+  revealers.get(root)?.();
   root.querySelectorAll('[data-rv]').forEach((el) => { el.classList.remove('in'); el.style.removeProperty('--d'); });
 }
 const menuUnder = document.getElementById('menuUnder');
 function setMenu(open) {
   menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
   if (open) {
-    menu.hidden = false; menu.scrollTop = 0; closeDetail(true); resetReveal(menu);
+    menu.hidden = false; menu.scrollTop = 0; closeDetail(true); resetReveal(menu); menu.style.setProperty('--sbw', (menu.offsetWidth - menu.clientWidth) + 'px');
     menu.classList.remove('closing'); menuUnder.classList.remove('closing');
-    requestAnimationFrame(() => requestAnimationFrame(() => { menu.classList.add('open'); menuUnder.classList.add('open'); revealIn(menu, reduceMotion ? 0 : 0.85); }));
+    requestAnimationFrame(() => requestAnimationFrame(() => { menu.classList.add('open'); menuUnder.classList.add('open'); revealIn(menu, reduceMotion ? 0 : 1.05); }));
   } else {
     menu.classList.add('closing'); menuUnder.classList.add('closing');
     menu.classList.remove('open'); menuUnder.classList.remove('open');
