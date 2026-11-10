@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Wallet CV · How I made it</title>
+<meta name="description" content="How I designed and built the Wallet CV: a real leather wallet that holds my CV, and its 3D twin on the web.">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<style>
+:root{--ink:#1F1F1F;--ink-soft:#5C5C59;--paper:#F2F2F0;--card:#FBFBF9;--green:#73956F;--accent:#46663F;--line:rgba(31,31,31,.14);
+  --hand-point:image-set(url("../assets/cursor/hand-point.png") 1x,url("../assets/cursor/hand-point@2x.png") 2x) 9 1,url("../assets/cursor/hand-point.png") 9 1,auto;
+  --w:1180px;--g:clamp(16px,4vw,48px)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 Archivo,Arial,sans-serif;cursor:var(--hand-point);-webkit-font-smoothing:antialiased}
+a,button{cursor:var(--hand-point);color:inherit}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 var(--g)}
+.top{position:sticky;top:0;z-index:5;background:var(--green);border-bottom:1px solid rgba(31,31,31,.08)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.top img{height:22px;width:auto}
+.back{font-weight:700;font-size:15px;text-decoration:none;background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px;transition:transform .2s ease}
+.back:hover{transform:translateX(-3px)}
+/* hero */
+.hero{background:var(--green);padding:64px 0 0;overflow:hidden}
+.kick{font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 18px}
+h1{font-stretch:112%;font-weight:800;font-size:clamp(52px,10vw,148px);line-height:.88;letter-spacing:-.04em;margin:0}
+.lede{font-size:clamp(20px,2.2vw,27px);line-height:1.35;max-width:30ch;margin:28px 0 0;font-weight:500}
+.meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:20px;margin:48px 0 0;padding:22px 0;border-top:2px solid var(--ink)}
+.meta dt{font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.7}
+.meta dd{margin:4px 0 0;font-weight:600;font-size:16px;line-height:1.35}
+.hero-shot{margin:24px auto 0;max-width:var(--w);padding:0 var(--g)}
+.hero-shot img{border-radius:14px 14px 0 0;box-shadow:0 30px 80px rgba(31,31,31,.25)}
+/* sections */
+section{padding:clamp(72px,10vw,128px) 0 0}
+.sec-head{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:baseline;border-top:2px solid var(--ink);padding-top:18px;margin-bottom:36px}
+.no{font-weight:800;font-size:15px;letter-spacing:.06em}
+h2{font-stretch:108%;font-weight:800;font-size:clamp(34px,5vw,62px);line-height:.98;letter-spacing:-.03em;margin:0}
+.cols{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px}
+.prose{max-width:66ch}
+.prose p{margin:0 0 1.1em}
+.prose strong{font-weight:700}
+.pull{font-size:clamp(24px,3vw,36px);line-height:1.2;font-weight:700;letter-spacing:-.02em;max-width:28ch;margin:8px 0 40px}
+figure{margin:0}
+figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px;max-width:60ch}
+.shot img{border-radius:12px;border:1px solid var(--line)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:36px 0}
+.grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:36px 0}
+.full{margin:40px 0}
+/* the wallet's contents */
+.items{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);border-radius:14px;overflow:hidden;margin:36px 0}
+.item{background:var(--card);padding:24px 22px 26px}
+.item b{display:block;font-stretch:108%;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.item span{display:block;font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin:2px 0 10px}
+.item p{margin:0;font-size:16px;line-height:1.5}
+/* photo still to come */
+.todo{aspect-ratio:4/3;border:2px dashed rgba(31,31,31,.35);border-radius:12px;display:grid;place-items:center;text-align:center;padding:20px;color:var(--ink-soft);font-weight:600;font-size:15px;background:repeating-linear-gradient(-45deg,transparent 0 14px,rgba(31,31,31,.035) 14px 28px)}
+/* small details */
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:36px 0}
+.det{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column}
+.det .pic{background:#E3E3E0;display:grid;place-items:center;min-height:220px;padding:22px}
+.det .txt{padding:22px 24px 26px}
+.det h3{font-stretch:108%;font-weight:800;font-size:23px;letter-spacing:-.02em;line-height:1.1;margin:0 0 8px}
+.det p{margin:0;font-size:16px;line-height:1.55}
+.det.wide{grid-column:1/-1}
+.pix{image-rendering:pixelated}
+.sprites{display:flex;align-items:flex-end;gap:14px}
+.sprites img{height:150px;width:auto}
+.hands{display:flex;align-items:center;gap:40px}
+.hands img{height:120px;width:auto}
+.swatches{display:flex;gap:0;width:100%;height:160px;border-radius:10px;overflow:hidden}
+.swatches div{flex:1;display:flex;align-items:flex-end;padding:12px;font-weight:700;font-size:14px}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);border-radius:14px;overflow:hidden;margin:36px 0 0}
+.tools div{background:var(--card);padding:20px}
+.tools b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.tools span{display:block;margin-top:6px;font-weight:600;line-height:1.35}
+/* end */
+.end{background:var(--ink);color:var(--paper);margin-top:clamp(80px,10vw,140px);padding:clamp(64px,9vw,110px) 0 36px}
+.end h2{color:var(--paper);max-width:16ch}
+.end p{color:rgba(242,242,240,.75);max-width:52ch}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin:30px 0 0}
+.btn{font-weight:700;text-decoration:none;padding:13px 20px;border-radius:999px;background:var(--green);color:var(--ink)}
+.btn.ghost{background:transparent;color:var(--paper);box-shadow:inset 0 0 0 2px rgba(242,242,240,.5)}
+.small{margin-top:70px;padding-top:20px;border-top:1px solid rgba(242,242,240,.18);font-size:14px;color:rgba(242,242,240,.6);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+/* reveal */
+.rv{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform 1s cubic-bezier(.16,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+@media (max-width:860px){
+  .meta{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sec-head,.cols{grid-template-columns:1fr}
+  .cols>.spacer{display:none}
+  .grid3,.items,.tools{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .details,.grid2{grid-template-columns:1fr}
+}
+@media (max-width:520px){.grid3,.items,.tools{grid-template-columns:1fr}.sprites img{height:96px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="../" aria-label="Harrison Greener, home"><img src="../brand/greener-solid-black.svg" alt="Greener" width="120" height="31"></a>
+  <a class="back" href="../">← Back to the wallet</a>
+</div></header>
+
+<div class="hero">
+  <div class="wrap">
+    <p class="kick">Portfolio project · Digital Media Project, Manchester Met</p>
+    <h1>The Wallet&nbsp;CV</h1>
+    <p class="lede">A real leather wallet that holds my CV, and its 3D twin on the web. Here's how I made both, and all the little things hidden in them.</p>
+    <dl class="meta">
+      <div><dt>What</dt><dd>Physical CV and interactive 3D website</dd></div>
+      <div><dt>My role</dt><dd>Idea, design, print, code, video</dd></div>
+      <div><dt>Made with</dt><dd>three.js, HTML, CSS, JavaScript, a printer, a green Sharpie</dd></div>
+      <div><dt>Year</dt><dd>2026</dd></div>
+    </dl>
+  </div>
+  <figure class="hero-shot"><img src="img/s-open.jpg" alt="The open 3D wallet on a desk, with the designer licence, the scratchcard, project cards, keys, a pen, a phone and a mug" width="1040" height="650"></figure>
+</div>
+
+<main>
+<section id="idea"><div class="wrap">
+  <div class="sec-head rv"><span class="no">01</span><h2>The idea</h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p class="pull">Graduates send hundreds of CVs and hear nothing back. I wanted mine to be something you'd keep.</p>
+    <p>This is my final-year Digital Media Project at Manchester Metropolitan University. The question behind it is a simple one: how do you stand out in the creative industry when everyone is sending the same PDF?</p>
+    <p>My answer was a wallet. Everything you'd want to know about me fits in the things you'd find in one. A licence says who I am. Business cards hold my projects. The receipt is my CV. A scratchcard gives you reasons to hire me. And a phone on the desk is how you get in touch.</p>
+    <p>I made it twice: once for real, in leather and paper, and once on the web, where you can open the wallet and pull out each item. The project's main output is a short film about making it, inspired by a series of increasingly ridiculous CVs made to avoid being ghosted by companies.</p>
+  </div></div>
+</div></section>
+
+<section id="contents"><div class="wrap">
+  <div class="sec-head rv"><span class="no">02</span><h2>What's in the wallet</h2></div>
+  <div class="items rv">
+    <div class="item"><span>Who I am</span><b>Designer Licence</b><p>A driving licence redesigned as a design licence: my photo, my skills as categories and a signature. The real one is an NFC card, so tapping it with a phone opens this site.</p></div>
+    <div class="item"><span>My work</span><b>Project cards</b><p>Eight business cards stepped in the pocket, one per project. Each has its own front and back, and opens that project's page.</p></div>
+    <div class="item"><span>My CV</span><b>The receipt</b><p>My CV printed on till roll, folded concertina-style, with "CV" scribbled across it in Sharpie. It unfolds as it comes to you.</p></div>
+    <div class="item"><span>Why hire me</span><b>Instant Hire</b><p>A scratchcard in a hidden slot by the fold. Scratch the silver for three reasons to hire me.</p></div>
+    <div class="item"><span>Get in touch</span><b>The phone</b><p>Lying on the desk with the real time on its lock screen. Pick it up, unlock it, and you're in a message thread with me.</p></div>
+    <div class="item"><span>For realism</span><b>The fiver</b><p>Tucked in the money slot, because a wallet with nothing in it doesn't look like anyone's wallet.</p></div>
+  </div>
+</div></section>
+
+<section id="physical"><div class="wrap">
+  <div class="sec-head rv"><span class="no">03</span><h2>Making the real thing</h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>The physical wallet came first, because I didn't want the website to be a picture of something that doesn't exist. Everything on the site is a real object I designed, printed and put in a real wallet.</p>
+    <p><strong>The receipts</strong> are printed on till roll, the same width as a shop receipt, and I wrote "CV" across each one by hand. I couldn't find a red Sharpie, so they're green, and the scribble on the website is green to match.</p>
+    <p><strong>The project cards</strong> are printed at business-card size so they fit the wallet's card slots. <strong>The licence</strong> is an NFC card with a printed sticker on top, and the chip links straight to this site.</p>
+  </div></div>
+  <div class="grid3 rv">
+    <div class="todo">Photo to come:<br>the wallet, open, with everything in it</div>
+    <div class="todo">Photo to come:<br>printed receipts with the green "CV"</div>
+    <div class="todo">Photo to come:<br>business cards and NFC licence</div>
+  </div>
+  <div class="grid2 rv">
+    <figure class="shot"><img src="img/licence-front.jpg" alt="The Designer Licence, front" loading="lazy" width="1000" height="631"><figcaption>The Designer Licence, front. My photo, my name and my disciplines listed like vehicle categories.</figcaption></figure>
+    <figure class="shot"><img src="img/licence-back.jpg" alt="The Designer Licence, back, with a QR code" loading="lazy" width="1000" height="631"><figcaption>The back, with a QR code to the site for phones that don't read NFC.</figcaption></figure>
+  </div>
+</div></section>
+
+<section id="scratchcard"><div class="wrap">
+  <div class="sec-head rv"><span class="no">04</span><h2>Instant Hire, the scratchcard</h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>I wanted one thing in the wallet that wasn't a project, something you'd actually want to play with. A scratchcard was perfect: everyone knows what to do with one.</p>
+    <p>I designed it like a classic UK lottery card rather than in my own colours: a yellow sunburst, chunky outlined lettering, and a cartoon of me holding the very card you're looking at, with a coin ready. Under the silver are three reasons to hire me. The back has the small print, done as a light wink rather than a hard sell.</p>
+    <p>It's printed at business-card size, 85 × 55 mm, so it fits the hidden slot. The silver is a separate print on scratch-off sticker paper, with the panel outlines and my G monogram in the pattern, the way real cards have the lottery logo in theirs.</p>
+  </div></div>
+  <div class="grid2 rv">
+    <figure class="shot"><img src="img/scratch-front.jpg" alt="Instant Hire scratchcard, front" loading="lazy" width="1400" height="906"><figcaption>The front, as printed. The panels on the right are where the silver goes.</figcaption></figure>
+    <figure class="shot"><img src="img/scratch-back.jpg" alt="Instant Hire scratchcard, back" loading="lazy" width="1400" height="906"><figcaption>The back: how to play, what you win, and the terms.</figcaption></figure>
+  </div>
+  <div class="grid3 rv">
+    <figure class="shot"><img src="img/scratch-foil.jpg" alt="The silver scratch layer with three numbered panels" loading="lazy"><figcaption>The scratch layer, printed separately and cut to fit.</figcaption></figure>
+    <figure class="shot"><img src="img/me-win.webp" alt="Cartoon of me holding the scratchcard and a coin" loading="lazy"><figcaption>The cartoon. The card in my hand is a tiny copy of the real one, baked in.</figcaption></figure>
+    <div class="todo">Photo to come:<br>the printed card, half scratched</div>
+  </div>
+  <figure class="full shot rv"><img src="img/s-scratch.jpg" alt="The scratchcard on the website, partly scratched" loading="lazy" width="1440" height="900"><figcaption>On the site, a £1 coin scratches the first panel for you, then it's your turn. The scratches are rough and uneven like a real coin, and silver shavings flick off as you go.</figcaption></figure>
+</div></section>
+
+<section id="web"><div class="wrap">
+  <div class="sec-head rv"><span class="no">05</span><h2>Building the 3D wallet</h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>The website is the wallet again, built in three.js. I didn't download a 3D model. Every layer of leather, every card and every stitch is built in code, measured from a photo of the real wallet at about 47 pixels to the centimetre, so everything is the right size.</p>
+    <p>A real wallet has layers, and so does this one: the lining, a hidden slot by the fold, a backing, eight cards stepped behind the pocket front, and saddle stitching that sits on whichever layer is on top. Where cards slide over the thread, the stitches are pressed flat, the way they are in real leather.</p>
+    <p>There are no buttons. The wallet is the navigation: open it, hover over an item to see its name, and pull it out. Cards come up to you so you can turn them over. The receipt unfolds on its way. Hovering over the keys, mug or pen gives them a little jiggle, but only the wallet opens.</p>
+  </div></div>
+  <div class="grid2 rv">
+    <figure class="shot"><img src="img/s-desk.jpg" alt="The closed wallet on a desk with keys, a phone, a mug and a pen" loading="lazy" width="1440" height="900"><figcaption>The desk when you arrive. The phone shows the real time.</figcaption></figure>
+    <figure class="shot"><img src="img/s-receipt.jpg" alt="The CV receipt pulled out of the wallet and unfolded" loading="lazy" width="1440" height="900"><figcaption>The receipt CV, unfolded and scrollable, crumples included.</figcaption></figure>
+  </div>
+</div></section>
+
+<section id="details"><div class="wrap">
+  <div class="sec-head rv"><span class="no">06</span><h2>The small details</h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>Most of the time on this project went into things you might not notice on the first visit. These are my favourites.</p>
+  </div></div>
+  <div class="details">
+    <article class="det wide rv">
+      <div class="pic"><div class="grid2" style="margin:0;width:100%">
+        <img src="img/shoot-photos.jpg" alt="Four photos of me: walking, mid-step, crouching and jumping, cut out on white" loading="lazy" width="1600" height="900">
+        <img src="img/shoot-drawn.jpg" alt="The same four poses redrawn as cartoon sprites" loading="lazy" width="1600" height="900">
+      </div></div>
+      <div class="txt"><h3>A photoshoot for a mini game</h3><p>At the bottom of the menu there's a little runner game, and the runner is me. I did a photoshoot walking, stepping, crouching and jumping, then turned each pose into a drawn sprite. There are two sets, smiling and straight-faced, and every now and then he switches between them.</p></div>
+    </article>
+    <article class="det rv">
+      <div class="pic"><div class="hands"><img class="pix" src="../assets/cursor/hand-point@2x.png" alt="Pixel hand, pointing" width="28" height="48"><img class="pix" src="../assets/cursor/hand-grab@2x.png" alt="Pixel hand, grabbing" width="38" height="48"></div></div>
+      <div class="txt"><h3>My hand is your cursor</h3><p>I photographed my own hand pointing and grabbing, then pixelated it into a cursor. It points by default and switches to the grab hand over anything you can pick up.</p></div>
+    </article>
+    <article class="det rv">
+      <div class="pic"><div class="sprites"><img src="../assets/game/harry-run1.webp" alt="" loading="lazy"><img src="../assets/game/harry-jump.webp" alt="" loading="lazy"><img src="../assets/game/harry-crouch.webp" alt="" loading="lazy"></div></div>
+      <div class="txt"><h3>Jump the blocks, duck the bars</h3><p>Space, the up arrow or a click to jump, the down arrow to duck. It speeds up the longer you last, and keeps your best score for the visit.</p></div>
+    </article>
+    <article class="det rv">
+      <div class="pic"><img src="../assets/me/me-toon.webp" alt="Cartoon portrait of me" loading="lazy" style="max-height:240px;width:auto"></div>
+      <div class="txt"><h3>A drawing that watches you</h3><p>The cartoon of me in the menu follows your cursor with its eyes and blinks now and then. Hover over it and it breaks into pixels that flip to the real photo underneath, lined up so my face doesn't move.</p></div>
+    </article>
+    <article class="det rv">
+      <div class="pic"><img src="img/receipt.webp" alt="The receipt CV with CV scribbled on it in green" loading="lazy" style="max-height:240px;width:auto"></div>
+      <div class="txt"><h3>The green Sharpie</h3><p>I couldn't find a red Sharpie when I wrote on the printed receipts, so they're green. Rather than fake red online, the website's receipt is green too, so both versions match.</p></div>
+    </article>
+    <article class="det rv">
+      <div class="pic"><img src="img/s-mp-projects.jpg" alt="The projects rail in the menu" loading="lazy"></div>
+      <div class="txt"><h3>Every project dresses as itself</h3><p>Each project page takes its colours and fonts from that project's own code, so Stack looks like Stack and Big Brother Inc. is in pixels. Some pages run the live project right there.</p></div>
+    </article>
+    <article class="det rv">
+      <div class="pic"><img src="img/s-mp-cv.jpg" alt="The CV timeline" loading="lazy"></div>
+      <div class="txt"><h3>A CV you scroll through</h3><p>The CV section plays my timeline from 2012 to now as you scroll. Jobs are dark, education is white, and a counter in the corner keeps the year.</p></div>
+    </article>
+    <article class="det rv">
+      <div class="pic"><img src="img/s-foot.jpg" alt="The contact orbs and the mini game at the foot of the menu" loading="lazy"></div>
+      <div class="txt"><h3>Contact you can push around</h3><p>Email, GitHub and LinkedIn are orbs with real physics. They nudge away from your cursor, get knocked by a fast swipe, and hop now and then.</p></div>
+    </article>
+    <article class="det rv">
+      <div class="pic"><div class="swatches"><div style="background:#73956F">Green<br>#73956F</div><div style="background:#1F1F1F;color:#F2F2F0">Ink<br>#1F1F1F</div><div style="background:#F2F2F0;box-shadow:inset 0 0 0 1px rgba(31,31,31,.12)">Paper<br>#F2F2F0</div></div></div>
+      <div class="txt"><h3>No pure black, no pure white</h3><p>My brand is green with a very dark grey and a very light grey, never pure black or white. It's softer on the eye and runs through everything, from the site to the print files.</p></div>
+    </article>
+    <article class="det wide rv">
+      <div class="txt"><h3>Little touches everywhere</h3><p>A scrollbar down the left edge that flips colour over the footer. A note for phone visitors that it's best on a computer, with a button to copy the link for later. A fresh scratchcard every time you pull it out.</p></div>
+    </article>
+  </div>
+</div></section>
+
+<section id="tools"><div class="wrap">
+  <div class="sec-head rv"><span class="no">07</span><h2>How it's put together</h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>The whole site is one hand-written HTML file with three.js for the 3D, no framework and no build step. Most textures, like the crumpled paper and the scratch foil, are drawn in code. The print files come from the same HTML, exported to PDF at print resolution, so the screen and the paper are the same design.</p>
+    <p>It's hosted for free on GitHub Pages under my own domain, harrisongreener.co.uk.</p>
+  </div></div>
+  <div class="tools rv">
+    <div><b>3D</b><span>three.js, built from code, no models</span></div>
+    <div><b>Front end</b><span>HTML, CSS and JavaScript</span></div>
+    <div><b>Print</b><span>Till roll, card, NFC cards, scratch-off sticker</span></div>
+    <div><b>Hosting</b><span>GitHub Pages, custom domain</span></div>
+  </div>
+</div></section>
+</main>
+
+<footer class="end"><div class="wrap">
+  <h2>Now go and open the wallet.</h2>
+  <p>Everything on this page is in there somewhere. See how many of the details you can find.</p>
+  <div class="btns"><a class="btn" href="../">Open the wallet</a><a class="btn ghost" href="https://github.com/HarrisonGreener/portfolio" target="_blank" rel="noopener">View the code ↗</a></div>
+  <div class="small"><span>© 2026</span><span>Designed and built by Harrison Greener</span></div>
+</div></footer>
+
+<script>
+(() => {
+  const els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  els.forEach((e) => io.observe(e));
+})();
+</script>
+</body>
+</html>
