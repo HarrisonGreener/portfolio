@@ -215,14 +215,14 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mp-sec{padding-top:72px;scroll-margin-top:12px}
 .mp-sec h2{margin:0 0 10px;font-size:clamp(28px,4vw,44px);display:flex;gap:10px;align-items:flex-start}
 .mp-lede{margin:0 0 28px;font-size:17px;max-width:46ch}
-.mp-head{padding-bottom:56px}
+.mp-head{padding-bottom:28px}
 /* Intro band: green, pinned while its words light up */
 .mp-intro{background:var(--green);height:200vh;height:200svh}
-.mi-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;overflow:hidden}
+.mi-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;overflow:hidden;box-sizing:border-box;padding-bottom:16vh}
 .mi-pin>.mp-wrap{width:100%;box-sizing:border-box;padding-top:0;position:relative;z-index:1;pointer-events:none}
 .mi-pin>.mp-wrap .w{pointer-events:auto}   /* only the words catch the mouse; the portrait beside them stays hoverable */
 @media (min-width:761px) and (min-height:521px){.mi-line{max-width:min(15ch,calc(100vw - min(34vmin,400px) * 1.3 - max(5vw,calc((100vw - 1180px) / 2 + 24px)) - 12vw))}}
-.mi-kicker{margin:0 0 26px;font-weight:700;font-size:15px}.mi-kicker span{opacity:.5;margin:0 4px}
+.mi-kicker{margin:0 0 22px;font-weight:700;font-size:clamp(20px,1.9vw,26px);letter-spacing:-.02em}.mi-kicker span{opacity:.5;margin:0 4px}
 .mi-line{margin:0;font-weight:700;font-size:clamp(36px,6.4vw,92px);line-height:.98;letter-spacing:-.045em;max-width:15ch}
 .mi-line .w{display:inline-block;opacity:.16;transition:opacity .5s ease,color .25s ease,transform .45s cubic-bezier(.3,1.7,.45,1)}.mi-line .w.lit{opacity:1}
 @media (hover:hover){.mi-line .w:hover{color:transparent;background:radial-gradient(circle var(--dr,0px) at var(--dx,-999px) var(--dy,-999px),var(--green) 99.4%,transparent 100%),radial-gradient(circle var(--or,0px) at var(--ox,-999px) var(--oy,-999px),var(--green) 99.4%,var(--paper) 100%);-webkit-background-clip:text;background-clip:text;opacity:1;transform:translateY(-.09em);transition:opacity .2s ease,color .15s ease,transform .3s cubic-bezier(.3,1.7,.45,1)}}
@@ -230,7 +230,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-scroll i{width:48px;height:2px;background:var(--ink);transform-origin:0 50%;animation:miScroll 2.2s cubic-bezier(.6,0,.2,1) infinite}
 @keyframes miScroll{0%{transform:scaleX(0)}55%{transform:scaleX(1);transform-origin:0 50%}56%{transform-origin:100% 50%}100%{transform:scaleX(0);transform-origin:100% 50%}}
 /* Me, drawn, beside the intro line: my eyes follow the cursor; hover and a lens shows the real photo underneath */
-.mi-me{position:absolute;z-index:0;margin:0;right:max(5vw,calc((100% - 1180px) / 2 + 24px));top:50%;width:min(34vmin,400px);aspect-ratio:678/760;transform:translateY(-46%);--lx:50%;--ly:50%;--lr:0px}
+.mi-me{position:absolute;z-index:0;margin:0;right:max(5vw,calc((100% - 1180px) / 2 + 24px));top:42%;width:min(34vmin,400px);aspect-ratio:678/760;transform:translateY(-46%);--lx:50%;--ly:50%;--lr:0px}
 .mi-me img,.mi-me svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .mi-me .me-toon-layer{position:absolute;inset:0}
 .mi-me .me-reveal{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
@@ -287,7 +287,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
   .mw-rail{height:auto!important}.mw-pin{position:static;height:auto;padding:72px 0}
   .mw-viewport{overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}.mw-viewport::-webkit-scrollbar{display:none}
   .mw-track{transform:none!important}.mw-card{width:78vw;scroll-snap-align:center}.mw-next{width:60vw}
-  .mp-intro{height:auto}.mi-pin{position:static;height:auto;padding:96px 0}
+  .mp-intro{height:auto}.mi-pin{position:static;height:auto;padding:56px 0}
 }
 /* CV: a pinned green band. Scrolling plays the years from school to now: blocks grow along the timeline,
    the travelling circle parks top right as a year counter, and each step's caption drops in from above */
@@ -476,7 +476,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
   </div>
 
   <section class="mp-intro" id="mpIntro" aria-label="Introduction"><div class="mi-pin"><div class="mp-wrap">
-    <p data-rv="up" class="mi-kicker">Harrison Greener <span>·</span> Designer, Manchester</p>
+    <p data-rv="up" class="mi-kicker">Harrison Greener</p>
     <p class="mi-line" id="miLine">I design brands, websites and apps, then I build them myself. Here's what I've made so far.</p>
     <p data-rv="up" class="mi-scroll" aria-hidden="true">Scroll <i></i></p>
   </div>
@@ -2116,8 +2116,8 @@ function orbStops() {
   const S = (s, x, y, d, c) => ({ s, x, y, d, c }), cvG = cvGeom();
   return [
     S(0, bx, by, 44, C_GREEN),                                                        // behind the X
-    S(Math.max(1, intro + H * 0.75), mob ? W * 0.82 : W * 0.78, H * 0.5, (mob ? 46 : 34) * vm, C_PAPER),     // drops into the green intro, slowly
-    S(Math.max(2, introEnd), mob ? W * 0.75 : W * 0.7, H * 0.52, (mob ? 60 : 50) * vm, C_PAPER),             // swells as the words light up, reaching under them
+    S(Math.max(1, intro + H * 0.75), mob ? W * 0.82 : W * 0.78, H * 0.42, (mob ? 46 : 34) * vm, C_PAPER),     // drops into the green intro, slowly
+    S(Math.max(2, introEnd), mob ? W * 0.75 : W * 0.7, H * 0.44, (mob ? 60 : 50) * vm, C_PAPER),             // swells as the words light up, reaching under them
     pinned ? S(Math.max(3, rail - H * 0.3), bar.left + W * 0.08, H * 0.62, 11 * vm, C_PAPER) : S(Math.max(3, rail - H * 0.3), W * 0.88, H * 0.3, 10 * vm, C_PAPER),   // still a clear disc as it heads into the projects
     pinned ? S(rail, bar.left, barY, 26, C_INK) : S(rail, W * 0.9, H * 0.2, 24, C_INK),   // shrinks to a bead...
     pinned ? S(rail + galTravel, bar.right, barY, 26, C_INK) : S(rail + mwRail.offsetHeight * 0.5, W * 0.9, H * 0.2, 24, C_INK),            // ...that runs along the strip's progress line
@@ -2371,7 +2371,7 @@ const CV_ITEMS = [   // lane: 0 education, 1-3 design & digital, 4 hospitality
   { k: 'Education', t: 'Graphic Design and Media Studies, B and B', at: 'Varndean College', s: [2018, 9], e: [2020, 6], lane: 0, sh: 'Varndean' },
   { k: 'Hospitality', t: 'Barman and chef', at: 'Revolution', s: [2020, 8], e: [2021, 2], lane: 4, sh: 'Revolution' },
   { k: 'Education', t: 'Graphic Design, Digital Marketing and Web Design, Pass', at: 'Brighton Met', s: [2020, 9], e: [2021, 6], lane: 0, sh: 'Graphics' },
-  { k: 'Hospitality', t: 'Barman', at: 'Charles Street Tap', s: [2021, 3], e: [2022, 12], lane: 4, sh: 'Charles St Tap' },
+  { k: 'Hospitality', t: 'Barman', at: 'Charles Street Tap', s: [2021, 3], e: [2022, 1], lane: 4, sh: 'Charles St Tap' },
   { k: 'Design & digital', t: 'Social Media Marketing Specialist', at: 'Citrus Orange', s: [2022, 2], e: [2022, 9], lane: 1, sh: 'Citrus Orange' },
   { k: 'Design & digital', t: 'Digital Marketing Executive', at: 'Neonify', s: [2022, 4], e: [2022, 9], lane: 2, sh: 'Neonify' },
   { k: 'Design & digital', t: 'Digital Marketing Executive', at: 'Pure Performance Media', s: [2022, 9], e: [2022, 10], lane: 3, sh: 'PPM' },
@@ -2402,7 +2402,7 @@ let cvBlocks = [], cvStep = -1, cvHover = -1;
     const a = cvM(it.s), b = cvM(it.e || CV_NOW) + 1;
     it.a = a; it.b = b;
     const el = document.createElement('button');
-    el.type = 'button'; el.className = 'cv-blk' + (it.lane === 4 ? ' p' : ''); el.textContent = it.sh; el.tabIndex = -1;
+    el.type = 'button'; el.className = 'cv-blk' + (it.lane === 0 ? ' p' : ''); el.textContent = it.sh; el.tabIndex = -1;
     el.style.setProperty('--s', (a / CV_SPAN * 100).toFixed(3) + '%'); el.style.setProperty('--w', ((b - a) / CV_SPAN * 100).toFixed(3) + '%');
     el.addEventListener('pointerenter', () => { cvHover = i; cvShow(); });
     el.addEventListener('pointerleave', () => { if (cvHover === i) { cvHover = -1; cvShow(); } });
