@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Scratch layer sheet</title>
+<style>
+/* A4 sheet of scratch panels with cut marks. Print at 100% (actual size). */
+@page{size:A4;margin:0}
+*{box-sizing:border-box}body{margin:0;font-family:'Archivo','Inter','Helvetica Neue',Arial,sans-serif}
+.page{width:210mm;height:297mm;position:relative}
+.grid{position:absolute;left:12mm;top:14mm;display:grid;grid-template-columns:repeat(4,38mm);grid-auto-rows:37.2mm;gap:8mm}
+iframe{width:38mm;height:37.2mm;border:0;display:block}
+.cell{position:relative}
+.cell::before,.cell::after{content:"";position:absolute;inset:-2.5mm;pointer-events:none;
+  background:linear-gradient(#000,#000) 0 2.5mm/1.8mm .15mm no-repeat,linear-gradient(#000,#000) 2.5mm 0/.15mm 1.8mm no-repeat,
+  linear-gradient(#000,#000) 100% 2.5mm/1.8mm .15mm no-repeat,linear-gradient(#000,#000) calc(100% - 2.5mm) 0/.15mm 1.8mm no-repeat,
+  linear-gradient(#000,#000) 0 calc(100% - 2.5mm)/1.8mm .15mm no-repeat,linear-gradient(#000,#000) 2.5mm 100%/.15mm 1.8mm no-repeat,
+  linear-gradient(#000,#000) 100% calc(100% - 2.5mm)/1.8mm .15mm no-repeat,linear-gradient(#000,#000) calc(100% - 2.5mm) 100%/.15mm 1.8mm no-repeat}
+.cell::after{display:none}
+.note{position:absolute;left:12mm;bottom:10mm;font-size:8pt;color:#555}
+</style></head><body>
+<div class="page"><div class="grid" id="g"></div><p class="note">Instant Hire scratch layer · 38 × 37.2 mm panels · print at 100% (actual size) and cut on the marks</p></div>
+<script>document.getElementById('g').innerHTML = Array.from({ length: 24 }, () => '<div class="cell"><iframe src="foil.html"></iframe></div>').join('');</script>
+</body></html>

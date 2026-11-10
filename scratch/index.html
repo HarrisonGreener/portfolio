@@ -7,7 +7,7 @@
 :root{--green:#73956F;--green-hi:#86A882;--ink:#1F1F1F;--paper:#F2F2F0;--font:'Archivo','Inter','Helvetica Neue',Arial,sans-serif}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:#E3E3E0;font-family:var(--font);color:var(--ink);display:flex;flex-wrap:wrap;gap:48px;align-items:center;justify-content:center;padding:48px 16px}
-.card{width:85mm;height:55mm;position:relative;overflow:hidden;border-radius:3mm;user-select:none;-webkit-user-select:none;box-shadow:0 10px 30px rgba(0,0,0,.18)}
+.card{width:85mm;height:55mm;position:relative;overflow:hidden;border-radius:0;user-select:none;-webkit-user-select:none;box-shadow:0 10px 30px rgba(0,0,0,.18)}
 .wrap{display:flex;flex-direction:column;gap:10px;align-items:center}.wrap>small{font-size:12px;font-weight:700;opacity:.55}
 @media screen{.card{transform:scale(var(--z,2.2));transform-origin:center;margin:calc(55mm * (var(--z,2.2) - 1) / 2) calc(85mm * (var(--z,2.2) - 1) / 2)}}
 @media screen and (max-width:900px){.card{--z:1.2}}
@@ -16,14 +16,14 @@ body{margin:0;min-height:100vh;background:#E3E3E0;font-family:var(--font);color:
 .front{background:#FFD21F;color:#141414}
 .art{position:absolute;left:0;top:0;bottom:7mm;width:43mm;overflow:hidden}
 .burst{position:absolute;inset:-40%;background:repeating-conic-gradient(from 0deg at 45% 55%,#FFB000 0 7deg,#FFD21F 7deg 15deg)}
-.burst::after{content:"";position:absolute;inset:0;background:radial-gradient(circle at 45% 55%,rgba(255,255,255,.55),transparent 40%)}
+.burst::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 30% 34% at 45% 56%,rgba(255,110,0,.55),rgba(227,0,27,.18) 60%,transparent 100%)}
 .price{position:absolute;left:1.6mm;top:1.6mm;z-index:5;width:7mm;height:7mm;border-radius:50%;background:#E3001B;border:.4mm solid #fff;box-shadow:0 0 0 .25mm #141414;display:grid;place-items:center}
 .price b{color:#fff;font-size:2.9mm;font-weight:900;letter-spacing:-.04em}
-.title{position:absolute;left:3mm;top:2.6mm;z-index:3;margin:0;transform:rotate(-6deg) skewX(-6deg);transform-origin:left top;line-height:.78;text-transform:uppercase;font-weight:900;font-stretch:118%}
+.title{position:absolute;left:3mm;top:3.9mm;z-index:3;margin:0;transform:rotate(-4deg) skewX(-6deg);transform-origin:left top;line-height:.78;text-transform:uppercase;font-weight:900;font-stretch:118%}
 .title span{display:block;-webkit-text-stroke:.55mm #fff;paint-order:stroke fill}
 .title .t1{font-size:6mm;color:#1446C8;margin-left:8.6mm;text-shadow:.35mm .35mm 0 #141414,.6mm .6mm 0 #141414}
 .title .t2{font-size:10.6mm;color:#E3001B;letter-spacing:-.02em;text-shadow:.5mm .5mm 0 #141414,.85mm .85mm 0 #141414,1.1mm 1.1mm 0 #141414}
-.me{position:absolute;left:-1.5mm;bottom:0;width:46.6mm;height:auto;z-index:4;filter:drop-shadow(.4mm .4mm 0 rgba(20,20,20,.5))}
+.me{position:absolute;left:-.6mm;bottom:0;width:43.8mm;height:auto;z-index:4;filter:drop-shadow(.4mm .4mm 0 rgba(20,20,20,.5)) drop-shadow(0 0 .6mm #FFE38A) drop-shadow(0 0 2mm rgba(255,122,0,.9)) drop-shadow(0 0 4.5mm rgba(227,0,27,.6))}
 .winup{position:absolute;left:2.2mm;bottom:2.6mm;z-index:5;margin:0;transform:rotate(-4deg);line-height:.9;text-transform:uppercase}
 .winup small{display:block;font-size:1.7mm;font-weight:900;color:#141414}
 .winup b{display:block;font-size:4.1mm;font-weight:900;font-stretch:115%;color:#1446C8;-webkit-text-stroke:.35mm #fff;paint-order:stroke fill;text-shadow:.35mm .35mm 0 #141414}
@@ -167,7 +167,8 @@ function barcode() {
   document.getElementById('barcode').innerHTML = s;
 }
 function deal() {
-  document.getElementById('reasons').innerHTML = [...shuffle([...PRIZES]).slice(0, 2), CLAIM].map((r) => `<li>${r}</li>`).join('');
+  const pick = /print/.test(location.search) ? PRIZES.slice(0, 2) : shuffle([...PRIZES]).slice(0, 2);
+  document.getElementById('reasons').innerHTML = [...pick, CLAIM].map((r) => `<li>${r}</li>`).join('');
   const no = String(100000 + rnd(899999)); document.getElementById('no').textContent = no; document.getElementById('no2').textContent = no;
   document.querySelectorAll('.foil').forEach(foil);
   barcode();
