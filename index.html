@@ -1077,17 +1077,52 @@ const scratchCard = (() => {
   const WIN = { x: 44.60 / 85 * CW, y: 5.78 / 55 * CH, w: 37.30 / 85 * CW, h: 36.50 / 55 * CH };
   const out = document.createElement('canvas'); out.width = CW; out.height = CH; const og = out.getContext('2d');
   const foil = document.createElement('canvas'); foil.width = CW; foil.height = CH; const fg = foil.getContext('2d');
-  let base = null, texture = null, cfg = null, coin = null, demoT = null, raf = 0, left = 1, bits = [], bitsRaf = 0, bitsT = 0;
-  function tickBits(now) {                                     // silver shavings: flick off the coin, tumble and fall away
+  let aff = null, base = null, texture = null, cfg = null, coin = null, demoT = null, raf = 0, left = 1, bits = [], bitsRaf = 0, bitsT = 0;
+  // Silver shavings fly off in screen space, on a canvas over the page, so they read at any zoom
+  const fx = document.createElement('canvas'); fx.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:30';
+  const xg = fx.getContext('2d'); let fxOn = false;
+  function tickBits(now) {
     const dt = Math.min(.05, (now - (bitsT || now)) / 1000); bitsT = now; bitsRaf = 0;
-    for (const b of bits) { b.vy += 2600 * dt; b.x += b.vx * dt; b.y += b.vy * dt; b.r += b.vr * dt; b.life -= dt; }
-    bits = bits.filter((b) => b.life > 0 && b.y < CH + 40);
-    draw(); if (bits.length) bitsRaf = requestAnimationFrame(tickBits); else bitsT = 0;
+    const dpr = Math.min(2, devicePixelRatio || 1), W = innerWidth, H = innerHeight;
+    if (fx.width !== Math.round(W * dpr) || fx.height !== Math.round(H * dpr)) { fx.width = Math.round(W * dpr); fx.height = Math.round(H * dpr); }
+    xg.setTransform(dpr, 0, 0, dpr, 0, 0); xg.clearRect(0, 0, W, H);
+    for (const b of bits) { b.vy += 1500 * dt; b.vx *= 1 - dt * 1.5; b.x += b.vx * dt; b.y += b.vy * dt; b.r += b.vr * dt; b.life -= dt; }
+    bits = bits.filter((b) => b.life > 0 && b.y < H + 20);
+    for (const b of bits) {
+      xg.save(); xg.translate(b.x, b.y); xg.rotate(b.r); xg.scale(1, Math.abs(Math.cos(b.r * 1.7)) * .8 + .2);   // flakes tumble, catching the light
+      xg.globalAlpha = Math.min(1, b.life * 2.5); xg.fillStyle = b.c;
+      xg.beginPath(); b.pts.forEach(([u, v], i) => (i ? xg.lineTo(u * b.s, v * b.s) : xg.moveTo(u * b.s, v * b.s))); xg.fill(); xg.restore();
+    }
+    if (bits.length) bitsRaf = requestAnimationFrame(tickBits); else { bitsT = 0; xg.clearRect(0, 0, W, H); }
   }
-  function spray(p, from) {
-    const dx = from ? p.x - from.x : 0, dy = from ? p.y - from.y : 0, n = reduceMotion ? 0 : Math.min(10, 2 + Math.hypot(dx, dy) / 8);
-    for (let i = 0; i < n; i++) bits.push({ x: p.x + (Math.random() - .5) * 50, y: p.y + (Math.random() - .5) * 30, vx: dx * 6 + (Math.random() - .5) * 700, vy: -250 - Math.random() * 600, r: Math.random() * 6, vr: (Math.random() - .5) * 20, s: 4 + Math.random() * 9, life: .5 + Math.random() * .6, c: Math.random() < .5 ? '#E4E6E7' : '#9EA3A5' });
-    if (bits.length > 400) bits.splice(0, bits.length - 400);
+  function toScreen(p) {                                       // card texture pixel -> screen point, via the front face's uv layout
+    if (!cfg || !cfg.frontMesh) return null;
+    const g = cfg.frontMesh.geometry, P = g.attributes.position, U = g.attributes.uv;
+    if (!aff) {                                                // fit pos = o + u*A + v*B from three corners of the face
+      let i0 = 0, i1 = 0, i2 = 0, best = 0;
+      for (let i = 0; i < U.count; i++) { if (U.getX(i) + U.getY(i) < U.getX(i0) + U.getY(i0)) i0 = i; if (U.getX(i) - U.getY(i) > U.getX(i1) - U.getY(i1)) i1 = i; if (U.getY(i) - U.getX(i) > U.getY(i2) - U.getX(i2)) i2 = i; }
+      const v = (i) => new THREE.Vector3().fromBufferAttribute(P, i), o = v(i0), du1 = U.getX(i1) - U.getX(i0), dv1 = U.getY(i1) - U.getY(i0), du2 = U.getX(i2) - U.getX(i0), dv2 = U.getY(i2) - U.getY(i0);
+      const e1 = v(i1).sub(o), e2 = v(i2).sub(o), det = du1 * dv2 - du2 * dv1 || 1;
+      aff = { o, u0: U.getX(i0), v0: U.getY(i0), A: e1.clone().multiplyScalar(dv2 / det).addScaledVector(e2, -dv1 / det), B: e2.clone().multiplyScalar(du1 / det).addScaledVector(e1, -du2 / det) };
+    }
+    const u = p.x / CW - aff.u0, v = 1 - p.y / CH - aff.v0;
+    const w = aff.o.clone().addScaledVector(aff.A, u).addScaledVector(aff.B, v); cfg.frontMesh.localToWorld(w); w.project(camera);
+    const r = renderer.domElement.getBoundingClientRect();
+    return { x: r.left + (w.x + 1) / 2 * r.width, y: r.top + (1 - w.y) / 2 * r.height };
+  }
+  function spray(p, from, scr) {
+    if (reduceMotion) return;
+    const s = scr || toScreen(p), s0 = from ? (scr && from.sx != null ? { x: from.sx, y: from.sy } : toScreen(from)) : null; if (!s) return;
+    if (!fxOn) { document.body.appendChild(fx); fxOn = true; }
+    const dx = s0 ? s.x - s0.x : 0, dy = s0 ? s.y - s0.y : 0, n = Math.min(14, 2 + Math.hypot(dx, dy) / 4);
+    for (let i = 0; i < n; i++) {
+      const k = 3 + Math.floor(Math.random() * 3), pts = [];
+      for (let j = 0; j < k; j++) { const a = j / k * 6.283 + Math.random() * .8, r = .5 + Math.random() * .5; pts.push([Math.cos(a) * r, Math.sin(a) * r]); }
+      const shade = Math.random();
+      bits.push({ x: s.x + (Math.random() - .5) * 14, y: s.y + (Math.random() - .5) * 10, vx: dx * 4 + (Math.random() - .5) * 260, vy: dy * 2 - 80 - Math.random() * 260, r: Math.random() * 6, vr: (Math.random() - .5) * 18,
+        s: 1.6 + Math.random() * 3.2, life: .6 + Math.random() * .7, pts, c: shade < .35 ? '#F4F5F5' : shade < .75 ? '#BFC3C5' : '#868B8E' });
+    }
+    if (bits.length > 500) bits.splice(0, bits.length - 500);
     if (!bitsRaf && bits.length) bitsRaf = requestAnimationFrame(tickBits);
   }
   function paintFoil() {
@@ -1110,7 +1145,6 @@ const scratchCard = (() => {
   function draw() {
     if (!base) return;
     og.drawImage(base, 0, 0, CW, CH); og.drawImage(foil, 0, 0);
-    for (const b of bits) { og.save(); og.translate(b.x, b.y); og.rotate(b.r); og.globalAlpha = Math.min(1, b.life * 3); og.fillStyle = b.c; og.fillRect(-b.s / 2, -b.s / 3, b.s, b.s * .66); og.restore(); }
     if (coin) {                                                // a pound coin doing the scratching in the demo
       og.save(); og.translate(coin.x, coin.y); og.rotate(coin.a);
       const r = 62, g = og.createRadialGradient(-18, -18, 6, 0, 0, r);
@@ -1123,14 +1157,32 @@ const scratchCard = (() => {
     }
     if (texture) texture.needsUpdate = true;
   }
-  function rub(p, from) {
-    fg.globalCompositeOperation = 'destination-out'; fg.lineCap = 'round'; fg.lineJoin = 'round'; fg.lineWidth = 64;
-    fg.beginPath(); fg.moveTo((from || p).x, (from || p).y); fg.lineTo(p.x + .1, p.y); fg.stroke();
-    if (left > 0) spray(p, from);
-    fg.globalCompositeOperation = 'source-over';
+  function rub(p, from, scr) {                                 // a coin edge, not an eraser: ragged chips, streaks, and specks of foil left behind
+    const a = from || p, dx = p.x - a.x, dy = p.y - a.y, L = Math.hypot(dx, dy), n = Math.max(1, Math.ceil(L / 9));
+    const nx = L ? -dy / L : 0, ny = L ? dx / L : 1, R = Math.random;
+    fg.globalCompositeOperation = 'destination-out'; fg.fillStyle = '#000'; fg.strokeStyle = '#000'; fg.lineCap = 'butt';
+    for (let i = 0; i <= n; i++) {
+      const t = i / n, cx = a.x + dx * t + (R() - .5) * 6, cy = a.y + dy * t + (R() - .5) * 6, m = 9 + Math.floor(R() * 5), rad = 20 + R() * 12;
+      fg.globalAlpha = .55 + R() * .45; fg.beginPath();
+      for (let k = 0; k < m; k++) { const ang = k / m * 6.283 + R() * .4, rr = rad * (.45 + R() * .7); fg[k ? 'lineTo' : 'moveTo'](cx + Math.cos(ang) * rr * (1 + Math.abs(nx) * .2), cy + Math.sin(ang) * rr); }
+      fg.fill();
+    }
+    for (let k = 0; k < 7; k++) {                               // grooves dragged along the stroke, wider than the chips
+      const off = (R() - .5) * 74, j = (R() - .5) * 10;
+      fg.globalAlpha = .35 + R() * .65; fg.lineWidth = 1 + R() * 5; fg.beginPath();
+      fg.moveTo(a.x + nx * off - dx * .05, a.y + ny * off - dy * .05); fg.lineTo(p.x + nx * (off + j) + dx * .05, p.y + ny * (off + j) + dy * .05); fg.stroke();
+    }
+    fg.globalAlpha = 1; fg.globalCompositeOperation = 'source-over';
+    for (let k = 0; k < n * 2; k++) {                           // stubborn specks of silver
+      if (R() < .7) continue; const t = R(), off = (R() - .5) * 56;
+      fg.fillStyle = R() < .5 ? 'rgba(205,208,209,.95)' : 'rgba(160,165,167,.95)';
+      const sx = a.x + dx * t + nx * off, sy = a.y + dy * t + ny * off; if (sx < WIN.x || sx > WIN.x + WIN.w || sy < WIN.y || sy > WIN.y + WIN.h) continue;
+      fg.beginPath(); const s = 1.5 + R() * 4; fg.moveTo(sx, sy); fg.lineTo(sx + s, sy + R() * s); fg.lineTo(sx + R() * s, sy + s * 1.3); fg.fill();
+    }
+    if (left > 0) spray(p, from, scr);
     if (Math.random() < .15) {                                 // once almost all of it is gone, the last bits flake away
       const d = fg.getImageData(WIN.x, WIN.y, WIN.w, WIN.h).data; let n = 0, k = 0;
-      for (let i = 3; i < d.length; i += 160) { k++; if (d[i] > 40) n++; }
+      for (let i = 3; i < d.length; i += 160) { k++; if (d[i] > 120) n++; }
       left = n / k; if (left < .12) { fg.clearRect(WIN.x - 4, WIN.y - 4, WIN.w + 8, WIN.h + 8); left = 0; }
     }
     if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); });
@@ -1142,7 +1194,7 @@ const scratchCard = (() => {
     ray.setFromCamera(ndc, camera);
     const hit = ray.intersectObject(cfg.frontMesh, false)[0];
     if (!hit || !hit.uv) return null;
-    const p = { x: hit.uv.x * CW, y: (1 - hit.uv.y) * CH };
+    const p = { x: hit.uv.x * CW, y: (1 - hit.uv.y) * CH, sx: e.clientX, sy: e.clientY };
     return p.x > WIN.x - 30 && p.x < WIN.x + WIN.w + 30 && p.y > WIN.y - 30 && p.y < WIN.y + WIN.h + 30 ? p : null;
   }
   function demo() {                                            // the coin scratches panel 1 by itself, then hands over
@@ -1172,7 +1224,7 @@ const scratchCard = (() => {
       cfg.frontMat.map = texture; cfg.frontMat.needsUpdate = true;
       const img = new Image(); img.onload = () => { base = img; draw(); }; img.src = cfg.front;
     },
-    reset() { if (demoT) cancelAnimationFrame(demoT); demoT = null; coin = null; bits = []; paintFoil(); draw(); },
+    reset() { if (demoT) cancelAnimationFrame(demoT); demoT = null; coin = null; bits = []; aff = null; paintFoil(); draw(); },
     at, rub, demo, canvas: out,
   };
 })();
@@ -1250,10 +1302,11 @@ projectsLabel.position.set((STRIP + W) / 2, pocketTop + 0.001, POCKET_EDGE + 0.9
 y += LAYER + 0.003;
 const rightStack = y - PT;
 const rightTopAt = (x, z) => (x < STRIP + 0.05 ? liningTop : z >= POCKET_EDGE ? pocketTop : backingTop);
+const seamStitch = stitches(linePath(STRIP + 0.16, -H / 2 + 0.3, STRIP + 0.16, POCKET_EDGE), () => backingTop);   // hidden while the scratchcard rides over it
 const rightStitch = rr(0.18, -H / 2 + 0.18, W - 0.18, H / 2 - 0.18, [0.04, RAD_OUT - 0.12, RAD_OUT - 0.12, 0.04]);
 wallet.add(
   stitches(rightStitch, rightTopAt, false, (x, z) => (x > STRIP + 0.05 && z < POCKET_EDGE) || (sideCfg && x < STRIP + 0.05 && z > sideCfg.home.zTop - 0.05 && z < sideCfg.home.zTop + sideCfg.zLen + 0.05)), stitches(rightStitch, () => 0, true),
-  stitches(linePath(STRIP + 0.16, -H / 2 + 0.3, STRIP + 0.16, POCKET_EDGE), () => backingTop),
+  seamStitch,
   stitches(linePath(STRIP + 0.16, POCKET_EDGE + 0.1, STRIP + 0.16, H / 2 - 0.3), () => pocketTop),
 );
 
@@ -1826,13 +1879,14 @@ function poseActive() {
     if (item.kind !== 'scratch') return;
     // rise just above the stitched seam where the project section starts, and hinge just past it, so the end still
     // in the slot dips back under the leather while the part coming out rides over the stitching
-    const up = (backingTop + 0.035 - item.home.y) * k;
+    const up = (backingTop + 0.06 - item.home.y) * k;
     const pivot = item.parent.localToWorld(new THREE.Vector3(STRIP + 0.22, item.home.y + up, item.home.zTop + item.zLen / 2));
     const axis = new THREE.Vector3(0, 0, 1).applyQuaternion(item.parent.getWorldQuaternion(new THREE.Quaternion()));
     const R = new THREE.Quaternion().setFromAxisAngle(axis, -0.14 * k);
     pos.y += up; pos.sub(pivot).applyQuaternion(R).add(pivot); quat.premultiply(R);
   };
   tilt(slideEnd, startQ, 1);
+  if (item.kind === 'scratch') seamStitch.visible = p < 0.002;   // the card covers this run once it's out; never draw thread over it
   if (p <= 1) {
     const f = ease(p);
     g.position.copy(homePos).addScaledVector(dirV, dist * f);
@@ -1851,6 +1905,7 @@ function finishReturn() {
   const cfg = active.item;
   cfg.parent.attach(cfg.group);
   cfg.group.position.copy(cfg.homePos); cfg.group.quaternion.copy(cfg.homeQuat); cfg.group.scale.setScalar(1);
+  seamStitch.visible = true;
   if (cfg.setFold) cfg.setFold(0);
   document.body.classList.remove('item-out');
   active = null; backdrop.material.opacity = 0; controls.enabled = true; updateUI();
@@ -1893,11 +1948,11 @@ let down = null, dragging = false;
 const el = renderer.domElement;
 el.addEventListener('pointerdown', (e) => {
   down = { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY };
-  if (active && active.p >= 2) { dragging = true; el.setPointerCapture(e.pointerId); down.scratch = active.item.kind === 'scratch' && scratchCard.at(e); if (down.scratch) scratchCard.rub(down.scratch); }
+  if (active && active.p >= 2) { dragging = true; el.setPointerCapture(e.pointerId); down.scratch = active.item.kind === 'scratch' && scratchCard.at(e); if (down.scratch) scratchCard.rub(down.scratch, null, { x: e.clientX, y: e.clientY }); }
 });
 el.addEventListener('pointermove', (e) => {
   if (dragging && down) {
-    if (down.scratch) { const p = scratchCard.at(e); if (p) { scratchCard.rub(p, down.scratch); down.scratch = p; } down.lx = e.clientX; down.ly = e.clientY; return; }
+    if (down.scratch) { const p = scratchCard.at(e); if (p) { scratchCard.rub(p, down.scratch, { x: e.clientX, y: e.clientY }); down.scratch = p; } down.lx = e.clientX; down.ly = e.clientY; return; }
     if (active.item.kind === 'receipt') receiptScrollT = Math.max(0, Math.min(1, receiptScrollT - (e.clientY - down.ly) * 0.0016));
     else { yawT += (e.clientX - down.lx) * 0.009; pitchT = Math.max(-1.45, Math.min(1.45, pitchT + (e.clientY - down.ly) * 0.009)); }
     down.lx = e.clientX; down.ly = e.clientY; el.classList.add('can-grab'); return;
