@@ -305,12 +305,9 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mf-cols a:hover,.mf-cols button:hover{color:var(--green)}
 .mf-cols a:focus-visible,.mf-cols button:focus-visible,.mf-mail:focus-visible{outline:2px solid var(--green);outline-offset:3px}
 /* Footer mini game: me, in pixels, jumping deadlines on a green strip */
-.mf-game{background:var(--green);color:var(--ink);padding-top:56px}
-.mg-head{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
-.mg-kicker{margin:0 0 6px;font-size:13px;font-weight:700;opacity:.6}
-.mg-head h3{margin:0 0 8px;font-size:clamp(28px,4vw,52px);line-height:1;letter-spacing:-.035em}
-.mg-help{margin:0;font-size:15px;opacity:.75}
-.mg-box{position:relative;height:clamp(250px,40vh,380px);margin-top:12px;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.mf-game{background:var(--green);color:var(--ink);padding-top:24px}
+@media (hover:none),(pointer:coarse){.mf-game{display:none}}   /* keyboard game: computers only */
+.mg-box{position:relative;height:clamp(250px,40vh,380px);cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .mg-box canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated}
 .mg-box:focus-visible{outline:3px solid var(--ink);outline-offset:-3px}
 .mg-ui{position:absolute;top:10px;right:max(clamp(16px,4vw,48px),calc((100% - 1180px) / 2 + clamp(16px,4vw,48px)));display:flex;align-items:baseline;gap:8px;font-weight:700;font-variant-numeric:tabular-nums}
@@ -450,16 +447,11 @@ canvas.can-grab{cursor:var(--hand-grab)}
       </div>
       <div data-rv="up" class="mf-base"><span>© 2026 Harrison Greener</span><span>Designed and built in Manchester</span></div>
     </div>
-    <section class="mf-game" aria-labelledby="mgTitle">
-      <div class="mg-head">
-        <p class="mg-kicker">One more thing</p>
-        <h3 id="mgTitle">Jump the boxes, duck the rest.</h3>
-        <p class="mg-help">Space or ↑ to jump, hold ↓ to duck. On a phone, tap the top half to jump and hold the bottom half to duck.</p>
-      </div>
+    <section class="mf-game" aria-label="Mini game">
       <div class="mg-box" id="mgBox">
-        <canvas id="mgCanvas" aria-label="Mini game: Harry runs, jumping boxes and ducking under barriers. Space or up arrow to jump, hold down arrow to duck."></canvas>
+        <canvas id="mgCanvas" aria-label="Mini game: Harry runs, jumping blocks and ducking under floating bars. Space or up arrow to jump, hold down arrow to duck."></canvas>
         <div class="mg-ui"><b id="mgScore">0</b><span>cleared</span><span class="mg-best">Best <b id="mgBest">0</b></span></div>
-        <div class="mg-msg" id="mgMsg"><b>Press space to start</b><span>or tap the game</span></div>
+        <div class="mg-msg" id="mgMsg"><b>Press space to start</b><span>Space to jump, hold ↓ to duck</span></div>
       </div>
     </section>
   </footer>
@@ -1818,7 +1810,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
 });
 { const next = document.createElement('div'); next.className = 'mw-next'; next.innerHTML = '<b>Next project</b><span>In the works. Check back soon.</span>'; grid.appendChild(next); }
 
-/* ===== Footer mini game: me, running, jumping boxes and ducking barriers ===== */
+/* ===== Footer mini game: me, running, jumping blocks and ducking floating bars ===== */
 (() => {
   const box = document.getElementById('mgBox'), cv = document.getElementById('mgCanvas'), g = cv.getContext('2d');
   const msg = document.getElementById('mgMsg'), scoreEl = document.getElementById('mgScore'), bestEl = document.getElementById('mgBest');
@@ -1828,10 +1820,10 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   const img = {}; for (const k in SPR) { img[k] = new Image(); img[k].src = `assets/game/harry-${k}.webp`; }
   // obstacle sizes in units of my standing height
   const KINDS = [
-    { k: 'box', w: 0.3, h: 0.27 }, { k: 'box', w: 0.42, h: 0.22 }, { k: 'stack', w: 0.3, h: 0.4 }, { k: 'pair', w: 0.62, h: 0.27 },
+    { k: 'box', w: 0.27, h: 0.27 }, { k: 'box', w: 0.44, h: 0.2 }, { k: 'stack', w: 0.3, h: 0.4 }, { k: 'pair', w: 0.6, h: 0.27 },
   ];
   let W = 0, H = 0, dpr = 1, U = 160, state = 'idle', y = 0, vy = 0, obs = [], spd = 0, score = 0, best = 0, gap = 0;
-  let landT = 0, hitT = 0, raf = 0, last = 0, onScreen = false, dist = 0, ducking = false, keyDuck = false, touchDuck = false;
+  let landT = 0, hitT = 0, raf = 0, last = 0, onScreen = false, dist = 0, ducking = false, keyDuck = false;
   try { best = +localStorage.getItem('harry-game-best') || 0; } catch (e) {}
   bestEl.textContent = best;
   function size() {
@@ -1843,15 +1835,8 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   function reset() { y = 0; vy = 0; obs = []; spd = Math.max(U * 2.4, W * 0.34); score = 0; dist = 0; gap = U * 2.4; scoreEl.textContent = '0'; }
   function start() { reset(); state = 'play'; msg.hidden = true; kick(); }
   function jump() { if (state !== 'play') return start(); if (y === 0 && !ducking) vy = U * 3.95; }
-  const setDuck = () => { ducking = state === 'play' && (keyDuck || touchDuck); if (ducking && y > 0) vy = Math.min(vy, -U * 3); };
-  box.addEventListener('pointerdown', (e) => {
-    e.preventDefault();
-    if (state !== 'play') return start();
-    const r = box.getBoundingClientRect();
-    if (e.clientY - r.top > r.height * 0.55) { touchDuck = true; setDuck(); box.setPointerCapture?.(e.pointerId); } else jump();
-  });
-  const endTouch = () => { if (touchDuck) { touchDuck = false; setDuck(); } };
-  box.addEventListener('pointerup', endTouch); box.addEventListener('pointercancel', endTouch);
+  const setDuck = () => { ducking = state === 'play' && keyDuck; if (ducking && y > 0) vy = Math.min(vy, -U * 3); };
+  box.addEventListener('pointerdown', (e) => { e.preventDefault(); jump(); });
   const live = () => onScreen && !menu.hidden;
   addEventListener('keydown', (e) => {
     if (!live()) return;
@@ -1865,30 +1850,14 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   addEventListener('resize', () => { if (onScreen) size(); });
 
   function rr(x, y0, w, h) { g.fillRect(Math.round(x), Math.round(y0), Math.round(w), Math.round(h)); }
-  function drawBox(x, gy, w, h) {               // a cardboard box with tape and a label
-    const t = Math.max(2, U * 0.012);
-    g.fillStyle = '#1F1F1F'; rr(x, gy - h, w, h);
-    g.fillStyle = '#C99A62'; rr(x + t, gy - h + t, w - 2 * t, h - 2 * t);
-    g.fillStyle = '#B4864F'; rr(x + t, gy - h + t, w - 2 * t, h * 0.16);
-    g.fillStyle = '#E4CB98'; rr(x + w * 0.44, gy - h + t, w * 0.12, h * 0.42);
-    g.fillStyle = '#F2F2F0'; rr(x + w * 0.16, gy - h * 0.42, w * 0.3, h * 0.2);
-    g.fillStyle = '#1F1F1F'; rr(x + w * 0.19, gy - h * 0.36, w * 0.2, Math.max(1, h * 0.03)); rr(x + w * 0.19, gy - h * 0.3, w * 0.14, Math.max(1, h * 0.03));
-  }
-  function drawBarrier(x, gy, w, bottom, th) {   // striped barrier hanging on two chains
-    const t = Math.max(2, U * 0.012), top = gy - bottom - th;
-    g.fillStyle = '#1F1F1F'; rr(x + w * 0.14, 0, t, top); rr(x + w * 0.86 - t, 0, t, top);
-    for (let cy = 4; cy < top; cy += 10) { rr(x + w * 0.14 - t, cy, t * 3, t); rr(x + w * 0.86 - 2 * t, cy, t * 3, t); }
-    g.fillStyle = '#1F1F1F'; rr(x, top, w, th);
-    g.save(); g.beginPath(); g.rect(x + t, top + t, w - 2 * t, th - 2 * t); g.clip();
-    g.fillStyle = '#F2F2F0'; rr(x + t, top + t, w - 2 * t, th - 2 * t);
-    g.fillStyle = '#C8452B'; for (let sx = x - th; sx < x + w; sx += th * 1.2) { g.beginPath(); g.moveTo(sx, top + th); g.lineTo(sx + th * 0.6, top + th); g.lineTo(sx + th * 1.2, top); g.lineTo(sx + th * 0.6, top); g.closePath(); g.fill(); }
-    g.restore();
-  }
+  // obstacles are plain blocks in the site's own colours, so they read as part of the page
+  const INK = '#1F1F1F', PAPER = '#F2F2F0', DEEP = '#4F6B4B';
+  function block(x, y0, w, h, c) { g.fillStyle = c; rr(x, y0, w, h); }
   function drawObs(o, gy) {
-    if (o.k === 'bar') return drawBarrier(o.x, gy, o.w, o.bottom, o.th);
-    if (o.k === 'stack') { drawBox(o.x, gy, o.w, o.h * 0.52); drawBox(o.x + o.w * 0.08, gy - o.h * 0.52 + 1, o.w * 0.84, o.h * 0.48); return; }
-    if (o.k === 'pair') { drawBox(o.x, gy, o.w * 0.48, o.h); drawBox(o.x + o.w * 0.5, gy, o.w * 0.5, o.h * 0.8); return; }
-    drawBox(o.x, gy, o.w, o.h);
+    if (o.k === 'bar') { block(o.x, gy - o.bottom - o.th, o.w, o.th, INK); return; }
+    if (o.k === 'stack') { block(o.x, gy - o.h * 0.5, o.w, o.h * 0.5, INK); block(o.x + o.w * 0.18, gy - o.h, o.w * 0.64, o.h * 0.5, PAPER); return; }
+    if (o.k === 'pair') { block(o.x, gy - o.h, o.w * 0.46, o.h, o.c); block(o.x + o.w * 0.54, gy - o.h * 0.7, o.w * 0.46, o.h * 0.7, o.c === INK ? DEEP : INK); return; }
+    block(o.x, gy - o.h, o.w, o.h, o.c);
   }
   function drawMe(k, x, footY, rot = 0) {
     const [w, h, ax, ay] = SPR[k], im = img[k]; if (!im.complete || !im.naturalWidth) return;
@@ -1911,8 +1880,8 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
       if (y === 0) { if (wasUp) landT = now; vy = 0; }
       gap -= spd * dt;
       if (gap <= 0) {
-        if (score >= 3 && Math.random() < 0.28) obs.push({ k: 'bar', x: W + 10, w: U * 0.62, bottom: U * 0.66, th: U * 0.13, passed: false });
-        else { const k = KINDS[Math.floor(Math.random() * (score < 4 ? 3 : KINDS.length))]; obs.push({ k: k.k, x: W + 10, w: k.w * U, h: k.h * U, passed: false }); }
+        if (score >= 3 && Math.random() < 0.28) obs.push({ k: 'bar', x: W + 10, w: U * 0.7, bottom: U * 0.66, th: U * 0.16, passed: false });
+        else { const k = KINDS[Math.floor(Math.random() * (score < 4 ? 3 : KINDS.length))]; obs.push({ k: k.k, x: W + 10, w: k.w * U, h: k.h * U, c: [INK, PAPER, DEEP][Math.floor(Math.random() * 3)], passed: false }); }
         gap = spd * (0.85 + Math.random() * 0.9) + U * 0.9;
       }
       for (const o of obs) { o.x -= spd * dt; if (!o.passed && o.x + o.w < hx - U * 0.15) { o.passed = true; score++; scoreEl.textContent = score; } }
@@ -1924,7 +1893,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
         if (hb.x < o.x + o.w - U * 0.03 && hb.x + hb.w > o.x + U * 0.03 && hb.top < ob && hb.bot > ot) {
           state = 'over'; hitT = now;
           if (score > best) { best = score; bestEl.textContent = best; try { localStorage.setItem('harry-game-best', best); } catch (e) {} }
-          msg.innerHTML = `<b>${score} cleared</b><span>Press space or tap to go again</span>`; msg.hidden = false; break;
+          msg.innerHTML = `<b>${score} cleared</b><span>Press space to go again</span>`; msg.hidden = false; break;
         }
       }
     }
