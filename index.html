@@ -1120,7 +1120,7 @@ const scratchCard = (() => {
       for (let j = 0; j < k; j++) { const a = j / k * 6.283 + Math.random() * .8, r = .5 + Math.random() * .5; pts.push([Math.cos(a) * r, Math.sin(a) * r]); }
       const shade = Math.random();
       bits.push({ x: s.x + (Math.random() - .5) * 14, y: s.y + (Math.random() - .5) * 10, vx: dx * 4 + (Math.random() - .5) * 260, vy: dy * 2 - 80 - Math.random() * 260, r: Math.random() * 6, vr: (Math.random() - .5) * 18,
-        s: 1.6 + Math.random() * 3.2, life: .6 + Math.random() * .7, pts, c: shade < .35 ? '#F4F5F5' : shade < .75 ? '#BFC3C5' : '#868B8E' });
+        s: 2.4 + Math.random() * 4.2, life: .6 + Math.random() * .7, pts, c: shade < .35 ? '#F4F5F5' : shade < .75 ? '#BFC3C5' : '#868B8E' });
     }
     if (bits.length > 500) bits.splice(0, bits.length - 500);
     if (!bitsRaf && bits.length) bitsRaf = requestAnimationFrame(tickBits);
