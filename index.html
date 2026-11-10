@@ -304,6 +304,19 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mf-cols a,.mf-cols button{all:unset;cursor:inherit;display:block;width:max-content;max-width:100%;font-weight:700;font-size:17px;margin-bottom:8px;color:var(--paper)}
 .mf-cols a:hover,.mf-cols button:hover{color:var(--green)}
 .mf-cols a:focus-visible,.mf-cols button:focus-visible,.mf-mail:focus-visible{outline:2px solid var(--green);outline-offset:3px}
+/* Footer mini game: me, in pixels, jumping deadlines on a green strip */
+.mf-game{background:var(--green);color:var(--ink);padding-top:56px}
+.mg-head{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+.mg-kicker{margin:0 0 6px;font-size:13px;font-weight:700;opacity:.6}
+.mg-head h3{margin:0 0 8px;font-size:clamp(28px,4vw,52px);line-height:1;letter-spacing:-.035em}
+.mg-help{margin:0;font-size:15px;opacity:.75}
+.mg-box{position:relative;height:clamp(250px,40vh,380px);margin-top:12px;cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
+.mg-box canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated}
+.mg-box:focus-visible{outline:3px solid var(--ink);outline-offset:-3px}
+.mg-ui{position:absolute;top:10px;right:max(clamp(16px,4vw,48px),calc((100% - 1180px) / 2 + clamp(16px,4vw,48px)));display:flex;align-items:baseline;gap:8px;font-weight:700;font-variant-numeric:tabular-nums}
+.mg-ui>b{font-size:30px}.mg-ui span{font-size:14px;opacity:.7}.mg-best{margin-left:12px}.mg-best b{font-size:16px}
+.mg-msg{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;pointer-events:none;background:var(--ink);color:var(--paper);padding:12px 20px;border-radius:14px}
+.mg-msg b{font-size:18px}.mg-msg span{font-size:13px;opacity:.7}.mg-msg[hidden]{display:none}
 .mf-base{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:20px;border-top:1px solid rgba(242,242,240,.18);font-size:13px;opacity:.6}
 @media (max-width:640px){.mf-cols{grid-template-columns:1fr 1fr}}
 
@@ -437,6 +450,18 @@ canvas.can-grab{cursor:var(--hand-grab)}
       </div>
       <div data-rv="up" class="mf-base"><span>© 2026 Harrison Greener</span><span>Designed and built in Manchester</span></div>
     </div>
+    <section class="mf-game" aria-labelledby="mgTitle">
+      <div class="mg-head">
+        <p class="mg-kicker">One more thing</p>
+        <h3 id="mgTitle">Help me jump the deadlines.</h3>
+        <p class="mg-help">Press space, or tap the game, to jump.</p>
+      </div>
+      <div class="mg-box" id="mgBox">
+        <canvas id="mgCanvas" aria-label="Mini game: Harry runs and jumps over deadlines. Press space or tap to jump."></canvas>
+        <div class="mg-ui"><b id="mgScore">0</b><span>dodged</span><span class="mg-best">Best <b id="mgBest">0</b></span></div>
+        <div class="mg-msg" id="mgMsg"><b>Press space to start</b><span>or tap the game</span></div>
+      </div>
+    </section>
   </footer>
 
   <div class="mp-detail" id="mpDetail" hidden>
@@ -1792,6 +1817,97 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   b.addEventListener('click', () => openDetail(cfg)); grid.appendChild(b); workCards.push(b);
 });
 { const next = document.createElement('div'); next.className = 'mw-next'; next.innerHTML = '<b>Next project</b><span>In the works. Check back soon.</span>'; grid.appendChild(next); }
+
+/* ===== Footer mini game: pixel me jumps the deadlines ===== */
+(() => {
+  const box = document.getElementById('mgBox'), cv = document.getElementById('mgCanvas'), g = cv.getContext('2d');
+  const msg = document.getElementById('mgMsg'), scoreEl = document.getElementById('mgScore'), bestEl = document.getElementById('mgBest');
+  box.tabIndex = 0;
+  const SPR = { run1: [32, 74, 9, 72], run2: [29, 74, 11, 72], jump: [43, 72, 26, 70], crouch: [34, 45, 15, 43] };   // w, h, torso x, feet y
+  const img = {}; for (const k in SPR) { img[k] = new Image(); img[k].src = `assets/game/harry-${k}.png`; }
+  // deadlines, drawn as pixel art: . clear, K ink, P paper, G dark green, T tea, R red
+  const COL = { K: '#1F1F1F', P: '#F2F2F0', G: '#4E6A4B', T: '#9A6B3F', R: '#C8452B' };
+  const ART = {
+    clock: ['.K........K.', 'KKK......KKK', '.KKKKKKKKKK.', 'KKPPPPPPPPKK', 'KPPPPKPPPPPK', 'KPPPPKPPPPPK', 'KPPPPKPPPPPK', 'KPPPPKKKKPPK', 'KPPPPPPPPPPK', 'KKPPPPPPPPKK', '.KKKKKKKKKK.', 'KK........KK'],
+    mug: ['..........', 'KKKKKKKK..', 'KTTTTTTK..', 'KPPPPPPKKK', 'KPPPPPPK.K', 'KPPPPPPK.K', 'KPPPPPPKKK', 'KPPPPPPK..', 'KPPPPPPK..', '.KKKKKK...'],
+    papers: ['KKKKKKKKKK..', 'KPPPPPPPPK..', 'KPKKKKKPPKK.', 'KPPPPPPPPKPK', 'KPKKKKPPPKPK', 'KPPPPPPPPKPK', 'KPKKKKKKPKPK', 'KPPPPPPPPKPK', 'KPRRRPPPPKPK', 'KPPPPPPPPKPK', 'KKKKKKKKKKPK', '.KPPPPPPPPPK', '.KKKKKKKKKKK'],
+    clocks: null,
+  };
+  ART.clocks = ART.clock.map((r) => r + '..' + r);
+  const KINDS = ['clock', 'mug', 'papers', 'clocks'];
+  let W = 0, H = 0, dpr = 1, P = 3, state = 'idle', y = 0, vy = 0, obs = [], spd = 0, score = 0, best = 0, gap = 0, landT = 0, hitT = 0, raf = 0, last = 0, onScreen = false, dist = 0;
+  try { best = +localStorage.getItem('harry-game-best') || 0; } catch (e) {}
+  bestEl.textContent = best;
+  function size() {
+    const r = box.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); P = Math.max(2, Math.min(4, Math.floor(H / 125)));
+  }
+  const groundY = () => H - 34;
+  const px = () => Math.max(56, Math.min(W * 0.16, 200));
+  function reset() { y = 0; vy = 0; obs = []; spd = Math.max(260, W * 0.32); score = 0; dist = 0; gap = 380; scoreEl.textContent = '0'; }
+  function jump() {
+    if (state !== 'play') { reset(); state = 'play'; msg.hidden = true; kick(); return; }
+    if (y === 0) vy = P * 74 * 3.6;
+  }
+  box.addEventListener('pointerdown', (e) => { e.preventDefault(); jump(); });
+  addEventListener('keydown', (e) => {
+    if (!onScreen || menu.hidden || !(e.code === 'Space' || e.key === ' ' || e.key === 'ArrowUp')) return;
+    if (document.activeElement && /^(INPUT|TEXTAREA|BUTTON|A)$/.test(document.activeElement.tagName) && document.activeElement !== box) return;
+    e.preventDefault(); jump();
+  });
+  new IntersectionObserver((es) => { onScreen = es[0].isIntersecting && es[0].intersectionRatio > 0.4; if (onScreen) { size(); kick(); } }, { threshold: [0, 0.4, 1] }).observe(box);
+  addEventListener('resize', () => { if (onScreen) size(); });
+  function drawArt(name, x, gy) {
+    const a = ART[name], h = a.length;
+    const Q = P * 2; for (let r = 0; r < h; r++) for (let c = 0; c < a[r].length; c++) { const ch = a[r][c]; if (ch !== '.') { g.fillStyle = COL[ch]; g.fillRect(Math.round(x + c * Q), Math.round(gy - (h - r) * Q), Q, Q); } }
+  }
+  function drawHarry(k, x, footY, rot = 0) {
+    const [w, h, ax, ay] = SPR[k], im = img[k]; if (!im.complete || !im.naturalWidth) return;
+    g.save(); g.translate(Math.round(x), Math.round(footY));
+    if (rot) { g.translate(0, -h * P * 0.5); g.rotate(rot); g.translate(0, h * P * 0.5); }
+    g.drawImage(im, -ax * P, -(ay + 1) * P, w * P, h * P); g.restore();
+  }
+  function frame(now) {
+    raf = 0;
+    const dt = Math.min(0.033, (now - last) / 1000 || 0); last = now;
+    g.setTransform(dpr, 0, 0, dpr, 0, 0); g.imageSmoothingEnabled = false; g.clearRect(0, 0, W, H);
+    const gy = groundY(), hx = px();
+    // ground: an ink line and passing pixel dashes
+    g.fillStyle = '#1F1F1F'; g.fillRect(0, gy, W, P);
+    g.fillStyle = 'rgba(31,31,31,.35)'; const off = (dist * 0.6) % (P * 22);
+    for (let x = -off; x < W; x += P * 22) g.fillRect(Math.round(x), gy + P * 4, P * 8, P);
+    for (let x = -((dist * 0.6 + P * 11) % (P * 22)); x < W; x += P * 22) g.fillRect(Math.round(x), gy + P * 8, P * 4, P);
+    if (state === 'play') {
+      spd += dt * 12; dist += spd * dt;
+      const wasUp = y > 0; vy -= dt * P * 74 * 11.5; y = Math.max(0, y + vy * dt);
+      if (y === 0) { if (wasUp) landT = now; vy = 0; }
+      gap -= spd * dt;
+      if (gap <= 0) { const k = KINDS[Math.floor(Math.random() * (score < 4 ? 3 : KINDS.length))]; obs.push({ x: W + 10, k, w: ART[k][0].length * P * 2, h: ART[k].length * P * 2, passed: false }); gap = spd * (0.8 + Math.random() * 0.95) + P * 30; }
+      for (const o of obs) { o.x -= spd * dt; if (!o.passed && o.x + o.w < hx - P * 8) { o.passed = true; score++; scoreEl.textContent = score; } }
+      obs = obs.filter((o) => o.x > -200);
+      const hb = { x: hx - P * 7, y: gy - y - P * 66, w: P * 15, h: P * 64 };
+      for (const o of obs) {
+        if (hb.x < o.x + o.w - P && hb.x + hb.w > o.x + P && hb.y + hb.h > gy - o.h + P) {
+          state = 'over'; hitT = now;
+          if (score > best) { best = score; bestEl.textContent = best; try { localStorage.setItem('harry-game-best', best); } catch (e) {} }
+          msg.innerHTML = `<b>${score} deadline${score === 1 ? '' : 's'} dodged</b><span>Press space or tap to go again</span>`; msg.hidden = false; break;
+        }
+      }
+    }
+    for (const o of obs) drawArt(o.k, o.x, gy);
+    // shadow, then me
+    const sh = Math.max(0.35, 1 - y / (P * 80));
+    g.fillStyle = 'rgba(31,31,31,.22)'; g.beginPath(); g.ellipse(hx, gy + P * 0.5, P * 9 * sh, P * 1.4, 0, 0, 7); g.fill();
+    if (state === 'over') { const k = Math.min(1, (now - hitT) / 450); drawHarry('jump', hx, gy - y - Math.sin(k * Math.PI) * P * 10, k * 1.3); }
+    else if (state === 'idle') drawHarry(Math.floor(now / 700) % 4 === 3 ? 'run1' : 'crouch', hx, gy);
+    else if (y > 0) drawHarry('jump', hx, gy - y);
+    else if (now - landT < 90) drawHarry('crouch', hx, gy);
+    else drawHarry(Math.floor(dist / (P * 26)) % 2 ? 'run2' : 'run1', hx, gy - (Math.floor(dist / (P * 13)) % 2) * P);
+    if (onScreen && !menu.hidden && (state === 'play' || state === 'idle' || now - hitT < 600)) kick();
+  }
+  function kick() { if (!raf) raf = requestAnimationFrame(frame); }
+  size();
+})();
 
 /* The strip: while its band is pinned, scrolling down slides the projects sideways */
 const mwRail = document.getElementById('mwRail'), mwPin = mwRail.querySelector('.mw-pin'), mwBar = document.getElementById('mwBar');
