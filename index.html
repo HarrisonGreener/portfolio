@@ -2552,7 +2552,7 @@ requestAnimationFrame(() => { cvFit(); cvTick(); });
   const close = () => { note.hidden = true; try { sessionStorage.setItem('deskNote', '1'); } catch (e) {} };
   document.getElementById('deskNoteGo').addEventListener('click', close);
   document.getElementById('deskNoteCopy').addEventListener('click', async (e) => {
-    const url = location.href.startsWith('http') ? location.href : 'https://harrisongreener.github.io/portfolio/';
+    const url = 'https://harrisongreener.co.uk/';
     try { await navigator.clipboard.writeText(url); e.target.textContent = 'Link copied'; }
     catch (err) { e.target.textContent = url; }
   });
