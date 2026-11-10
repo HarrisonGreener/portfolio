@@ -234,6 +234,13 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-me .me-toon-layer{position:absolute;inset:0}
 .mi-me .me-reveal{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
 .mi-me .me-photo{display:none}   /* only a source for the reveal */
+/* the frame: the drawing's own circle as a paper disc, a thin offset ring, hair breaking out over the top */
+.mi-me .me-disc,.mi-me .me-ring{position:absolute;border-radius:50%;aspect-ratio:1}
+.mi-me .me-disc{left:-12.3%;top:-7.2%;width:118.6%;background:var(--paper)}   /* the drawing's own circle, made whole */
+.mi-me .me-ring{left:-16%;top:-10.4%;width:126%;border:2px solid var(--ink);transition:transform .8s cubic-bezier(.3,1.5,.5,1)}
+.mi-me:hover .me-ring{transform:scale(1.025)}
+.me-tag{position:absolute;left:47%;bottom:-7%;transform:translateX(-50%) rotate(-3deg);white-space:nowrap;font-weight:700;font-size:13px;background:var(--ink);color:var(--paper);padding:7px 13px;border-radius:999px;transition:opacity .3s ease}
+.mi-me:hover .me-tag{opacity:0}
 .me-pupil{transition:transform .12s linear}
 @media (max-width:760px),(max-height:520px){.mi-me{position:relative;right:auto;top:auto;transform:none;width:min(62vw,300px);margin:40px auto 0}}
 /* Projects: a white band that pins and slides the work sideways as you scroll */
@@ -423,12 +430,14 @@ canvas.can-grab{cursor:var(--hand-grab)}
     <p data-rv="up" class="mi-scroll" aria-hidden="true">Scroll <i></i></p>
   </div>
   <figure class="mi-me" id="miMe" aria-label="Harry, drawn; hover to see the photo">
+    <i class="me-disc" aria-hidden="true"></i><i class="me-ring" aria-hidden="true"></i>
     <div class="me-toon-layer">
       <img class="me-toon" src="assets/me/me-toon.webp" alt="" width="678" height="760">
       <svg class="me-eyes" viewBox="0 0 678 760" aria-hidden="true"><g class="me-eye" transform="translate(258 270)"><clipPath id="meClip0"><path d="M-24 0 Q0 -14 24 0 Q0 12 -24 0Z"/></clipPath><path d="M-24 0 Q0 -14 24 0 Q0 12 -24 0Z" fill="#FBFBFA"/><g clip-path="url(#meClip0)"><g class="me-pupil"><circle r="9.5" fill="#647A99" stroke="#2E3A4E" stroke-width="1.6"/><circle r="4.6" fill="#1F1F1F"/><circle cx="2.6" cy="-3" r="2" fill="#fff"/></g></g></g><g class="me-eye" transform="translate(384 264)"><clipPath id="meClip1"><path d="M-23 0 Q0 -14 23 0 Q0 12 -23 0Z"/></clipPath><path d="M-23 0 Q0 -14 23 0 Q0 12 -23 0Z" fill="#FBFBFA"/><g clip-path="url(#meClip1)"><g class="me-pupil"><circle r="9.5" fill="#647A99" stroke="#2E3A4E" stroke-width="1.6"/><circle r="4.6" fill="#1F1F1F"/><circle cx="2.6" cy="-3" r="2" fill="#fff"/></g></g></g></svg>
     </div>
     <img class="me-photo" src="assets/me/me-photo.webp" alt="Harrison Greener" width="678" height="760" hidden>
     <canvas class="me-reveal" aria-hidden="true"></canvas>
+    <figcaption class="me-tag">Hover for the real me</figcaption>
   </figure>
   </div></section>
 
@@ -1946,17 +1955,19 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   let raf = 0, mx = -1, my = -1, over = false, lx = -999, ly = -999;
   // Pixel reveal: the drawing breaks into squares; near the cursor they flip to the photo, with a ragged edge and a fading trail
   const cv = me.querySelector('.me-reveal'), g = cv.getContext('2d'), photo = me.querySelector('.me-photo');
-  let cells = [], cols = 0, rows = 0, cell = 12, W = 0, H = 0, dpr = 1;
+  let cells = [], cols = 0, rows = 0, cell = 12, W = 0, H = 0, dpr = 1, pat = null, patW = 0;
   function layout() {
     const b = me.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = b.width; H = b.height;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-    cell = Math.max(8, Math.round(W / 34)); cols = Math.ceil(W / cell); rows = Math.ceil(H / cell);
+    cell = Math.max(8, Math.round(W / 32)); pat = null; cols = Math.ceil(W / cell); rows = Math.ceil(H / cell);
     cells = Array.from({ length: cols * rows }, () => ({ heat: 0, v: 0, n: Math.random(), sp: 5 + Math.random() * 7 }));
   }
   function draw(dt) {
     const R = W * 0.2, kx = photo.naturalWidth / W, ky = photo.naturalHeight / H;
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.clearRect(0, 0, W, H);
     let busy = false;
+    if (!pat || patW !== W) { const oc = document.createElement('canvas'); oc.width = Math.round(W * dpr); oc.height = Math.round(H * dpr); oc.getContext('2d').drawImage(photo, 0, 0, oc.width, oc.height); pat = g.createPattern(oc, 'no-repeat'); pat.setTransform(new DOMMatrix().scale(1 / dpr)); patW = W; }
+    g.beginPath();
     for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
       const o = cells[r * cols + c], cx = (c + 0.5) * cell, cy = (r + 0.5) * cell;
       if (over) { const d = Math.hypot(cx - lx, cy - ly) / R; if (d < 0.75 + o.n * 0.7) o.heat = 1; }
@@ -1965,9 +1976,10 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
       o.v += (target - o.v) * Math.min(1, dt * o.sp);
       if (Math.abs(target - o.v) > 0.01 || o.heat > 0) busy = true;
       if (o.v < 0.04) continue;
-      const s = o.v >= 0.98 ? cell + 0.5 : cell * o.v, x = cx - s / 2, y = cy - s / 2;   // squares grow out of their centres
-      g.drawImage(photo, x * kx, y * ky, s * kx, s * ky, x, y, s, s);
+      const rad = cell * 0.5 * o.v * (o.v > 0.97 ? 1.46 : 1.08);   // round pixels grow from their centres and merge once fully on
+      g.moveTo(cx + rad, cy); g.arc(cx, cy, rad, 0, Math.PI * 2);
     }
+    g.fillStyle = pat; g.fill();
     return busy;
   }
   let last = 0;
