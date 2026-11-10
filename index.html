@@ -1871,8 +1871,6 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.imageSmoothingEnabled = true; g.clearRect(0, 0, W, H);
     const gy = groundY(), hx = px();
     g.fillStyle = '#1F1F1F'; g.fillRect(0, gy, W, H - gy);                 // the ground is a dark band; blocks rise out of it
-    g.fillStyle = 'rgba(242,242,240,.12)'; const step = U * 0.5, off = (dist * 0.7) % step;
-    for (let x = -off; x < W; x += step) g.fillRect(Math.round(x), gy + 12, Math.round(step * 0.35), 2);
     if (state === 'play') {
       spd += dt * U * 0.07; dist += spd * dt;
       const wasUp = y > 0; vy -= dt * U * 12.5; y = Math.max(0, y + vy * dt);
