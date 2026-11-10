@@ -207,7 +207,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .menu [data-rv=tile].in:hover>*{transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .4s ease}
 .mp-wrap{max-width:1180px;margin:0 auto;padding:28px clamp(16px,4vw,48px) 0}
 .mp-logo{width:clamp(150px,18vw,220px);height:auto;color:var(--ink);display:block}
-.mp-nav{display:flex;flex-wrap:wrap;gap:12px 40px;margin:48px 0 24px}
+.mp-nav{display:flex;flex-wrap:wrap;gap:12px 40px;margin:36px 0 20px}
 .mp-nav a{color:var(--ink);text-decoration:none;font-weight:700;font-size:clamp(34px,6vw,72px);line-height:.95;display:flex;gap:10px;align-items:flex-start;transition:color .2s ease}
 .mp-nav a span,.mp-sec h2 span{font-size:14px;letter-spacing:0;margin-top:.5em;opacity:.6}
 .mp-nav a:hover{color:var(--green)}
@@ -215,10 +215,10 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mp-sec{padding-top:72px;scroll-margin-top:12px}
 .mp-sec h2{margin:0 0 10px;font-size:clamp(28px,4vw,44px);display:flex;gap:10px;align-items:flex-start}
 .mp-lede{margin:0 0 28px;font-size:17px;max-width:46ch}
-.mp-head{padding-bottom:28px}
+.mp-head{padding-bottom:12px}
 /* Intro band: green, pinned while its words light up */
 .mp-intro{background:var(--green);height:200vh;height:200svh}
-.mi-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;overflow:hidden;box-sizing:border-box;padding-bottom:16vh}
+.mi-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:flex-start;overflow:hidden;box-sizing:border-box;padding-top:clamp(28px,6vh,64px)}
 .mi-pin>.mp-wrap{width:100%;box-sizing:border-box;padding-top:0;position:relative;z-index:1;pointer-events:none}
 .mi-pin>.mp-wrap .w{pointer-events:auto}   /* only the words catch the mouse; the portrait beside them stays hoverable */
 @media (min-width:761px) and (min-height:521px){.mi-line{max-width:min(15ch,calc(100vw - min(34vmin,400px) * 1.3 - max(5vw,calc((100vw - 1180px) / 2 + 24px)) - 12vw))}}
@@ -230,7 +230,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-scroll i{width:48px;height:2px;background:var(--ink);transform-origin:0 50%;animation:miScroll 2.2s cubic-bezier(.6,0,.2,1) infinite}
 @keyframes miScroll{0%{transform:scaleX(0)}55%{transform:scaleX(1);transform-origin:0 50%}56%{transform-origin:100% 50%}100%{transform:scaleX(0);transform-origin:100% 50%}}
 /* Me, drawn, beside the intro line: my eyes follow the cursor; hover and a lens shows the real photo underneath */
-.mi-me{position:absolute;z-index:0;margin:0;right:max(5vw,calc((100% - 1180px) / 2 + 24px));top:42%;width:min(34vmin,400px);aspect-ratio:678/760;transform:translateY(-46%);--lx:50%;--ly:50%;--lr:0px}
+.mi-me{position:absolute;z-index:0;margin:0;right:max(5vw,calc((100% - 1180px) / 2 + 24px));top:var(--me-y,42%);width:min(34vmin,400px);aspect-ratio:678/760;transform:translateY(-46%);--lx:50%;--ly:50%;--lr:0px}
 .mi-me img,.mi-me svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .mi-me .me-toon-layer{position:absolute;inset:0}
 .mi-me .me-reveal{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
@@ -392,20 +392,22 @@ canvas.can-grab{cursor:var(--hand-grab)}
 @media (max-width:640px){.mf-cols{grid-template-columns:1fr 1fr}}
 
 .mp-foot{padding-top:80px}
-.mp-detail{position:fixed;inset:0;z-index:2;transition:transform .9s cubic-bezier(.7,0,.15,1);background:var(--paper);overflow-y:auto;padding:0 clamp(16px,4vw,48px) 64px}
-.pd-hero{background:var(--green);box-shadow:0 0 0 100vmax var(--green);clip-path:inset(0 -100vmax);padding:96px 0 44px;margin-bottom:56px}
+.mp-detail{position:fixed;inset:0;z-index:2;transition:transform .9s cubic-bezier(.7,0,.15,1);background:var(--pd-bg,var(--paper));color:var(--pd-ink,var(--ink));font-family:var(--pd-body,var(--display));overflow-y:auto;padding:0 clamp(16px,4vw,48px) 64px}
+.pd-hero{background:var(--pd-hero,var(--green));color:var(--pd-hero-ink,var(--ink));box-shadow:0 0 0 100vmax var(--pd-hero,var(--green));clip-path:inset(0 -100vmax);padding:110px 0 48px;margin-bottom:56px}
 .pd-hero .pd-links{margin-bottom:0}
 .mp-detail[hidden],.menu[hidden]{display:none}
 .mp-detail.enter{transform:translateY(100%)}
-.mp-detail-close{all:unset;position:absolute;top:24px;left:clamp(16px,4vw,48px);cursor:inherit;font-size:34px;font-weight:700}
+.mp-detail-close{all:unset;position:fixed;top:22px;left:clamp(16px,4vw,48px);z-index:6;cursor:inherit;font-family:var(--pd-body,var(--display));font-size:15px;font-weight:700;padding:11px 18px;border-radius:999px;background:var(--pd-btn,var(--ink));color:var(--pd-btn-ink,var(--paper));box-shadow:0 6px 18px rgba(0,0,0,.18);transition:transform .2s ease}
+.mp-detail-close:hover{transform:translateX(-3px)}
 .mp-detail-close:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
 .pd{max-width:1100px;margin:0 auto}
 .mp-eyebrow{margin:0 0 8px;font-size:14px;letter-spacing:0;opacity:.65;font-weight:700}
-.pd h3{margin:0 0 16px;font-size:clamp(40px,7vw,84px);line-height:.95}
-.pd-desc{font-size:clamp(18px,1.8vw,22px);line-height:1.45;max-width:46ch;margin:0 0 24px}
+.pd h3{margin:0 0 16px;font-family:var(--pd-display,inherit);font-weight:var(--pd-hw,700);text-transform:var(--pd-case,none);letter-spacing:var(--pd-ls,-.03em);font-size:var(--pd-hs,clamp(40px,7vw,84px));line-height:var(--pd-lh,.95)}
+.pd h4{font-family:var(--pd-display,inherit);font-weight:var(--pd-hw,700)}
+.pd-desc{font-size:calc(clamp(18px,1.8vw,22px) * var(--pd-tz,1));line-height:1.45;max-width:46ch;margin:0 0 24px}
 .pd-links{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:40px}
-.pd-links a{font-weight:700;font-size:16px;text-decoration:none;border-radius:999px;padding:12px 22px;border:2px solid var(--ink);color:var(--ink);transition:transform .2s ease}
-.pd-links a:first-child{background:var(--ink);color:var(--paper)}
+.pd-links a{font-weight:700;font-size:16px;text-decoration:none;border-radius:var(--pd-r,999px);padding:12px 22px;border:2px solid currentColor;color:inherit;transition:transform .2s ease}
+.pd-links a:first-child{background:var(--pd-btn,var(--ink));border-color:var(--pd-btn,var(--ink));color:var(--pd-btn-ink,var(--paper))}
 .pd-links a:hover{transform:translateY(-2px)}
 .pd-links a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
 /* live preview: the real site, running inside a phone or a browser window */
@@ -431,23 +433,29 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .pd-cards dl{display:grid;grid-template-columns:auto 1fr;gap:8px 18px;font-size:16px;margin:8px 0 0}
 .pd-cards dt{font-weight:700;opacity:.65}.pd-cards dd{margin:0}
 /* repo preview, styled after a GitHub repo card */
-.pd-repo{background:#fff;border-radius:16px;padding:22px 24px;box-shadow:0 14px 30px rgba(31,31,31,.18)}
+.pd-repo{background:var(--pd-card,#fff);color:var(--pd-card-ink,var(--ink));border-radius:16px;padding:22px 24px;box-shadow:0 14px 30px rgba(31,31,31,.18)}
 .pd-repo:empty{display:none}
 .pd-repo-head{display:flex;align-items:center;gap:10px;font-size:19px;font-weight:700;margin-bottom:6px;word-break:break-all}
 .pd-repo-head svg{width:20px;height:20px;flex:none;fill:currentColor;opacity:.7}
-.pd-repo-head a{color:var(--ink)}
+.pd-repo-head a{color:inherit}
 .pd-repo-meta{font-size:14px;opacity:.65;margin:0 0 16px}
 .pd-langbar{display:flex;height:9px;border-radius:5px;overflow:hidden;margin-bottom:10px}
 .pd-langs{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin:0 0 18px;padding:0;list-style:none}
 .pd-langs li{display:flex;align-items:center;gap:6px}.pd-langs i{width:10px;height:10px;border-radius:50%}
-.pd-files{list-style:none;margin:0;padding:0;border:1px solid rgba(31,31,31,.12);border-radius:10px;overflow:hidden;font-size:14px}
-.pd-files li{display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid rgba(31,31,31,.08)}
+.pd-files{list-style:none;margin:0;padding:0;border:1px solid color-mix(in srgb,currentColor 15%,transparent);border-radius:10px;overflow:hidden;font-size:14px}
+.pd-files li{display:flex;align-items:center;gap:10px;padding:8px 14px;border-top:1px solid color-mix(in srgb,currentColor 10%,transparent)}
 .pd-files li:first-child{border-top:0}
 .pd-files svg{width:16px;height:16px;flex:none}
 .pd-gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:24px;align-items:start}
 .pd-gallery figure{margin:0}
 .pd-gallery img{width:100%;height:auto;display:block;border-radius:12px;box-shadow:0 12px 26px rgba(31,31,31,.25)}
 .pd-gallery figcaption{font-size:14px;margin-top:8px;opacity:.8}
+.pd-nav{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-top:72px;padding-top:28px;border-top:2px solid currentColor}
+.pd-nav button{all:unset;cursor:inherit;font-family:var(--pd-display,inherit);font-weight:var(--pd-hw,700);text-transform:var(--pd-case,none);font-size:calc(clamp(20px,2.4vw,30px) * var(--pd-ns,1));transition:transform .2s ease}
+.pd-nav #pdBack{font-family:var(--pd-body,var(--display));font-weight:700;text-transform:none;font-size:16px;align-self:center}
+.pd-nav button:hover{transform:translateX(4px)}.pd-nav #pdBack:hover{transform:translateX(-4px)}
+.pd-nav button:focus-visible,.mp-detail-close:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+.pd-next small{display:block;font-family:var(--pd-body,var(--display));font-size:13px;font-weight:700;text-transform:none;letter-spacing:0;opacity:.6;margin-bottom:4px;text-align:right}
 @media (max-width:760px){.mp-contact,.pd-cols{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.menu,.menu-under,.menu-btn i,[data-rv],[data-rv]>*{transition:none!important}.menu,.menu-under{transform:none;opacity:0}.menu.open,.menu-under.open{opacity:1}}
 </style>
@@ -542,7 +550,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
   </footer>
 
   <div class="mp-detail" id="mpDetail" hidden>
-    <button type="button" class="mp-detail-close" id="mpDetailClose" aria-label="Back to projects">←</button>
+    <button type="button" class="mp-detail-close" id="mpDetailClose"><span aria-hidden="true">←</span> All projects</button>
     <article class="pd">
       <header class="pd-hero">
         <p data-rv="up" class="mp-eyebrow" id="mpdEyebrow"></p>
@@ -557,6 +565,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
       </div>
       <section data-rv="up" class="pd-brand" id="pdBrand" hidden></section>
       <div data-rv="up" class="pd-gallery" id="pdGallery"></div>
+      <nav class="pd-nav" aria-label="More projects"><button type="button" id="pdBack">← All projects</button><button type="button" id="pdNext" class="pd-next"></button></nav>
     </article>
   </div>
 </div>
@@ -2113,11 +2122,11 @@ function orbStops() {
   const intro = at(mpIntro), introEnd = intro + mpIntro.offsetHeight - H, rail = at(mwRail), cv = document.getElementById('mp-cv'), cvTop = at(cv), foot = at(document.querySelector('.mp-footer'));
   const end = menu.scrollHeight - H, pinned = stripPinned() && galTravel > 0;
   const bar = document.querySelector('.mw-progress').getBoundingClientRect(), barY = bar.top + bar.height / 2 - mwPin.getBoundingClientRect().top;   // where the line sits while the strip is pinned
-  const S = (s, x, y, d, c) => ({ s, x, y, d, c }), cvG = cvGeom();
+  const S = (s, x, y, d, c) => ({ s, x, y, d, c }), cvG = cvGeom(), introMid = introCentre(H);
   return [
     S(0, bx, by, 44, C_GREEN),                                                        // behind the X
-    S(Math.max(1, intro + H * 0.75), mob ? W * 0.82 : W * 0.78, H * 0.42, (mob ? 46 : 34) * vm, C_PAPER),     // drops into the green intro, slowly
-    S(Math.max(2, introEnd), mob ? W * 0.75 : W * 0.7, H * 0.44, (mob ? 60 : 50) * vm, C_PAPER),             // swells as the words light up, reaching under them
+    S(Math.max(1, intro + H * 0.75), mob ? W * 0.82 : W * 0.78, introMid - H * 0.08, (mob ? 46 : 34) * vm, C_PAPER),     // drops into the green intro, slowly
+    S(Math.max(2, introEnd), mob ? W * 0.75 : W * 0.7, introMid - H * 0.06, (mob ? 60 : 50) * vm, C_PAPER),             // swells as the words light up, reaching under them
     pinned ? S(Math.max(3, rail - H * 0.3), bar.left + W * 0.08, H * 0.62, 11 * vm, C_PAPER) : S(Math.max(3, rail - H * 0.3), W * 0.88, H * 0.3, 10 * vm, C_PAPER),   // still a clear disc as it heads into the projects
     pinned ? S(rail, bar.left, barY, 26, C_INK) : S(rail, W * 0.9, H * 0.2, 24, C_INK),   // shrinks to a bead...
     pinned ? S(rail + galTravel, bar.right, barY, 26, C_INK) : S(rail + mwRail.offsetHeight * 0.5, W * 0.9, H * 0.2, 24, C_INK),            // ...that runs along the strip's progress line
@@ -2179,7 +2188,7 @@ function orbTick() {
   orb.x += (t.x - orb.x) * k; orb.y += (t.y - orb.y) * k; orb.d += (t.d - orb.d) * k;
   drawOrb();
   const by = menuBtn.getBoundingClientRect(), f = document.querySelector('.mp-footer').getBoundingClientRect(), cy = by.top + by.height / 2;
-  menuBtn.classList.toggle('x-light', mpDetail.hidden && cy > f.top && cy < f.bottom && Math.hypot(orb.x - (by.left + by.width / 2), orb.y - cy) > orb.d / 2);
+  if (mpDetail.hidden) menuBtn.classList.toggle('x-light', cy > f.top && cy < f.bottom && Math.hypot(orb.x - (by.left + by.width / 2), orb.y - cy) > orb.d / 2);
   if (Math.abs(t.x - orb.x) + Math.abs(t.y - orb.y) + Math.abs(t.d - orb.d) > 0.4) orb.raf = requestAnimationFrame(orbTick);
 }
 const kickOrb = () => { if (!orb.raf) orb.raf = requestAnimationFrame(orbTick); };
@@ -2281,7 +2290,45 @@ function buildRepo(pr) {
     <p class="pd-repo-meta">Public · updated ${fmtDay(pr.updated)} · “${esc(pr.commit)}”</p>
     <div class="pd-langbar">${bar}</div><ul class="pd-langs">${legend}</ul><ul class="pd-files">${files}</ul>`;
 }
+/* Each project page wears its project's own colours and fonts, taken from its repo */
+const PD_THEMES = {
+  stack:        { bg: '#F0E3CE', ink: '#2A1A12', hero: '#EF8B2C', heroInk: '#2A1A12', btn: '#2A1A12', btnInk: '#F0E3CE', card: '#FFF8EC', display: "'Shrikhand',serif", hw: 400, ls: '0', body: "'Geist',system-ui,sans-serif" },
+  folio:        { bg: '#FBFBFA', ink: '#0F0D0E', hero: '#0F0D0E', heroInk: '#FBFBFA', heroDark: 1, btn: '#B3593B', btnInk: '#FFFFFF', card: '#FFFFFF', display: "'Inter',sans-serif", hw: 900, case: 'uppercase', ls: '-.04em', body: "'Inter',sans-serif" },
+  quotable:     { bg: '#F2F3EF', ink: '#0B2742', hero: '#0B2742', heroInk: '#F2F3EF', heroDark: 1, btn: '#C4561B', btnInk: '#FFFFFF', card: '#FFFFFF', display: "'Archivo',sans-serif", hw: 800, ls: '-.03em', body: "'Archivo',sans-serif" },
+  pat:          { bg: '#FBFBF9', ink: '#1F1F1F', hero: '#2274A4', heroInk: '#FBFBF9', heroDark: 1, btn: '#F9B514', btnInk: '#1F1F1F', card: '#FFFFFF' },
+  brandomizer:  { bg: '#1F1311', ink: '#EFE3C6', hero: '#951C2E', heroInk: '#EFE3C6', dark: 1, btn: '#FFB23E', btnInk: '#22100D', card: '#2B1A17', display: "'Bungee',sans-serif", hw: 400, ls: '0', body: "'Barlow',sans-serif", r: '8px' },
+  'big-brother':{ bg: '#101113', ink: '#E6E2D8', hero: '#1A1C1F', heroInk: '#E6E2D8', dark: 1, btn: '#C23B30', btnInk: '#E6E2D8', card: '#1A1C1F', display: "'Press Start 2P',monospace", hw: 400, ls: '0', hs: 'clamp(24px,4vw,46px)', lh: '1.3', ns: .7, body: "'VT323',monospace", tz: 1.3, r: '0' },
+  fly:          { bg: '#F4F4F2', ink: '#0A0A0A', hero: '#0A0A0A', heroInk: '#F4F4F2', heroDark: 1, btn: '#D6241C', btnInk: '#FFFFFF', card: '#FFFFFF', display: "'Space Grotesk',sans-serif", hw: 700, ls: '-.03em', body: "'Space Grotesk',sans-serif", r: '0' },
+  rolla:        { bg: '#F4F5F2', ink: '#0E0E0E', hero: '#7EE8C3', heroInk: '#0E0E0E', btn: '#0E0E0E', btnInk: '#7EE8C3', card: '#FFFFFF', display: "'Figtree',sans-serif", hw: 800, ls: '-.03em', body: "'Inter',sans-serif" },
+};
+let pdFontsIn = false, pdTheme = {};
+function loadProjectFonts() {
+  if (pdFontsIn) return; pdFontsIn = true;
+  const l = document.createElement('link'); l.rel = 'stylesheet';
+  l.href = 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Shrikhand&family=Inter:wght@400;500;600;700;800;900&family=Bungee&family=Barlow:wght@400;500;600;700&family=VT323&family=Press+Start+2P&family=Space+Grotesk:wght@400;500;700&family=Figtree:wght@700;800&display=swap';
+  document.head.appendChild(l);
+}
+function applyTheme(id) {
+  const t = pdTheme = PD_THEMES[id] || {};
+  const map = { bg: '--pd-bg', ink: '--pd-ink', hero: '--pd-hero', heroInk: '--pd-hero-ink', btn: '--pd-btn', btnInk: '--pd-btn-ink', card: '--pd-card', display: '--pd-display', hw: '--pd-hw', case: '--pd-case', ls: '--pd-ls', hs: '--pd-hs', lh: '--pd-lh', body: '--pd-body', tz: '--pd-tz', ns: '--pd-ns', r: '--pd-r' };
+  for (const [k, v] of Object.entries(map)) t[k] != null ? detail.style.setProperty(v, t[k]) : detail.style.removeProperty(v);
+  detail.style.setProperty('--pd-card-ink', t.dark ? t.ink : (t.ink || ''));
+  detXLight();
+}
+function detXLight() {   // keep the X readable over dark project colours
+  if (detail.hidden) return;
+  const hero = detail.querySelector('.pd-hero').getBoundingClientRect();
+  menuBtn.classList.toggle('x-light', !!(pdTheme.dark || (pdTheme.heroDark && hero.bottom > 40)));
+}
+detail.addEventListener('scroll', detXLight, { passive: true });
+const BIZ = ITEMS.filter((i) => i.kind === 'biz');
+let pdCur = null;
+document.getElementById('pdBack').addEventListener('click', () => closeDetail());
+document.getElementById('pdNext').addEventListener('click', () => { const n = BIZ[(BIZ.indexOf(pdCur) + 1) % BIZ.length]; detail.scrollTo({ top: 0 }); openDetail(n); });
 function openDetail(cfg) {
+  pdCur = cfg; loadProjectFonts();
+  const nx = BIZ[(BIZ.indexOf(cfg) + 1) % BIZ.length];
+  document.getElementById('pdNext').innerHTML = `<small>Next project</small>${esc(nx.title)} →`;
   const pr = PROJECTS[cfg.id];
   document.getElementById('mpdFront').src = cfg.front; document.getElementById('mpdFront').alt = `${cfg.title} card, front`;
   document.getElementById('mpdBack').src = cfg.back; document.getElementById('mpdBack').alt = `${cfg.title} card, back`;
@@ -2295,7 +2342,7 @@ function openDetail(cfg) {
     .map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join('') : '<p class="mp-note">Code coming soon.</p>';
   document.getElementById('pdGallery').innerHTML = pr ? pr.shots.map(([src, cap, w, h]) => `<figure><img src="${src}" alt="${esc(cap)}" width="${w}" height="${h}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('') : '';
   buildRepo(pr); buildBrand(cfg.id, cfg.title);
-  resetReveal(detail); detail.classList.add('enter'); detail.hidden = false; menuBtn.classList.remove('x-light'); detail.scrollTop = 0; if (pr) pr.cover = cfg.front; buildPreview(pr);
+  resetReveal(detail); detail.classList.add('enter'); detail.hidden = false; applyTheme(cfg.id); detail.scrollTop = 0; if (pr) pr.cover = cfg.front; buildPreview(pr);
   const fromMenu = menu.classList.contains('open');
   requestAnimationFrame(() => requestAnimationFrame(() => { detail.classList.remove('enter'); revealIn(detail, reduceMotion ? 0 : (fromMenu ? 0.55 : 1.1)); }));
   document.getElementById('mpDetailClose').focus({ preventScroll: true });
@@ -2343,7 +2390,7 @@ function setMenu(open) {
   if (open) {
     menu.hidden = false; menu.scrollTop = 0; closeDetail(true); resetReveal(menu); menu.style.setProperty('--sbw', (menu.offsetWidth - menu.clientWidth) + 'px');
     menu.classList.remove('closing'); menuUnder.classList.remove('closing');
-    resetStrip(); sizeStrip(); resetOrb();
+    resetStrip(); sizeStrip(); resetOrb(); placeMe();
     requestAnimationFrame(() => requestAnimationFrame(() => { menu.classList.add('open'); menuUnder.classList.add('open'); revealIn(menu, reduceMotion ? 0 : 1.05); setTimeout(kickStrip, reduceMotion ? 0 : 1200); setTimeout(() => { orbCache = null; kickOrb(); }, reduceMotion ? 0 : 900); setTimeout(() => { orbCache = null; drawOrb(); }, reduceMotion ? 0 : 1600); }));
   } else {
     menu.classList.add('closing'); menuUnder.classList.add('closing'); menuBtn.classList.remove('x-light');
@@ -2383,6 +2430,13 @@ const CV_ITEMS = [   // lane: 0 education, 1-3 design & digital, 4 hospitality
 ];
 const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const cvDate = (d) => d ? `${MON[d[1] - 1]} ${d[0]}` : 'now';
+function introCentre(H) {   // where the intro text's middle sits while its band is pinned
+  const pin = mpIntro.querySelector('.mi-pin'), wrap = pin.querySelector('.mp-wrap');
+  const y = wrap.getBoundingClientRect().top - pin.getBoundingClientRect().top + wrap.offsetHeight / 2;
+  return y > 0 ? y : H * 0.45;
+}
+function placeMe() { const y = introCentre(menu.clientHeight); document.getElementById('miMe').style.setProperty('--me-y', (y + 18) + 'px'); }
+addEventListener('resize', placeMe);
 function cvGeom() {   // where the year counter sits; the travelling circle parks on the same spot
   const W = innerWidth, H = menu.clientHeight || innerHeight, vm = Math.min(W, H) / 100, mob = W < 760;
   return mob ? { x: W * 0.8, y: H * 0.275, d: 22 * vm } : { x: W * 0.77, y: H * 0.38, d: 34 * vm };
