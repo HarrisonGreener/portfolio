@@ -179,7 +179,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 /* The orb: a circle that sits behind the X and travels with you down the menu page.
    It paints above each band's background but below the content, so it reads as part of the layout. */
 .mp-orb{position:fixed;left:0;top:0;width:100%;height:100%;z-index:1;pointer-events:none}
-.mp-orb-top{z-index:3}   /* over the project strip the orb passes in front of the cards, so it never vanishes behind them */
+.mp-orb-top{z-index:3}   /* spare layer above the content; the orb ducks under the project cards */
 .menu .mp-head,.menu .mi-pin>.mp-wrap,.menu .mw-head,.menu .mw-viewport,.menu .mw-foot,.menu .mp-cvband>.mp-wrap,.menu .mf-in,.menu .mg-box{position:relative;z-index:2}
 .menu .mi-pin,.menu .mw-pin{z-index:2}   /* sticky panels are their own layers: lift them over the orb */
 .menu-btn:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
@@ -2006,7 +2006,7 @@ function orbTarget() {
 const orbCtx = mpOrb.getContext('2d'), mpOrbTop = document.getElementById('mpOrbTop'), orbTopCtx = mpOrbTop.getContext('2d');
 // what colour the orb takes over each band, so it always shows
 const ORB_ON = () => [
-  [document.querySelector('.mp-head'), C_GREEN], [mpIntro, C_PAPER], [document.getElementById('mp-projects'), C_GREEN, true],
+  [document.querySelector('.mp-head'), C_GREEN], [mpIntro, C_PAPER], [document.getElementById('mp-projects'), C_GREEN],
   [document.getElementById('mp-cv'), C_PAPER], [document.querySelector('.mf-in'), C_INK], [document.querySelector('.mf-game'), C_PAPER],
 ];
 // a hovered intro word is white; wherever it crosses the white orb it turns green, worked out from the word's own box
