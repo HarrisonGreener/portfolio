@@ -16,16 +16,16 @@ body{margin:0;min-height:100vh;background:#E3E3E0;font-family:var(--font);color:
 .front{background:#FFD21F;color:#141414}
 .art{position:absolute;left:0;top:0;bottom:7mm;width:43mm;overflow:hidden}
 .burst{position:absolute;inset:-40%;background:repeating-conic-gradient(from 0deg at 45% 55%,#FFB000 0 7deg,#FFD21F 7deg 15deg)}
-.burst::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 30% 34% at 45% 56%,rgba(255,110,0,.55),rgba(227,0,27,.18) 60%,transparent 100%)}
+.burst::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 30% 34% at 45% 56%,rgba(255,110,0,.28),rgba(227,0,27,.08) 60%,transparent 100%)}
 .price{position:absolute;left:1.6mm;top:1.6mm;z-index:5;width:7mm;height:7mm;border-radius:50%;background:#E3001B;border:.4mm solid #fff;box-shadow:0 0 0 .25mm #141414;display:grid;place-items:center}
 .price b{color:#fff;font-size:2.9mm;font-weight:900;letter-spacing:-.04em}
 .title{position:absolute;left:3mm;top:3.9mm;z-index:3;margin:0;transform:rotate(-4deg) skewX(-6deg);transform-origin:left top;line-height:.78;text-transform:uppercase;font-weight:900;font-stretch:118%}
 .title span{display:block;-webkit-text-stroke:.55mm #fff;paint-order:stroke fill}
 .title .t1{font-size:6mm;color:#1446C8;margin-left:8.6mm;text-shadow:.35mm .35mm 0 #141414,.6mm .6mm 0 #141414}
 .title .t2{font-size:10.6mm;color:#E3001B;letter-spacing:-.02em;text-shadow:.5mm .5mm 0 #141414,.85mm .85mm 0 #141414,1.1mm 1.1mm 0 #141414}
-.me{position:absolute;left:-.6mm;bottom:0;width:43.8mm;height:auto;z-index:4;filter:drop-shadow(.4mm .4mm 0 rgba(20,20,20,.5)) drop-shadow(0 0 .6mm #FFE38A) drop-shadow(0 0 2mm rgba(255,122,0,.9)) drop-shadow(0 0 4.5mm rgba(227,0,27,.6))}
+.me{position:absolute;left:-.6mm;bottom:0;width:43.8mm;height:auto;z-index:4;filter:drop-shadow(.4mm .4mm 0 rgba(20,20,20,.5)) drop-shadow(0 0 .6mm rgba(255,227,138,.8)) drop-shadow(0 0 2mm rgba(255,122,0,.5)) drop-shadow(0 0 4.5mm rgba(227,0,27,.28))}
 .winup{position:absolute;left:2.2mm;bottom:2.6mm;z-index:5;margin:0;transform:rotate(-4deg);line-height:.9;text-transform:uppercase}
-.winup small{display:block;font-size:1.7mm;font-weight:900;color:#141414}
+.winup small{display:block;font-size:1.7mm;font-weight:900;color:#141414;-webkit-text-stroke:.45mm #fff;paint-order:stroke fill}
 .winup b{display:block;font-size:4.1mm;font-weight:900;font-stretch:115%;color:#1446C8;-webkit-text-stroke:.35mm #fff;paint-order:stroke fill;text-shadow:.35mm .35mm 0 #141414}
 .rules{margin:0;font-size:1.3mm;font-weight:700;line-height:1.25;color:#141414;opacity:.8}
 .play{position:absolute;right:2mm;top:2mm;bottom:8.6mm;width:39.5mm;background:#1446C8;border-radius:1.2mm;padding:1.1mm;display:flex;flex-direction:column;box-shadow:inset 0 0 0 .35mm #0A2A86}
@@ -76,7 +76,6 @@ body{margin:0;min-height:100vh;background:#E3E3E0;font-family:var(--font);color:
   <div class="card front" id="front">
     <div class="art">
       <div class="burst" aria-hidden="true"></div>
-      <div class="price"><b>£1</b></div>
       <h1 class="title"><span class="t1">Instant</span><span class="t2">Hire</span></h1>
       <img class="me" src="me-win.webp" alt="">
       <p class="winup"><small>WIN UP TO</small><b>1 DESIGNER</b></p>
@@ -114,10 +113,10 @@ body{margin:0;min-height:100vh;background:#E3E3E0;font-family:var(--font);color:
 </div>
 
 <script>
-const PRIZES = [   // rows 1 and 2 show two of these; row 3 is always how to claim
-  'I design it and build it. Nothing lost in the handover.',
-  'I’ve launched a real product, run as my own company.',
+const PRIZES = [   // rows 1 and 2 show two of these (the first two on the printed card); row 3 is always how to claim
   'Brand, web, apps and print. One person, all of it.',
+  'I’ve launched a real product, run as my own company.',
+  'I design it and build it. Nothing lost in the handover.',
   'I create things digitally and physically, and I get things done.',
 ];
 const CLAIM = '<span class="claim3">Claim your designer:<b>harrisongreener.co.uk</b></span>';
