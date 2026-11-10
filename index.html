@@ -1870,21 +1870,21 @@ function putBack() {
   document.body.classList.remove('item-out');
   hideSheet(); updateUI();
 }
+// The scratchcard comes out of a slot by the fold, so it tilts up as it slides, clearing the stitching and the
+// left panel; the end still in the slot dips into the leather, out of sight.
+function scratchTilt(item, pos, quat, k) {
+  const up = (backingTop + 0.06 - item.home.y) * k;
+  const pivot = item.parent.localToWorld(new THREE.Vector3(STRIP + 0.22, item.home.y + up, item.home.zTop + item.zLen / 2));
+  const axis = new THREE.Vector3(0, 0, 1).applyQuaternion(item.parent.getWorldQuaternion(new THREE.Quaternion()));
+  const R = new THREE.Quaternion().setFromAxisAngle(axis, -0.14 * k);
+  pos.y += up; pos.sub(pivot).applyQuaternion(R).add(pivot); quat.premultiply(R);
+}
 function poseActive() {
   const { item, p, homePos, homeQuat, dist, dirV } = active; const g = item.group;
   const slideEnd = homePos.clone().addScaledVector(dirV, dist), startQ = homeQuat.clone();
   // The scratchcard comes out of a slot by the fold, so it tilts up as it slides, clearing the stitching and the
   // left panel; the end still in the slot dips into the leather, out of sight.
-  const tilt = (pos, quat, f, k = 1) => {
-    if (item.kind !== 'scratch') return;
-    // rise just above the stitched seam where the project section starts, and hinge just past it, so the end still
-    // in the slot dips back under the leather while the part coming out rides over the stitching
-    const up = (backingTop + 0.06 - item.home.y) * k;
-    const pivot = item.parent.localToWorld(new THREE.Vector3(STRIP + 0.22, item.home.y + up, item.home.zTop + item.zLen / 2));
-    const axis = new THREE.Vector3(0, 0, 1).applyQuaternion(item.parent.getWorldQuaternion(new THREE.Quaternion()));
-    const R = new THREE.Quaternion().setFromAxisAngle(axis, -0.14 * k);
-    pos.y += up; pos.sub(pivot).applyQuaternion(R).add(pivot); quat.premultiply(R);
-  };
+  const tilt = (pos, quat, f, k = 1) => { if (item.kind === 'scratch') scratchTilt(item, pos, quat, k); };
   tilt(slideEnd, startQ, 1);
   if (item.kind === 'scratch') seamStitch.visible = p < 0.002;   // the card covers this run once it's out; never draw thread over it
   if (p <= 1) {
@@ -2861,7 +2861,12 @@ function frame() {
     const target = (!active && openVal === 1 && hovered === cfg) ? 1 : 0;
     cfg.hover += (target - cfg.hover) * Math.min(1, dt * 12);
     cfg.group.position.copy(cfg.homePos).addScaledVector(cfg.slide, cfg.hover * 0.6);
-    if (cfg.kind === 'biz') cfg.group.position.y += cfg.hover * 0.011;   // just clears the flattened stitches, stays under the pocket front
+    if (cfg.kind === 'biz') cfg.group.position.y += cfg.hover * 0.011;
+    if (cfg.kind === 'scratch') {                                     // the peek rides over the stitching too, like the full pull
+      cfg.group.quaternion.copy(cfg.homeQuat);
+      if (cfg.hover > 0.001) scratchTilt(cfg, cfg.group.position, cfg.group.quaternion, Math.min(1, cfg.hover * 4));
+      if (!active) seamStitch.visible = cfg.hover < 0.002;
+    }   // just clears the flattened stitches, stays under the pocket front
     if (cfg.kind === 'receipt') cfg.group.position.z += (1 - ease(openVal)) * 1.5;   // tucked right in while closed
   }
   if (active) {
