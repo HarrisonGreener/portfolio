@@ -1043,12 +1043,13 @@ function makeItemMesh(cfg) {
   if (cfg.kind === 'receipt') return makeReceipt(cfg);
   const isReceipt = cfg.kind === 'receipt', isPaper = cfg.kind === 'biz' || cfg.kind === 'scratch';
   const { w, h, t } = cfg;
-  const shape = rr(-w / 2, -h / 2, w / 2, h / 2, isReceipt ? 0.06 : isPaper ? 0.12 : 0.32);
+  const isCardboard = cfg.kind === 'scratch';
+  const shape = rr(-w / 2, -h / 2, w / 2, h / 2, isCardboard ? 0.005 : isReceipt ? 0.06 : isPaper ? 0.12 : 0.32);
   const group = new THREE.Group();
   const bodyGeo = new THREE.ExtrudeGeometry(shape, { depth: t, bevelEnabled: false, curveSegments: 12 });
   bodyGeo.translate(0, 0, -t / 2);
-  const body = new THREE.Mesh(bodyGeo, new THREE.MeshStandardMaterial({ color: isReceipt ? 0xf4f2ec : 0xf1eee7, roughness: 0.6 }));
-  const surface = isReceipt ? { roughness: 0.92, envMapIntensity: 0.5 } : isPaper ? { roughness: 0.7, envMapIntensity: 0.25 } : { roughness: 0.55, envMapIntensity: 0.25 };
+  const body = new THREE.Mesh(bodyGeo, new THREE.MeshStandardMaterial({ color: isCardboard ? 0xcfc6b4 : isReceipt ? 0xf4f2ec : 0xf1eee7, roughness: isCardboard ? 0.95 : 0.6 }));
+  const surface = isCardboard ? { roughness: 0.85, envMapIntensity: 0.18 } : isReceipt ? { roughness: 0.92, envMapIntensity: 0.5 } : isPaper ? { roughness: 0.7, envMapIntensity: 0.25 } : { roughness: 0.55, envMapIntensity: 0.25 };
   const frontMat = new THREE.MeshPhysicalMaterial({ map: tex(drawArt(cfg.art, 'front')), ...surface });
   const backMat = new THREE.MeshPhysicalMaterial({ map: tex(drawArt(cfg.art, 'back')), ...surface });
   const fg = faceGeo(shape, w, h);
@@ -1076,7 +1077,19 @@ const scratchCard = (() => {
   const WIN = { x: 44.60 / 85 * CW, y: 5.78 / 55 * CH, w: 37.30 / 85 * CW, h: 36.50 / 55 * CH };
   const out = document.createElement('canvas'); out.width = CW; out.height = CH; const og = out.getContext('2d');
   const foil = document.createElement('canvas'); foil.width = CW; foil.height = CH; const fg = foil.getContext('2d');
-  let base = null, texture = null, cfg = null, coin = null, demoT = null, raf = 0, left = 1;
+  let base = null, texture = null, cfg = null, coin = null, demoT = null, raf = 0, left = 1, bits = [], bitsRaf = 0, bitsT = 0;
+  function tickBits(now) {                                     // silver shavings: flick off the coin, tumble and fall away
+    const dt = Math.min(.05, (now - (bitsT || now)) / 1000); bitsT = now; bitsRaf = 0;
+    for (const b of bits) { b.vy += 2600 * dt; b.x += b.vx * dt; b.y += b.vy * dt; b.r += b.vr * dt; b.life -= dt; }
+    bits = bits.filter((b) => b.life > 0 && b.y < CH + 40);
+    draw(); if (bits.length) bitsRaf = requestAnimationFrame(tickBits); else bitsT = 0;
+  }
+  function spray(p, from) {
+    const dx = from ? p.x - from.x : 0, dy = from ? p.y - from.y : 0, n = reduceMotion ? 0 : Math.min(10, 2 + Math.hypot(dx, dy) / 8);
+    for (let i = 0; i < n; i++) bits.push({ x: p.x + (Math.random() - .5) * 50, y: p.y + (Math.random() - .5) * 30, vx: dx * 6 + (Math.random() - .5) * 700, vy: -250 - Math.random() * 600, r: Math.random() * 6, vr: (Math.random() - .5) * 20, s: 4 + Math.random() * 9, life: .5 + Math.random() * .6, c: Math.random() < .5 ? '#E4E6E7' : '#9EA3A5' });
+    if (bits.length > 400) bits.splice(0, bits.length - 400);
+    if (!bitsRaf && bits.length) bitsRaf = requestAnimationFrame(tickBits);
+  }
   function paintFoil() {
     fg.globalCompositeOperation = 'source-over'; fg.clearRect(0, 0, CW, CH);
     const { x, y, w, h } = WIN, gr = fg.createLinearGradient(x, y, x + w, y + h);
@@ -1097,6 +1110,7 @@ const scratchCard = (() => {
   function draw() {
     if (!base) return;
     og.drawImage(base, 0, 0, CW, CH); og.drawImage(foil, 0, 0);
+    for (const b of bits) { og.save(); og.translate(b.x, b.y); og.rotate(b.r); og.globalAlpha = Math.min(1, b.life * 3); og.fillStyle = b.c; og.fillRect(-b.s / 2, -b.s / 3, b.s, b.s * .66); og.restore(); }
     if (coin) {                                                // a pound coin doing the scratching in the demo
       og.save(); og.translate(coin.x, coin.y); og.rotate(coin.a);
       const r = 62, g = og.createRadialGradient(-18, -18, 6, 0, 0, r);
@@ -1112,8 +1126,7 @@ const scratchCard = (() => {
   function rub(p, from) {
     fg.globalCompositeOperation = 'destination-out'; fg.lineCap = 'round'; fg.lineJoin = 'round'; fg.lineWidth = 64;
     fg.beginPath(); fg.moveTo((from || p).x, (from || p).y); fg.lineTo(p.x + .1, p.y); fg.stroke();
-    // flecks of silver flying off
-    if (Math.random() < .5) for (let i = 0; i < 3; i++) { fg.globalCompositeOperation = 'source-over'; fg.fillStyle = 'rgba(190,193,194,.9)'; fg.fillRect(p.x + (Math.random() - .5) * 140, p.y + 30 + Math.random() * 40, 3, 3); }
+    if (left > 0) spray(p, from);
     fg.globalCompositeOperation = 'source-over';
     if (Math.random() < .15) {                                 // once almost all of it is gone, the last bits flake away
       const d = fg.getImageData(WIN.x, WIN.y, WIN.w, WIN.h).data; let n = 0, k = 0;
@@ -1159,7 +1172,7 @@ const scratchCard = (() => {
       cfg.frontMat.map = texture; cfg.frontMat.needsUpdate = true;
       const img = new Image(); img.onload = () => { base = img; draw(); }; img.src = cfg.front;
     },
-    reset() { if (demoT) cancelAnimationFrame(demoT); demoT = null; coin = null; paintFoil(); draw(); },
+    reset() { if (demoT) cancelAnimationFrame(demoT); demoT = null; coin = null; bits = []; paintFoil(); draw(); },
     at, rub, demo, canvas: out,
   };
 })();
@@ -1239,7 +1252,7 @@ const rightStack = y - PT;
 const rightTopAt = (x, z) => (x < STRIP + 0.05 ? liningTop : z >= POCKET_EDGE ? pocketTop : backingTop);
 const rightStitch = rr(0.18, -H / 2 + 0.18, W - 0.18, H / 2 - 0.18, [0.04, RAD_OUT - 0.12, RAD_OUT - 0.12, 0.04]);
 wallet.add(
-  stitches(rightStitch, rightTopAt, false, (x, z) => x > STRIP + 0.05 && z < POCKET_EDGE), stitches(rightStitch, () => 0, true),
+  stitches(rightStitch, rightTopAt, false, (x, z) => (x > STRIP + 0.05 && z < POCKET_EDGE) || (sideCfg && x < STRIP + 0.05 && z > sideCfg.home.zTop - 0.05 && z < sideCfg.home.zTop + sideCfg.zLen + 0.05)), stitches(rightStitch, () => 0, true),
   stitches(linePath(STRIP + 0.16, -H / 2 + 0.3, STRIP + 0.16, POCKET_EDGE), () => backingTop),
   stitches(linePath(STRIP + 0.16, POCKET_EDGE + 0.1, STRIP + 0.16, H / 2 - 0.3), () => pocketTop),
 );
@@ -1315,7 +1328,7 @@ for (const cfg of ITEMS) {
   const g = makeItemMesh(cfg);
   const h = cfg.home;
   const parent = h.parent === 'left' ? leftContent : wallet;
-  if (cfg.rotated) g.rotation.set(-Math.PI / 2, 0, -Math.PI / 2);
+  if (cfg.rotated) g.rotation.set(-Math.PI / 2, 0, cfg.kind === 'scratch' ? Math.PI / 2 : -Math.PI / 2);   // the scratchcard sits yellow end out
   g.position.set(h.x, h.y, h.zTop + cfg.zLen / 2);
   cfg.group = g; cfg.parent = parent;
   cfg.homePos = g.position.clone(); cfg.homeQuat = g.quaternion.clone();
