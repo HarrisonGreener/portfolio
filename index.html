@@ -1819,15 +1819,26 @@ function putBack() {
 }
 function poseActive() {
   const { item, p, homePos, homeQuat, dist, dirV } = active; const g = item.group;
-  const slideEnd = homePos.clone().addScaledVector(dirV, dist);
+  const slideEnd = homePos.clone().addScaledVector(dirV, dist), startQ = homeQuat.clone();
+  // The scratchcard comes out of a slot by the fold, so it tilts up as it slides, clearing the stitching and the
+  // left panel; the end still in the slot dips into the leather, out of sight.
+  const tilt = (pos, quat, f) => {
+    if (item.kind !== 'scratch') return;
+    const pivot = item.parent.localToWorld(new THREE.Vector3(STRIP, item.home.y, item.home.zTop + item.zLen / 2));
+    const axis = new THREE.Vector3(0, 0, 1).applyQuaternion(item.parent.getWorldQuaternion(new THREE.Quaternion()));
+    const R = new THREE.Quaternion().setFromAxisAngle(axis, -0.11 * Math.min(1, f * 1.6));
+    pos.sub(pivot).applyQuaternion(R).add(pivot); quat.premultiply(R);
+  };
+  tilt(slideEnd, startQ, 1);
   if (p <= 1) {
     const f = ease(p);
     g.position.copy(homePos).addScaledVector(dirV, dist * f);
     g.quaternion.copy(homeQuat); g.scale.setScalar(1);
+    tilt(g.position, g.quaternion, f);
   } else {
     const f = ease(p - 1); const t = expandedPose(item);
     g.position.lerpVectors(slideEnd, t.pos, f); g.position.y += Math.sin(Math.PI * f) * 2.2;
-    g.quaternion.slerpQuaternions(homeQuat, t.quat, f);
+    g.quaternion.slerpQuaternions(startQ, t.quat, f);
     g.scale.setScalar(1 + (t.scale - 1) * f);
   }
   if (item.setFold) item.setFold(p <= 1 ? 0 : ease(p - 1));   // unfolds on the way to you, folds back up on the way home
