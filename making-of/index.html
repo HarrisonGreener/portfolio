@@ -281,11 +281,11 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
   <div class="cols"><div class="spacer"></div><div class="prose rv">
     <p>The GREENER wordmark is older than this project. I first made it when I was 14 or 15: a striped, multi-line green logo where the G flowed into the R. For this portfolio I reimagined it, redrew it from scratch and turned it into a clean vector.</p>
     <p>The details are deliberate. Where the G meets the R, the gap between them forms the tip of a pen nib, a quiet nod to being a designer. The two Es in GREENER stack into one tall E. That same gap sets the G apart, so it works on its own as a monogram, which turns up as the favicon, in the scratchcard's silver and debossed on the wallet. And GR sits on a higher baseline than ENER, a bit of movement kept from the original.</p>
-    <p>I put it all into a short brand handbook, in the same style as the one I made for Stack: the logo's story and anatomy, the colours and contrast pairs, the type, the character and where it all lives.</p>
+    <p>I put it all into a short brand handbook, in the same style as the one I made for Stack: the logo's story and anatomy, how to use it, the colours and contrast pairs, and the type.</p>
   </div></div>
   <div class="viewer rv">
     <div class="vscreen"><iframe id="glFrame" src="../brand/guidelines.html?embed" title="Greener brand guidelines" width="1600" height="900" scrolling="no" loading="lazy"></iframe></div>
-    <div class="vbar"><button type="button" id="glPrev" aria-label="Previous page">←</button><span id="glNum">1 / 14</span><button type="button" id="glNext" aria-label="Next page">→</button><a href="../brand/guidelines.html">Open the full guidelines ↗</a></div>
+    <div class="vbar"><button type="button" id="glPrev" aria-label="Previous page">←</button><span id="glNum">1 / 11</span><button type="button" id="glNext" aria-label="Next page">→</button><a href="../brand/guidelines.html">Open the full guidelines ↗</a></div>
   </div>
 </div></section>
 
@@ -322,7 +322,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
 <script>
 (() => {
   const f = document.getElementById('glFrame'), box = f.parentElement, num = document.getElementById('glNum');
-  let i = 0, n = 14;
+  let i = 0, n = 11;
   const fit = () => { f.style.transform = `scale(${box.clientWidth / 1600})`; };
   const go = (k) => { i = (k + n) % n; num.textContent = `${i + 1} / ${n}`; try { f.contentWindow.scrollTo(0, i * 900); } catch (e) {} };
   f.addEventListener('load', () => { try { n = f.contentDocument.querySelectorAll('.pg').length || n; } catch (e) {} go(i); });
