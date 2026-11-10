@@ -70,8 +70,12 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
 .pix{image-rendering:pixelated}
 .sprites{display:flex;align-items:flex-end;gap:14px}
 .sprites img{height:150px;width:auto}
-.hands{display:flex;align-items:center;gap:40px}
-.hands img{height:120px;width:auto}
+.handrow{display:flex;align-items:center;justify-content:center;gap:clamp(10px,2.4vw,28px);flex-wrap:wrap;width:100%}
+.handrow figure{width:clamp(110px,18vw,200px)}
+.handrow figure img{border-radius:10px;aspect-ratio:3/4;object-fit:cover;width:100%}
+.handrow figcaption{text-align:center;margin-top:6px}
+.handrow .big{height:clamp(90px,12vw,150px);width:auto}
+.arr{font-size:28px;font-weight:700;color:var(--ink-soft)}
 .swatches{display:flex;gap:0;width:100%;height:160px;border-radius:10px;overflow:hidden}
 .swatches div{flex:1;display:flex;align-items:flex-end;padding:12px;font-weight:700;font-size:14px}
 .tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:2px;background:var(--ink);border:2px solid var(--ink);border-radius:14px;overflow:hidden;margin:36px 0 0}
@@ -207,9 +211,16 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
       </div></div>
       <div class="txt"><h3>A photoshoot for a mini game</h3><p>At the bottom of the menu there's a little runner game, and the runner is me. I did a photoshoot walking, stepping, crouching and jumping, then turned each pose into a drawn sprite. There are two sets, smiling and straight-faced, and every now and then he switches between them.</p></div>
     </article>
-    <article class="det rv">
-      <div class="pic"><div class="hands"><img class="pix" src="../assets/cursor/hand-point@2x.png" alt="Pixel hand, pointing" width="28" height="48"><img class="pix" src="../assets/cursor/hand-grab@2x.png" alt="Pixel hand, grabbing" width="38" height="48"></div></div>
-      <div class="txt"><h3>My hand is your cursor</h3><p>I photographed my own hand pointing and grabbing, then pixelated it into a cursor. It points by default and switches to the grab hand over anything you can pick up.</p></div>
+    <article class="det wide rv">
+      <div class="pic"><div class="handrow">
+        <figure><img src="img/hand-point-photo.jpg" alt="Photo of my hand pointing, with my ring and chain bracelet" loading="lazy" width="700" height="933"><figcaption>Pointing</figcaption></figure>
+        <span class="arr" aria-hidden="true">→</span>
+        <img class="pix big" src="../assets/cursor/hand-point@2x.png" alt="The pointing hand as a pixel cursor" width="28" height="48">
+        <figure><img src="img/hand-grab-photo.jpg" alt="Photo of my hand curled to grab" loading="lazy" width="700" height="933"><figcaption>Grabbing</figcaption></figure>
+        <span class="arr" aria-hidden="true">→</span>
+        <img class="pix big" src="../assets/cursor/hand-grab@2x.png" alt="The grabbing hand as a pixel cursor" width="38" height="48">
+      </div></div>
+      <div class="txt"><h3>My hand is your cursor</h3><p>I photographed my own hand pointing and grabbing, then turned each photo into a tiny pixel cursor, keeping the chain bracelet. It points by default and switches to the grab hand over anything you can pick up. Look closely at your cursor on the site: that's me.</p></div>
     </article>
     <article class="det rv">
       <div class="pic"><div class="sprites"><img src="../assets/game/harry-run1.webp" alt="" loading="lazy"><img src="../assets/game/harry-jump.webp" alt="" loading="lazy"><img src="../assets/game/harry-crouch.webp" alt="" loading="lazy"></div></div>
