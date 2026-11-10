@@ -180,7 +180,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
    It paints above each band's background but below the content, so it reads as part of the layout. */
 .mp-orb{position:fixed;left:0;top:0;width:100%;height:100%;z-index:1;pointer-events:none}
 .mp-orb-top{z-index:3}   /* spare layer above the content; the orb ducks under the project cards */
-.menu .mp-head,.menu .mi-pin>.mp-wrap,.menu .mw-head,.menu .mw-viewport,.menu .mw-foot,.menu .mp-cvband>.mp-wrap,.menu .mf-in,.menu .mg-box{position:relative;z-index:2}
+.menu .mp-head,.menu .mi-pin>.mp-wrap,.menu .mw-head,.menu .mw-viewport,.menu .mw-foot,.menu .mp-cvband>.mp-wrap,.menu .mf-in,.menu .mg-box,.menu .mf-end{position:relative;z-index:2}
 .menu .mi-pin,.menu .mw-pin{z-index:2}   /* sticky panels are their own layers: lift them over the orb */
 .menu-btn:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
 .menu{position:fixed;inset:0;z-index:8;background:var(--paper);color:var(--ink);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
@@ -337,7 +337,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mg-ui>b{font-size:18px}.mg-ui span{font-size:14px;opacity:.7}.mg-best{margin-left:12px}.mg-best b{font-size:14px}
 .mg-msg{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;pointer-events:none;background:var(--ink);color:var(--paper);padding:12px 20px;border-radius:14px}
 .mg-msg b{font-size:18px}.mg-msg span{font-size:13px;opacity:.7}.mg-msg[hidden]{display:none}
-.mf-pit{position:relative;height:clamp(230px,28vw,330px);margin:44px 0 36px;touch-action:pan-y}
+.mf-pit{position:relative;height:clamp(230px,28vw,330px);margin:36px 0 8px;touch-action:pan-y}
 .mf-orb{all:unset;box-sizing:border-box;position:absolute;left:0;top:0;width:var(--d,120px);height:var(--d,120px);border-radius:50%;display:grid;place-items:center;background:var(--paper);color:var(--ink);cursor:inherit;opacity:0;will-change:transform}
 .mf-orb.on{opacity:1}
 .mf-orb.g{background:var(--green)}
@@ -345,7 +345,8 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mf-orb:hover svg{transform:scale(1.18) rotate(-6deg)}
 .mf-orb:focus-visible{outline:3px solid var(--green);outline-offset:4px}
 .mf-orb.g:focus-visible{outline-color:var(--paper)}
-.mf-site{display:flex;flex-wrap:wrap;gap:8px 28px;margin-bottom:36px}
+.mf-end{max-width:1180px;margin:0 auto;padding:36px clamp(16px,4vw,48px) 28px}
+.mf-site{display:flex;flex-wrap:wrap;gap:8px 28px;margin-bottom:28px}
 .mf-site a,.mf-site button{all:unset;cursor:inherit;font-weight:700;font-size:15px;color:var(--paper);opacity:.7}
 .mf-site a:hover,.mf-site button:hover{color:var(--green);opacity:1}
 .mf-site a:focus-visible,.mf-site button:focus-visible{outline:2px solid var(--green);outline-offset:3px}
@@ -485,7 +486,6 @@ canvas.can-grab{cursor:var(--hand-grab)}
     <div class="mf-in">
       <div class="mf-top">
         <p data-rv="rise" class="mf-big">Got a role, a project or just a question?</p>
-        <a data-rv="up" class="mf-mail" href="mailto:harrygreener@hotmail.co.uk">harrygreener@hotmail.co.uk</a>
       </div>
       <div class="mf-pit" id="mfPit" role="group" aria-label="Ways to get in touch">
         <a class="mf-orb" href="mailto:harrygreener@hotmail.co.uk" aria-label="Email me" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 6.5 9 7 9-7"/></svg></a>
@@ -494,8 +494,6 @@ canvas.can-grab{cursor:var(--hand-grab)}
         <a class="mf-orb g" href="receipt/Harrison-Greener-CV-receipt.pdf" target="_blank" rel="noopener" aria-label="CV (PDF)" title="CV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M5 2.5h14v19l-2.33-1.5-2.34 1.5L12 20l-2.33 1.5L7.33 20 5 21.5z"/><path d="M8.5 7.5h7M8.5 11h7M8.5 14.5h4"/></svg></a>
         <button type="button" class="mf-orb" id="mpPhone" aria-label="Message me on the phone" title="Message me"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="6" y="2" width="12" height="20" rx="2.5"/><path d="M10.5 18.5h3"/></svg></button>
       </div>
-      <div data-rv="up" class="mf-site"><a href="#mp-projects" data-jump>Portfolio Projects</a><a href="#mp-cv" data-jump>CV</a><button type="button" id="mpBack">Back to the desk</button></div>
-      <div data-rv="up" class="mf-base"><span>© 2026</span><span>Designed and built by Harrison Greener</span></div>
     </div>
     <section class="mf-game" aria-label="Mini game">
       <div class="mg-box" id="mgBox">
@@ -504,6 +502,10 @@ canvas.can-grab{cursor:var(--hand-grab)}
         <div class="mg-msg" id="mgMsg"><b>Press space to start</b><span>Space to jump, hold ↓ to duck</span></div>
       </div>
     </section>
+    <div class="mf-end">
+        <div data-rv="up" class="mf-site"><a href="#mp-projects" data-jump>Portfolio Projects</a><a href="#mp-cv" data-jump>CV</a><button type="button" id="mpBack">Back to the desk</button></div>
+        <div data-rv="up" class="mf-base"><span>© 2026</span><span>Designed and built by Harrison Greener</span></div>
+    </div>
   </footer>
 
   <div class="mp-detail" id="mpDetail" hidden>
@@ -2333,7 +2335,7 @@ function goTo(id) {
   const pit = document.getElementById('mfPit'); if (!pit) return;
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const B = [...pit.querySelectorAll('.mf-orb')].map((el, i) => ({ el, x: 0, y: 0, vx: 0, vy: 0, r: 60, t: i * 0.14, live: false }));
-  let W = 0, H = 0, started = false, running = false, last = 0, startT = 0;
+  let W = 0, H = 0, started = false, running = false, last = 0, startT = 0, hopAt = 0;
   const P = { x: -1e4, y: -1e4, vx: 0, vy: 0, moved: 0 };
   const G = 2600, REST = 0.55;
   function size() {
@@ -2354,12 +2356,24 @@ function goTo(id) {
   addEventListener('resize', () => { size(); if (reduce && started) rowOnFloor(); });
   function step(dt, now) {
     const sweeping = now - P.moved < 60, sp = Math.hypot(P.vx, P.vy);
+    if (!reduce && now > hopAt) {   // every few seconds one orb hops, so the pile never looks dead
+      hopAt = now + 2200 + Math.random() * 2600;
+      const b = B[(Math.random() * B.length) | 0];
+      if (b.live && b.y > H - b.r - 2) { b.vy = -420 - Math.random() * 260; b.vx += (Math.random() - 0.5) * 220; }
+    }
     for (const b of B) {
       if (!b.live) {
         if ((now - startT) / 1000 < b.t) continue;
         b.live = true; b.x = b.r + Math.random() * (W - 2 * b.r); b.y = -b.r * 1.2; b.vx = (Math.random() - 0.5) * 300; b.vy = 0; b.el.classList.add('on');
       }
       b.vy += G * dt; b.x += b.vx * dt; b.y += b.vy * dt;
+      {   // a nearby cursor leans on the orb and rolls it away; right in the middle it lets go, so it can still be clicked
+        const dx = b.x - P.x, dy = b.y - P.y, d = Math.hypot(dx, dy) || 1, inner = b.r * 0.55, outer = b.r + 70;
+        if (d > inner && d < outer) {
+          const f = 2600 * (1 - (d - inner) / (outer - inner));
+          b.vx += dx / d * f * dt; b.vy += Math.min(0, dy / d) * f * 0.6 * dt;
+        }
+      }
       if (sweeping && sp > 40) {   // the cursor bats the orb away along the line between them
         const dx = b.x - P.x, dy = b.y - P.y, d = Math.hypot(dx, dy) || 1, reach = b.r + 18;
         if (d < reach) {
@@ -2395,8 +2409,8 @@ function goTo(id) {
   setInterval(() => {   // wake when the footer is on screen (the menu scrolls in its own layer, so poll rather than listen)
     const r = pit.getBoundingClientRect();
     if (!r.width || r.top > innerHeight * 0.85 || r.bottom < 0) return;
-    if (!started) { started = true; size(); startT = performance.now(); if (reduce) { rowOnFloor(); return; } }
-    if (!reduce && !running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
+    if (!started) { started = true; size(); startT = performance.now(); if (reduce) rowOnFloor(); }
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(frame); }
   }, 250);
   window.__orbs = B;
 })();
