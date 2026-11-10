@@ -1256,7 +1256,7 @@ for (const cfg of ITEMS) {
 // Right half: a strip by the fold holding one card upright in a hidden slot (only a sliver shows), then the card
 // section: a backing layer with seven cards stepped behind one plain pocket front.
 const STRIP = 0.96;                                   // width of the centre strip on each side of the fold
-const SIDE_ID = 'scratch';                           // the hidden slot by the fold, under the project cards: the scratchcard slides up out of the top
+const SIDE_ID = 'scratch';                           // the hidden slot by the fold, under the project cards: the scratchcard nudges out towards the fold, then lifts away
 const RIGHT_IDS = ['stack', 'folio', 'quotable', 'pat', 'brandomizer', 'big-brother', 'fly', 'rolla'];
 const CARD_STEP = 0.28, CARD_TOPS = RIGHT_IDS.map((_, k) => -5.13 + k * CARD_STEP);
 const CARD_LIFT = 0.012; // cards overlap almost flat, so the pocket keeps one slim thickness however full it is
@@ -1270,7 +1270,7 @@ const lining = slab(rightShape, LAYER, y); wallet.add(lining); addPick(lining, '
 y += LAYER + 0.002;
 const liningTop = y;
 const sideCfg = SIDE_ID && ITEMS.find((i) => i.id === SIDE_ID);
-if (sideCfg) { sideCfg.home = { parent: 'right', y: y + sideCfg.t / 2, x: 0.32 + sideCfg.xLen / 2, zTop: -4.23 }; sideCfg.slide = new THREE.Vector3(0, 0, -1); }   // slides up out of the top of its slot, like Rolla used to
+if (sideCfg) { sideCfg.home = { parent: 'right', y: y + sideCfg.t / 2, x: 0.32 + sideCfg.xLen / 2, zTop: -4.23 }; sideCfg.slide = new THREE.Vector3(-1, 0, 0); }   // nudges out towards the fold, then lifts away to you, like the licence
 y += 0.02 + 0.002;
 const R_SECTION = [0.06, RAD_OUT, RAD_OUT, 0.06];
 const backing = slab(rr(STRIP, -H / 2, W, H / 2, R_SECTION), LAYER, y); wallet.add(backing); addPick(backing, 'wallet');
@@ -1853,7 +1853,7 @@ function pull(cfg) {
   const homePos = new THREE.Vector3(), homeQuat = new THREE.Quaternion();
   cfg.group.getWorldPosition(homePos); cfg.group.getWorldQuaternion(homeQuat);
   const dirV = cfg.slide.clone();
-  const dist = dirV.x > 0 ? 1.6 : dirV.x < 0 ? cfg.xLen + 0.6 : homePos.z + cfg.zLen / 2 + H / 2 + 0.6; // licence: out to the right; cards: up out of the slot
+  const dist = dirV.x > 0 ? 1.6 : dirV.x < 0 ? 0.3 : homePos.z + cfg.zLen / 2 + H / 2 + 0.6; // licence: out to the right; cards: up out of the slot
   scene.attach(cfg.group);
   receiptScroll = receiptScrollT = 0;
   yaw = yawT = 0; pitch = pitchT = 0;
@@ -2844,7 +2844,7 @@ function frame() {
     if (active && active.item === cfg) continue;
     const target = (!active && openVal === 1 && hovered === cfg) ? 1 : 0;
     cfg.hover += (target - cfg.hover) * Math.min(1, dt * 12);
-    cfg.group.position.copy(cfg.homePos).addScaledVector(cfg.slide, cfg.hover * 0.6);
+    cfg.group.position.copy(cfg.homePos).addScaledVector(cfg.slide, cfg.hover * (cfg.kind === 'scratch' ? 0.25 : 0.6));
     if (cfg.kind === 'biz') cfg.group.position.y += cfg.hover * 0.011;
    // just clears the flattened stitches, stays under the pocket front
     if (cfg.kind === 'receipt') cfg.group.position.z += (1 - ease(openVal)) * 1.5;   // tucked right in while closed
