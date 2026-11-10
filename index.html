@@ -1822,19 +1822,22 @@ function poseActive() {
   const slideEnd = homePos.clone().addScaledVector(dirV, dist), startQ = homeQuat.clone();
   // The scratchcard comes out of a slot by the fold, so it tilts up as it slides, clearing the stitching and the
   // left panel; the end still in the slot dips into the leather, out of sight.
-  const tilt = (pos, quat, f) => {
+  const tilt = (pos, quat, f, k = 1) => {
     if (item.kind !== 'scratch') return;
-    const pivot = item.parent.localToWorld(new THREE.Vector3(STRIP, item.home.y, item.home.zTop + item.zLen / 2));
+    // rise just above the stitched seam where the project section starts, and hinge just past it, so the end still
+    // in the slot dips back under the leather while the part coming out rides over the stitching
+    const up = (backingTop + 0.035 - item.home.y) * k;
+    const pivot = item.parent.localToWorld(new THREE.Vector3(STRIP + 0.22, item.home.y + up, item.home.zTop + item.zLen / 2));
     const axis = new THREE.Vector3(0, 0, 1).applyQuaternion(item.parent.getWorldQuaternion(new THREE.Quaternion()));
-    const R = new THREE.Quaternion().setFromAxisAngle(axis, -0.11 * Math.min(1, f * 1.6));
-    pos.sub(pivot).applyQuaternion(R).add(pivot); quat.premultiply(R);
+    const R = new THREE.Quaternion().setFromAxisAngle(axis, -0.14 * k);
+    pos.y += up; pos.sub(pivot).applyQuaternion(R).add(pivot); quat.premultiply(R);
   };
   tilt(slideEnd, startQ, 1);
   if (p <= 1) {
     const f = ease(p);
     g.position.copy(homePos).addScaledVector(dirV, dist * f);
     g.quaternion.copy(homeQuat); g.scale.setScalar(1);
-    tilt(g.position, g.quaternion, f);
+    tilt(g.position, g.quaternion, f, Math.min(1, p * 25));   // lifts clear in the first moment of the pull
   } else {
     const f = ease(p - 1); const t = expandedPose(item);
     g.position.lerpVectors(slideEnd, t.pos, f); g.position.y += Math.sin(Math.PI * f) * 2.2;
@@ -2850,7 +2853,7 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
-window.__wallet = { state: () => ({ phoneP, phoneTarget, openVal, openTarget, active: !!active }), phoneNow: (step) => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); resetPhoneScreen(); phoneUI.classList.add('on'); if (step) phoneUI.dataset.step = step; }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS, scratchCard }; // handle for automated checks
+window.__wallet = { state: () => ({ phoneP, phoneTarget, openVal, openTarget, active: !!active }), phoneNow: (step) => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); resetPhoneScreen(); phoneUI.classList.add('on'); if (step) phoneUI.dataset.step = step; }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS, scratchCard, THREE }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
