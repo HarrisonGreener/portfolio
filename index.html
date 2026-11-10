@@ -305,13 +305,13 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mf-cols a:hover,.mf-cols button:hover{color:var(--green)}
 .mf-cols a:focus-visible,.mf-cols button:focus-visible,.mf-mail:focus-visible{outline:2px solid var(--green);outline-offset:3px}
 /* Footer mini game: me, in pixels, jumping deadlines on a green strip */
-.mf-game{background:var(--green);color:var(--ink);padding-top:24px}
+.mf-game{background:var(--green);color:var(--ink);padding-top:0}
 @media (hover:none),(pointer:coarse){.mf-game{display:none}}   /* keyboard game: computers only */
 .mg-box{position:relative;height:clamp(250px,40vh,380px);cursor:pointer;touch-action:manipulation;user-select:none;-webkit-user-select:none}
 .mg-box canvas{position:absolute;inset:0;width:100%;height:100%;display:block;image-rendering:pixelated}
 .mg-box:focus-visible{outline:3px solid var(--ink);outline-offset:-3px}
-.mg-ui{position:absolute;top:10px;right:max(clamp(16px,4vw,48px),calc((100% - 1180px) / 2 + clamp(16px,4vw,48px)));display:flex;align-items:baseline;gap:8px;font-weight:700;font-variant-numeric:tabular-nums}
-.mg-ui>b{font-size:30px}.mg-ui span{font-size:14px;opacity:.7}.mg-best{margin-left:12px}.mg-best b{font-size:16px}
+.mg-ui{position:absolute;bottom:5px;color:var(--paper);z-index:1;right:max(clamp(16px,4vw,48px),calc((100% - 1180px) / 2 + clamp(16px,4vw,48px)));display:flex;align-items:baseline;gap:8px;font-weight:700;font-variant-numeric:tabular-nums}
+.mg-ui>b{font-size:18px}.mg-ui span{font-size:14px;opacity:.7}.mg-best{margin-left:12px}.mg-best b{font-size:14px}
 .mg-msg{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;pointer-events:none;background:var(--ink);color:var(--paper);padding:12px 20px;border-radius:14px}
 .mg-msg b{font-size:18px}.mg-msg span{font-size:13px;opacity:.7}.mg-msg[hidden]{display:none}
 .mf-base{display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;padding-top:20px;border-top:1px solid rgba(242,242,240,.18);font-size:13px;opacity:.6}
@@ -1824,7 +1824,6 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   ];
   let W = 0, H = 0, dpr = 1, U = 160, state = 'idle', y = 0, vy = 0, obs = [], spd = 0, score = 0, best = 0, gap = 0;
   let landT = 0, hitT = 0, raf = 0, last = 0, onScreen = false, dist = 0, ducking = false, keyDuck = false;
-  try { best = +localStorage.getItem('harry-game-best') || 0; } catch (e) {}
   bestEl.textContent = best;
   function size() {
     const r = box.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = r.width; H = r.height;
@@ -1854,7 +1853,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   const INK = '#1F1F1F', PAPER = '#F2F2F0';
   function block(x, y0, w, h, c) { g.fillStyle = c; rr(x, y0, w, h); }
   function drawObs(o, gy) {
-    if (o.k === 'bar') { block(o.x, gy - o.bottom - o.th, o.w, o.th, PAPER); return; }   // white: the ones to duck
+    if (o.k === 'bar') { block(o.x, 0, o.w, gy - o.bottom, INK); return; }   // hangs down from the dark footer above
     if (o.k === 'pair') { block(o.x, gy - o.h, o.w * 0.44, o.h, o.c); block(o.x + o.w * 0.56, gy - o.h * 0.7, o.w * 0.44, o.h * 0.7, o.c); return; }
     block(o.x, gy - o.h, o.w, o.h, o.c);
   }
@@ -1889,7 +1888,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
         const ot = o.k === 'bar' ? 0 : gy - o.h + U * 0.02, ob = o.k === 'bar' ? gy - o.bottom : gy;
         if (hb.x < o.x + o.w - U * 0.03 && hb.x + hb.w > o.x + U * 0.03 && hb.top < ob && hb.bot > ot) {
           state = 'over'; hitT = now;
-          if (score > best) { best = score; bestEl.textContent = best; try { localStorage.setItem('harry-game-best', best); } catch (e) {} }
+          if (score > best) { best = score; bestEl.textContent = best; }   // best resets when the page reloads
           msg.innerHTML = `<b>${score} cleared</b><span>Press space to go again</span>`; msg.hidden = false; break;
         }
       }
