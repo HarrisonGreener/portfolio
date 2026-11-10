@@ -68,6 +68,11 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
 .det p{margin:0;font-size:16px;line-height:1.55}
 .det.wide{grid-column:1/-1}
 .pix{image-rendering:pixelated}
+.licz{display:grid;grid-template-columns:1.6fr .7fr 1fr;gap:20px;align-items:center;width:100%}
+.licz img{border-radius:10px;width:100%}
+.licz figure img{box-shadow:0 0 0 1px rgba(31,31,31,.1)}
+.licz figcaption{text-align:center}
+@media (max-width:860px){.licz{grid-template-columns:1fr 1fr}.licz>img{grid-column:1/-1}}
 .mascot{display:flex;align-items:flex-end;justify-content:center;gap:clamp(14px,3vw,40px);flex-wrap:wrap;width:100%}
 .mascot img{height:clamp(120px,16vw,210px);width:auto}
 .mascot .logo{height:clamp(26px,3vw,40px);align-self:center}
@@ -249,6 +254,14 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
     <article class="det rv">
       <div class="pic"><img src="../assets/me/me-toon.webp" alt="Cartoon portrait of me" loading="lazy" style="max-height:240px;width:auto"></div>
       <div class="txt"><h3>A drawing that watches you</h3><p>The cartoon of me in the menu follows your cursor with its eyes and blinks now and then. Hover over it and it breaks into pixels that flip to the real photo underneath, lined up so my face doesn't move.</p></div>
+    </article>
+    <article class="det wide rv">
+      <div class="pic"><div class="licz">
+        <img src="img/licence-front.jpg" alt="The Designer Licence, front" loading="lazy" width="1000" height="647">
+        <figure><img src="img/licence-crest.jpg" alt="Close-up of the faint Greener crest on the licence" loading="lazy" width="221" height="231"><figcaption>The Greener crest</figcaption></figure>
+        <figure><img src="img/licence-guilloche.jpg" alt="Close-up of the licence's wavy-line security background" loading="lazy" width="340" height="220"><figcaption>The custom background</figcaption></figure>
+      </div></div>
+      <div class="txt"><h3>A licence down to the security print</h3><p>The Designer Licence copies the details of a real UK driving licence. The blue-to-pink background is custom, built from fine wavy lines and rosettes like the security print on the real card, with a small ghost photo and my signature. Faint in the corner, where a hologram would be, is the Greener crest: a coat of arms I drew as a secondary brand element, with a knight's helmet, a shield and a tree. Most people won't spot it, and that's the point.</p></div>
     </article>
     <article class="det rv">
       <div class="pic"><img src="img/receipt.webp" alt="The receipt CV with CV scribbled on it in green" loading="lazy" style="max-height:240px;width:auto"></div>
