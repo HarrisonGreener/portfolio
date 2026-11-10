@@ -1,0 +1,322 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Greener · Brand guidelines</title>
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<style>
+:root{--ink:#1F1F1F;--soft:#5C5C59;--paper:#F2F2F0;--table:#E3E3E0;--green:#73956F;--accent:#46663F;--card:#FBFBF9}
+*{box-sizing:border-box}
+html{background:#cfcfcb}
+body{margin:0;font:400 20px/1.45 Archivo,Arial,sans-serif;color:var(--ink)}
+@page{size:1600px 900px;margin:0}
+.pg{width:1600px;height:900px;position:relative;overflow:hidden;background:var(--paper);margin:0 auto 40px;padding:80px 96px 0;page-break-after:always;break-after:page}
+@media print{html{background:none}.pg{margin:0}}
+.pg.dark{background:var(--ink);color:var(--paper)}
+.pg.green{background:var(--green)}
+.eyebrow{font-size:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:0 0 14px}
+.dark .eyebrow{color:var(--green)}
+h1,h2{font-stretch:110%;font-weight:800;letter-spacing:-.035em;line-height:.95;margin:0}
+h2{font-size:72px}
+h2 em{font-style:normal;color:var(--accent)}
+.dark h2 em{color:var(--green)}
+p.lead{font-size:22px;line-height:1.45;max-width:46ch;margin:22px 0 0;color:var(--soft)}
+.dark p.lead{color:rgba(242,242,240,.7)}
+.foot{position:absolute;left:96px;right:96px;bottom:34px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:var(--soft)}
+.dark .foot{color:rgba(242,242,240,.55)}
+.foot img{height:18px;width:auto;vertical-align:middle;margin-right:10px}
+.stripe{position:absolute;left:0;right:0;bottom:0;height:8px;display:flex}
+.stripe i{flex:1}
+.stripe i:nth-child(1){background:var(--green)}.stripe i:nth-child(2){background:var(--accent)}.stripe i:nth-child(3){background:var(--ink)}.stripe i:nth-child(4){background:var(--soft)}.stripe i:nth-child(5){background:var(--table)}
+.box{border-radius:14px;display:grid;place-items:center;position:relative}
+.lbl{font-size:15px;font-weight:700;margin-top:12px}
+.lbl small{display:block;font-weight:400;color:var(--soft);font-size:14px;margin-top:2px;line-height:1.35}
+.dark .lbl small{color:rgba(242,242,240,.6)}
+.row{display:grid;gap:24px}
+/* cover */
+.cover h1{font-size:150px;position:relative;z-index:2;margin-top:150px}
+.cover h1 em{font-style:normal;color:var(--green)}
+.cover .mono{position:absolute;right:-110px;top:40px;width:820px;opacity:1}
+.cover .wm{height:44px;width:auto;position:relative;z-index:2}
+.cover .meta{position:relative;z-index:2;margin-top:30px;font-size:17px;color:rgba(242,242,240,.6)}
+/* contents */
+.toc{display:grid;grid-template-columns:repeat(2,1fr);gap:0 64px;margin-top:60px;max-width:1100px}
+.toc div{display:flex;gap:22px;padding:16px 0;border-bottom:1px solid rgba(31,31,31,.15);font-size:24px;font-weight:600}
+.toc b{color:var(--accent);font-size:16px;width:28px;padding-top:6px}
+/* values */
+.vals{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;position:absolute;left:96px;right:96px;bottom:110px}
+.vals div{background:#2a2a2a;border-radius:14px;padding:24px 24px 28px}
+.vals b{display:block;font-size:24px;font-stretch:108%;color:var(--green);margin-bottom:8px}
+.vals span{font-size:17px;line-height:1.45;color:rgba(242,242,240,.75)}
+/* swatches */
+.sw{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-top:56px}
+.sw .c{height:300px;border-radius:14px;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;font-size:15px;line-height:1.5}
+.sw .c b{font-size:20px;font-stretch:108%}
+.pairs{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px}
+.pairs div{height:180px;border-radius:14px;padding:20px;display:flex;flex-direction:column;justify-content:space-between}
+.pairs .aa{font-size:58px;font-weight:800;font-stretch:110%;line-height:1;letter-spacing:-.03em}
+.pairs small{font-size:14px;font-weight:600;line-height:1.4}
+.bal{display:flex;height:56px;border-radius:12px;overflow:hidden;margin-top:28px;font-size:15px;font-weight:700}
+.bal div{display:flex;align-items:center;padding:0 16px}
+.ok,.no{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:17px;font-weight:800;color:#fff}
+.ok{background:var(--accent)}.no{background:#C0392B}
+.miss .box{height:200px;background:var(--card);border:1px solid rgba(31,31,31,.1);overflow:hidden}
+.miss .box::after{content:"";position:absolute;inset:0;background:linear-gradient(to top right,transparent calc(50% - 2px),rgba(192,57,43,.85) calc(50% - 2px) calc(50% + 2px),transparent calc(50% + 2px))}
+.type{display:grid;grid-template-columns:1fr 1.25fr;gap:56px;margin-top:40px}
+.spec{background:#2a2a2a;border-radius:14px;padding:30px}
+.spec .big{font-size:150px;font-weight:800;font-stretch:120%;line-height:.9;color:var(--green);letter-spacing:-.04em}
+.spec p{font-size:16px;color:rgba(242,242,240,.7);margin:16px 0 0;line-height:1.55}
+.scale div{display:grid;grid-template-columns:170px 1fr;align-items:baseline;padding:13px 0;border-bottom:1px solid rgba(242,242,240,.12)}
+.scale small{font-size:14px;color:rgba(242,242,240,.5);font-weight:600}
+.apps{display:grid;grid-template-columns:1.25fr 1fr 1fr;grid-template-rows:300px 300px;gap:18px;margin-top:36px}
+.apps figure{margin:0;border-radius:14px;overflow:hidden;position:relative;background:var(--table)}
+.apps img{width:100%;height:100%;object-fit:cover;display:block}
+.apps figcaption{position:absolute;left:12px;bottom:12px;background:var(--ink);color:var(--paper);font-size:14px;font-weight:700;padding:6px 12px;border-radius:999px}
+.anat{position:absolute;left:70px;top:250px;width:1010px}
+.pin{position:absolute;width:44px;height:44px;border-radius:50%;background:var(--green);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:20px;box-shadow:0 0 0 4px var(--paper)}
+.base{position:absolute;height:0;border-top:3px dashed var(--accent)}
+.notes{position:absolute;right:96px;top:240px;width:400px;margin:0;padding:0;list-style:none;counter-reset:n}
+.notes li{counter-increment:n;position:relative;padding:0 0 22px 52px;font-size:17px;line-height:1.45;color:var(--soft)}
+.notes li::before{content:counter(n);position:absolute;left:0;top:-2px;width:34px;height:34px;border-radius:50%;background:var(--green);color:var(--ink);display:grid;place-items:center;font-weight:800;font-size:16px}
+.notes b{color:var(--ink);display:block;font-size:19px}
+html.embed{background:transparent;overflow:hidden}
+html.embed .pg{margin:0}
+html.embed .bar{display:none}
+.bar{position:relative;display:flex;justify-content:space-between;align-items:center;max-width:1600px;margin:0 auto 24px;padding:14px 0;font:700 15px Archivo,Arial,sans-serif}
+.bar a,.bar button{all:unset;cursor:pointer;background:var(--ink);color:var(--paper);padding:10px 16px;border-radius:999px}
+@media print{.bar{display:none}}
+</style>
+<script>if (/[?&]embed/.test(location.search)) document.documentElement.classList.add('embed');</script>
+</head>
+<body>
+<div class="bar"><a href="../making-of/">← The Wallet CV</a><button type="button" onclick="print()">Save as PDF</button></div>
+
+<!-- 1 cover -->
+<section class="pg dark cover">
+  <img class="wm" src="greener-solid-white.svg" alt="Greener">
+  <img class="mono" src="greener-g-green.svg" alt="">
+  <h1>Brand<br><em>guidelines.</em></h1>
+  <p class="meta">Version 1.0 · November 2026 · Harrison Greener</p>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 2 contents -->
+<section class="pg">
+  <p class="eyebrow">Contents</p>
+  <h2>What's<br><em>inside.</em></h2>
+  <div class="toc">
+    <div><b>01</b>The brand</div><div><b>07</b>Logo misuse</div>
+    <div><b>02</b>Logo story</div><div><b>08</b>Colour</div>
+    <div><b>03</b>Logo anatomy</div><div><b>09</b>Colour pairs</div>
+    <div><b>04</b>Logo system</div><div><b>10</b>Typography</div>
+    <div><b>05</b>Clear space and sizes</div><div><b>11</b>The character</div>
+    <div><b>06</b>Logo on backgrounds</div><div><b>12</b>Applications</div>
+  </div>
+  <div class="foot"><span><img src="greener-g-black.svg" alt="">Contents</span><span>2 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 3 the brand -->
+<section class="pg dark">
+  <p class="eyebrow">01 The brand</p>
+  <h2>Design it. Build it.<br><em>Make it real.</em></h2>
+  <p class="lead">Greener is my own brand as a designer. It's the name on everything I make, from brands and websites to apps and the odd physical object, and it should feel like one person made all of it.</p>
+  <div class="vals">
+    <div><b>Hands-on</b><span>I make the thing, on screen and in real life. The brand shows the making, not just the finish.</span></div>
+    <div><b>Curious</b><span>Always learning and trying new things. Room for experiments, never stiff.</span></div>
+    <div><b>Honest</b><span>Plain words and real work. No buzzwords, no promises I can't keep.</span></div>
+    <div><b>A bit playful</b><span>A wink, not a joke. A scratchcard CV, not a clown suit.</span></div>
+  </div>
+  <div class="foot"><span><img src="greener-g-white.svg" alt="">The brand</span><span>3 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- logo story -->
+<section class="pg dark">
+  <p class="eyebrow">02 Logo story</p>
+  <h2>A logo I started<br><em>at fourteen.</em></h2>
+  <p class="lead">The Greener wordmark began when I was 14 or 15: a striped, multi-line green logo where the G flowed into the R and the letters sat on two baselines. Years later I came back to it, kept the ideas that worked, and redrew the whole thing from scratch as a clean vector.</p>
+  <div class="row" style="grid-template-columns:1fr 70px 1fr;align-items:center;position:absolute;left:96px;right:96px;bottom:120px">
+    <div class="box" style="height:300px;border:2px dashed rgba(242,242,240,.35);color:rgba(242,242,240,.6);font-weight:600;font-size:18px;text-align:center;padding:20px">The original, aged 14<br><small style="font-weight:400">image to come</small></div>
+    <div style="text-align:center;font-size:40px;color:var(--green)">→</div>
+    <div class="box" style="height:300px;background:var(--paper)"><img src="greener-solid-black.svg" alt="The redrawn Greener wordmark" style="width:82%"></div>
+  </div>
+  <div class="foot"><span><img src="greener-g-white.svg" alt="">Logo story</span><span>4 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- logo anatomy -->
+<section class="pg">
+  <p class="eyebrow">03 Logo anatomy</p>
+  <h2>The little <em>details.</em></h2>
+  <svg class="anat" viewBox="-100 -145 1690 655" role="img" aria-label="The Greener wordmark with four numbered details">
+    <image href="greener-solid-black.svg" x="0" y="0" width="1500" height="385"/>
+    <g fill="none" stroke="#46663F" stroke-width="5" stroke-dasharray="14 10">
+      <circle cx="262" cy="66" r="62"/>
+      <rect x="490" y="-14" width="262" height="410" rx="14"/>
+      <line x1="-10" y1="300" x2="490" y2="300"/>
+      <line x1="490" y1="392" x2="1510" y2="392"/>
+    </g>
+    <g stroke="#46663F" stroke-width="4"><line x1="262" y1="4" x2="262" y2="-70"/><line x1="621" y1="-14" x2="621" y2="-70"/><line x1="2" y1="190" x2="-40" y2="190"/><line x1="1000" y1="392" x2="1000" y2="440"/></g>
+    <g font-family="Archivo,Arial,sans-serif" font-weight="800" font-size="40" text-anchor="middle">
+      <circle cx="262" cy="-100" r="34" fill="#73956F"/><text x="262" y="-86">1</text>
+      <circle cx="621" cy="-100" r="34" fill="#73956F"/><text x="621" y="-86">2</text>
+      <circle cx="-62" cy="190" r="34" fill="#73956F"/><text x="-62" y="204">3</text>
+      <circle cx="1000" cy="470" r="34" fill="#73956F"/><text x="1000" y="484">4</text>
+    </g>
+  </svg>
+  <ol class="notes">
+    <li><b>The pen nib.</b> Where the G meets the R, the gap between them makes the tip of a pen nib, a quiet nod to the fact that I'm a designer.</li>
+    <li><b>Stacked Es.</b> GREENER has two Es together. They stack into one tall E, which saves space and gives the wordmark its rhythm.</li>
+    <li><b>The G on its own.</b> That same gap sets the G apart from the rest of the word, so it can stand alone as the monogram.</li>
+    <li><b>Two baselines.</b> GR sits higher than ENER, kept from the original logo, which gives a solid, chunky mark a bit of movement.</li>
+  </ol>
+  <div class="foot"><span><img src="greener-g-black.svg" alt="">Logo anatomy</span><span>5 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 4 logo system -->
+<section class="pg">
+  <p class="eyebrow">04 Logo system</p>
+  <h2>One wordmark,<br><em>one monogram.</em></h2>
+  <div class="row" style="grid-template-columns:1.6fr 1fr 1fr;margin-top:52px">
+    <div><div class="box" style="height:300px;background:var(--card);border:1px solid rgba(31,31,31,.1)"><img src="greener-solid-black.svg" alt="" style="width:78%"></div><p class="lbl">Wordmark<small>The main logo. The G sits apart behind a thin gap; the two Es stack into one tall E. Use it wherever there's room.</small></p></div>
+    <div><div class="box" style="height:300px;background:var(--green)"><img src="greener-g-black.svg" alt="" style="width:46%"></div><p class="lbl">G monogram<small>For small spaces: favicons, stamps, patterns and debossing.</small></p></div>
+    <div><div class="box" style="height:300px;background:var(--ink)"><img src="greener-g-green.svg" alt="" style="width:46%"></div><p class="lbl">Inverse<small>Green or paper on ink. Never pure white.</small></p></div>
+  </div>
+  <div class="foot"><span><img src="greener-g-black.svg" alt="">Logo system</span><span>6 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 5 clear space -->
+<section class="pg">
+  <p class="eyebrow">05 Clear space and sizes</p>
+  <h2>Give it<br><em>room to breathe.</em></h2>
+  <p class="lead">Keep a clear space of at least <b>x</b> on every side, where x is the height of the G's top bar. Nothing else goes in that space.</p>
+  <div style="position:absolute;right:96px;top:90px;width:640px">
+    <div class="box" style="height:300px;background:var(--card);outline:2px dashed rgba(70,102,63,.6);outline-offset:-40px;border:1px solid rgba(31,31,31,.1)"><img src="greener-solid-black.svg" alt="" style="width:62%"></div>
+    <div class="box" style="height:250px;width:250px;margin:24px 0 0 auto;background:var(--card);outline:2px dashed rgba(70,102,63,.6);outline-offset:-30px;border:1px solid rgba(31,31,31,.1)"><img src="greener-g-black.svg" alt="" style="width:52%"></div>
+  </div>
+  <div class="row" style="grid-template-columns:repeat(2,250px);position:absolute;left:96px;bottom:120px">
+    <div style="background:var(--card);border-radius:14px;padding:22px"><img src="greener-solid-black.svg" alt="" style="height:22px;width:auto"><p class="lbl">Wordmark minimum<small>90 px on screen · 25 mm in print</small></p></div>
+    <div style="background:var(--card);border-radius:14px;padding:22px"><img src="greener-g-black.svg" alt="" style="height:22px;width:auto"><p class="lbl">Monogram minimum<small>16 px on screen · 5 mm in print</small></p></div>
+  </div>
+  <div class="foot"><span><img src="greener-g-black.svg" alt="">Clear space and sizes</span><span>7 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 6 backgrounds -->
+<section class="pg">
+  <p class="eyebrow">06 Logo on backgrounds</p>
+  <h2>The right logo<br><em>for every background.</em></h2>
+  <p class="lead">Ink on light, paper or green on dark. On photos, place the logo over a calm area or on a solid panel.</p>
+  <div class="row" style="grid-template-columns:repeat(4,1fr);margin-top:44px">
+    <div><div class="box" style="height:200px;background:var(--paper);border:1px solid rgba(31,31,31,.12)"><img src="greener-solid-black.svg" alt="" style="width:62%"><span class="ok">✓</span></div><p class="lbl">Ink on paper</p></div>
+    <div><div class="box" style="height:200px;background:var(--green)"><img src="greener-solid-black.svg" alt="" style="width:62%"><span class="ok">✓</span></div><p class="lbl">Ink on green</p></div>
+    <div><div class="box" style="height:200px;background:var(--ink)"><img src="greener-solid-white.svg" alt="" style="width:62%"><span class="ok">✓</span></div><p class="lbl">Paper on ink</p></div>
+    <div><div class="box" style="height:200px;background:var(--ink)"><img src="greener-solid-green.svg" alt="" style="width:62%"><span class="ok">✓</span></div><p class="lbl">Green on ink</p></div>
+  </div>
+  <div class="foot"><span><img src="greener-g-black.svg" alt="">Logo on backgrounds</span><span>8 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 7 misuse -->
+<section class="pg">
+  <p class="eyebrow">07 Logo misuse</p>
+  <h2>Things<br><em>never to do.</em></h2>
+  <div class="row miss" style="grid-template-columns:repeat(3,1fr);margin-top:40px">
+    <div><div class="box"><img src="greener-solid-black.svg" alt="" style="width:66%;transform:scaleX(1.4) scaleY(.75)"></div><p class="lbl">Don't stretch it</p></div>
+    <div><div class="box"><img src="greener-solid-black.svg" alt="" style="width:62%;filter:invert(32%) sepia(90%) saturate(2000%) hue-rotate(330deg)"></div><p class="lbl">Don't recolour it</p></div>
+    <div><div class="box"><img src="greener-solid-black.svg" alt="" style="width:62%;transform:rotate(-14deg)"></div><p class="lbl">Don't rotate it</p></div>
+    <div><div class="box" style="background:#73956F"><img src="greener-solid-green.svg" alt="" style="width:62%"></div><p class="lbl">Don't lose the contrast</p></div>
+    <div><div class="box"><img src="greener-solid-black.svg" alt="" style="width:62%;filter:drop-shadow(6px 6px 0 #73956F) drop-shadow(0 0 10px rgba(0,0,0,.6))"></div><p class="lbl">Don't add effects</p></div>
+    <div><div class="box"><img src="greener-solid-black.svg" alt="" style="width:62%;letter-spacing:0"><span style="position:absolute;right:16%;top:30%;background:#F2C230;font-weight:800;font-size:18px;padding:4px 10px;transform:rotate(-8deg)">HIRE ME!</span></div><p class="lbl">Don't crowd it</p></div>
+  </div>
+  <div class="foot"><span><img src="greener-g-black.svg" alt="">Logo misuse</span><span>9 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 8 colour -->
+<section class="pg">
+  <p class="eyebrow">08 Colour</p>
+  <h2>Green, with<br><em>no pure black or white.</em></h2>
+  <div class="sw">
+    <div class="c" style="background:#73956F"><b>Greener</b>#73956F<br>RGB 115 149 111<br>Brand colour</div>
+    <div class="c" style="background:#46663F;color:#F2F2F0"><b>Moss</b>#46663F<br>RGB 70 102 63<br>Accents, small text</div>
+    <div class="c" style="background:#1F1F1F;color:#F2F2F0"><b>Ink</b>#1F1F1F<br>RGB 31 31 31<br>Text, dark panels</div>
+    <div class="c" style="background:#5C5C59;color:#F2F2F0"><b>Graphite</b>#5C5C59<br>RGB 92 92 89<br>Secondary text</div>
+    <div class="c" style="background:#E3E3E0"><b>Stone</b>#E3E3E0<br>RGB 227 227 224<br>Surfaces, the desk</div>
+    <div class="c" style="background:#F2F2F0;border:1px solid rgba(31,31,31,.12)"><b>Paper</b>#F2F2F0<br>RGB 242 242 240<br>Backgrounds</div>
+  </div>
+  <div class="foot"><span><img src="greener-g-black.svg" alt="">Colour</span><span>10 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 9 pairs -->
+<section class="pg">
+  <p class="eyebrow">09 Colour pairs</p>
+  <h2>Readable<br><em>on every background.</em></h2>
+  <p class="lead">Body text must meet WCAG AA: a contrast ratio of at least 4.5:1. Paper on green is for large display type only.</p>
+  <div class="pairs">
+    <div style="background:#F2F2F0;color:#1F1F1F;border:1px solid rgba(31,31,31,.12)"><span class="aa">Aa</span><small>Ink on paper · 14.7:1 · AAA</small></div>
+    <div style="background:#1F1F1F;color:#F2F2F0"><span class="aa">Aa</span><small>Paper on ink · 14.7:1 · AAA</small></div>
+    <div style="background:#73956F;color:#1F1F1F"><span class="aa">Aa</span><small>Ink on green · 4.9:1 · AA</small></div>
+    <div style="background:#F2F2F0;color:#46663F;border:1px solid rgba(31,31,31,.12)"><span class="aa">Aa</span><small>Moss on paper · 5.8:1 · AA</small></div>
+  </div>
+  <div class="bal"><div style="background:#F2F2F0;flex:55;border:1px solid rgba(31,31,31,.12)">Paper 55%</div><div style="background:#73956F;flex:20">Green 20%</div><div style="background:#1F1F1F;color:#F2F2F0;flex:20">Ink 20%</div><div style="background:#46663F;flex:5"></div></div>
+  <div class="foot"><span><img src="greener-g-black.svg" alt="">Colour pairs</span><span>11 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 10 type -->
+<section class="pg dark">
+  <p class="eyebrow">10 Typography</p>
+  <h2>Archivo for<br><em>everything.</em></h2>
+  <div class="type">
+    <div class="spec"><div class="big">Aa</div><p><b style="color:#F2F2F0">Archivo</b> · Google Fonts, free<br>Weights 400 to 800, widths 62 to 125. Headlines run wide and heavy with tight spacing; body text stays regular and normal width.</p><p style="font-size:22px;color:#F2F2F0;letter-spacing:.02em">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz 0123456789</p></div>
+    <div class="scale">
+      <div><small>Display · 800 · wide</small><span style="font-size:64px;font-weight:800;font-stretch:115%;letter-spacing:-.04em;line-height:1">Make it real.</span></div>
+      <div><small>Heading · 800</small><span style="font-size:34px;font-weight:800;letter-spacing:-.02em">Design it. Build it.</span></div>
+      <div><small>Body · 400</small><span style="font-size:20px">I design brands, websites and apps, then I build them myself.</span></div>
+      <div><small>Label · 700 · caps</small><span style="font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--green)">Portfolio project</span></div>
+    </div>
+  </div>
+  <div class="foot"><span><img src="greener-g-white.svg" alt="">Typography</span><span>12 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 11 character -->
+<section class="pg green">
+  <p class="eyebrow" style="color:var(--ink)">11 The character</p>
+  <h2>One face,<br>the same everywhere.</h2>
+  <p class="lead" style="color:var(--ink);max-width:40ch">The cartoon me is the brand's mascot. He always wears the same thing: curly hair, a grey T-shirt, navy trousers and black and white trainers. Bold outlines, flat colour, a friendly smile.</p>
+  <div style="position:absolute;right:70px;bottom:60px;display:flex;align-items:flex-end;gap:30px">
+    <img src="../assets/game/harry-run1.webp" alt="" style="height:400px;width:auto">
+    <img src="../assets/me/me-toon.webp" alt="" style="height:300px;width:auto">
+    <img src="../scratch/me-win.webp" alt="" style="height:340px;width:auto">
+  </div>
+  <ul style="position:absolute;left:96px;bottom:120px;margin:0;padding:0;list-style:none;font-size:18px;font-weight:600;line-height:2">
+    <li>✓ Keep the outfit and the hair</li><li>✓ Let him do things: run, hold, point</li><li>✕ Don't redraw him in another style</li>
+  </ul>
+  <div class="foot" style="color:var(--ink)"><span><img src="greener-g-black.svg" alt="">The character</span><span>13 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+
+<!-- 12 applications -->
+<section class="pg">
+  <p class="eyebrow">12 Applications</p>
+  <h2>Where it <em>lives.</em></h2>
+  <div class="apps">
+    <figure style="grid-row:1/3"><img src="../making-of/img/s-open.jpg" alt=""><figcaption>The Wallet CV website</figcaption></figure>
+    <figure><img src="../making-of/img/scratch-front.jpg" alt=""><figcaption>Instant Hire scratchcard</figcaption></figure>
+    <figure><img src="../making-of/img/receipt.webp" alt="" style="object-position:top"><figcaption>Receipt CV</figcaption></figure>
+    <figure><img src="../making-of/img/scratch-foil.jpg" alt=""><figcaption>G monogram in the scratch foil</figcaption></figure>
+    <figure><img src="../making-of/img/s-desk.jpg" alt="" style="object-position:48% 62%;transform:scale(1.6)"><figcaption>Debossed on the wallet</figcaption></figure>
+  </div>
+  <div class="foot"><span><img src="greener-g-black.svg" alt="">Applications</span><span>14 / 14</span></div>
+  <div class="stripe"><i></i><i></i><i></i><i></i><i></i></div>
+</section>
+</body>
+</html>

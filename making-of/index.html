@@ -85,6 +85,14 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
 .tools div{background:var(--card);padding:20px}
 .tools b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
 .tools span{display:block;margin-top:6px;font-weight:600;line-height:1.35}
+/* brand guidelines viewer */
+.viewer{margin:40px 0 0}
+.vscreen{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:12px;background:#1F1F1F;box-shadow:0 20px 60px rgba(31,31,31,.18)}
+.vscreen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;pointer-events:none}
+.vbar{display:flex;align-items:center;gap:14px;margin-top:16px;font-weight:700}
+.vbar button{all:unset;cursor:var(--hand-point);width:46px;height:46px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;font-size:20px}
+.vbar span{min-width:70px;text-align:center}
+.vbar a{margin-left:auto;text-decoration:none;font-size:15px}
 /* end */
 .end{background:var(--ink);color:var(--paper);margin-top:clamp(80px,10vw,140px);padding:clamp(64px,9vw,110px) 0 36px}
 .end h2{color:var(--paper);max-width:16ch}
@@ -268,8 +276,21 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
   </div>
 </div></section>
 
+<section id="brand"><div class="wrap">
+  <div class="sec-head rv"><span class="no">07</span><h2>The Greener brand</h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>The GREENER wordmark is older than this project. I first made it when I was 14 or 15: a striped, multi-line green logo where the G flowed into the R. For this portfolio I reimagined it, redrew it from scratch and turned it into a clean vector.</p>
+    <p>The details are deliberate. Where the G meets the R, the gap between them forms the tip of a pen nib, a quiet nod to being a designer. The two Es in GREENER stack into one tall E. That same gap sets the G apart, so it works on its own as a monogram, which turns up as the favicon, in the scratchcard's silver and debossed on the wallet. And GR sits on a higher baseline than ENER, a bit of movement kept from the original.</p>
+    <p>I put it all into a short brand handbook, in the same style as the one I made for Stack: the logo's story and anatomy, the colours and contrast pairs, the type, the character and where it all lives.</p>
+  </div></div>
+  <div class="viewer rv">
+    <div class="vscreen"><iframe id="glFrame" src="../brand/guidelines.html?embed" title="Greener brand guidelines" width="1600" height="900" scrolling="no" loading="lazy"></iframe></div>
+    <div class="vbar"><button type="button" id="glPrev" aria-label="Previous page">←</button><span id="glNum">1 / 14</span><button type="button" id="glNext" aria-label="Next page">→</button><a href="../brand/guidelines.html">Open the full guidelines ↗</a></div>
+  </div>
+</div></section>
+
 <section id="tools"><div class="wrap">
-  <div class="sec-head rv"><span class="no">07</span><h2>How it's put together</h2></div>
+  <div class="sec-head rv"><span class="no">08</span><h2>How it's put together</h2></div>
   <div class="cols"><div class="spacer"></div><div class="prose rv">
     <p>The whole site is one hand-written HTML file with three.js for the 3D, no framework and no build step. Most textures, like the crumpled paper and the scratch foil, are drawn in code. The print files come from the same HTML, exported to PDF at print resolution, so the screen and the paper are the same design.</p>
     <p>It's hosted for free on GitHub Pages under my own domain, harrisongreener.co.uk.</p>
@@ -296,6 +317,18 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
   if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
   const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
   els.forEach((e) => io.observe(e));
+})();
+</script>
+<script>
+(() => {
+  const f = document.getElementById('glFrame'), box = f.parentElement, num = document.getElementById('glNum');
+  let i = 0, n = 14;
+  const fit = () => { f.style.transform = `scale(${box.clientWidth / 1600})`; };
+  const go = (k) => { i = (k + n) % n; num.textContent = `${i + 1} / ${n}`; try { f.contentWindow.scrollTo(0, i * 900); } catch (e) {} };
+  f.addEventListener('load', () => { try { n = f.contentDocument.querySelectorAll('.pg').length || n; } catch (e) {} go(i); });
+  document.getElementById('glPrev').onclick = () => go(i - 1);
+  document.getElementById('glNext').onclick = () => go(i + 1);
+  addEventListener('resize', fit); fit();
 })();
 </script>
 </body>
