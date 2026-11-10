@@ -707,6 +707,10 @@ const ITEMS = [
     eyebrow: 'Project card', title: 'Rolla',
     body: 'Swipe into work. A gamified, swipe-style recruitment app concept.',
     facts: [], ...art('rolla'), art: 'biz-ink' },
+  { id: 'scratch', side: 'right', kind: 'scratch', label: 'Instant Hire',
+    eyebrow: 'Hidden slot', title: 'Instant Hire',
+    body: 'A scratchcard with three reasons to hire me under the silver.',
+    facts: [], front: 'scratch/print/instant-hire-front-600dpi.png', back: 'scratch/print/instant-hire-back-600dpi.png', art: 'biz-paper' },
   { id: 'receipt', side: 'right', kind: 'receipt', label: 'Receipt',
     eyebrow: 'Note compartment', title: 'Receipt',
     body: 'An itemised receipt of skills and experience, tucked in where the cash would go.',
@@ -1037,7 +1041,7 @@ function makeReceipt(cfg) {
 /* ---------- Cards ---------- */
 function makeItemMesh(cfg) {
   if (cfg.kind === 'receipt') return makeReceipt(cfg);
-  const isReceipt = cfg.kind === 'receipt', isPaper = cfg.kind === 'biz';
+  const isReceipt = cfg.kind === 'receipt', isPaper = cfg.kind === 'biz' || cfg.kind === 'scratch';
   const { w, h, t } = cfg;
   const shape = rr(-w / 2, -h / 2, w / 2, h / 2, isReceipt ? 0.06 : isPaper ? 0.12 : 0.32);
   const group = new THREE.Group();
@@ -1058,11 +1062,107 @@ function makeItemMesh(cfg) {
 // Swap in real artwork later: ITEMS[i].front = 'cards/licence-front.png' and it loads here.
 const loader = new THREE.TextureLoader();
 function loadArt(cfg) {
+  if (cfg.kind === 'scratch') { scratchCard.init(cfg); }
   for (const side of ['front', 'back']) {
-    if (!cfg[side]) continue;
+    if (!cfg[side] || (cfg.kind === 'scratch' && side === 'front')) continue;
     loader.load(cfg[side], (t) => { t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = maxAniso; const m = cfg[side + 'Mat']; m.map = t; m.needsUpdate = true; });
   }
 }
+
+
+/* ---------- Instant Hire scratchcard: the front is drawn live, with silver over the three panels ---------- */
+const scratchCard = (() => {
+  const CW = 1700, CH = 1100;                                   // 85 x 55 mm at 20 px/mm
+  const WIN = { x: 44.60 / 85 * CW, y: 5.78 / 55 * CH, w: 37.30 / 85 * CW, h: 36.50 / 55 * CH };
+  const out = document.createElement('canvas'); out.width = CW; out.height = CH; const og = out.getContext('2d');
+  const foil = document.createElement('canvas'); foil.width = CW; foil.height = CH; const fg = foil.getContext('2d');
+  let base = null, texture = null, cfg = null, coin = null, demoT = null, raf = 0, left = 1;
+  function paintFoil() {
+    fg.globalCompositeOperation = 'source-over'; fg.clearRect(0, 0, CW, CH);
+    const { x, y, w, h } = WIN, gr = fg.createLinearGradient(x, y, x + w, y + h);
+    gr.addColorStop(0, '#C6C9CA'); gr.addColorStop(.42, '#F2F3F3'); gr.addColorStop(.55, '#B3B7B8'); gr.addColorStop(1, '#DCDEDE');
+    fg.fillStyle = gr; fg.fillRect(x - 3, y - 3, w + 6, h + 6);
+    for (let i = 0; i < 9000; i++) { fg.fillStyle = `rgba(${Math.random() < .5 ? '255,255,255' : '80,85,88'},${Math.random() * .2})`; fg.fillRect(x + Math.random() * w, y + Math.random() * h, 2, 2); }
+    const pad = 10, bh = (h - pad * 2) / 3;
+    for (let i = 0; i < 3; i++) {
+      const by = y + pad + i * bh;
+      fg.strokeStyle = 'rgba(20,20,20,.85)'; fg.lineWidth = 5; fg.strokeRect(x + pad + 4, by + 4, w - pad * 2 - 8, bh - 8);
+      const r = bh * .17, cx = x + pad + r + bh * .16, cy = by + bh / 2;
+      fg.fillStyle = '#141414'; fg.beginPath(); fg.arc(cx, cy, r, 0, 7); fg.fill();
+      fg.fillStyle = '#fff'; fg.font = `900 ${r * 1.25}px Archivo, Arial, sans-serif`; fg.textAlign = 'center'; fg.textBaseline = 'middle'; fg.fillText(i + 1, cx, cy + 2);
+      fg.fillStyle = '#E3001B'; fg.font = `900 ${bh * .24}px Archivo, Arial, sans-serif`; fg.fillText('SCRATCH HERE', (x + w + cx + r) / 2, cy + 2);
+    }
+    left = 1;
+  }
+  function draw() {
+    if (!base) return;
+    og.drawImage(base, 0, 0, CW, CH); og.drawImage(foil, 0, 0);
+    if (coin) {                                                // a pound coin doing the scratching in the demo
+      og.save(); og.translate(coin.x, coin.y); og.rotate(coin.a);
+      const r = 62, g = og.createRadialGradient(-18, -18, 6, 0, 0, r);
+      g.addColorStop(0, '#FFF6C8'); g.addColorStop(.6, '#E2B84A'); g.addColorStop(1, '#9C7420');
+      og.shadowColor = 'rgba(0,0,0,.35)'; og.shadowBlur = 18; og.shadowOffsetY = 8;
+      og.fillStyle = g; og.beginPath(); og.arc(0, 0, r, 0, 7); og.fill(); og.shadowColor = 'transparent';
+      og.strokeStyle = '#8A6418'; og.lineWidth = 5; og.beginPath(); og.arc(0, 0, r - 9, 0, 7); og.stroke();
+      og.fillStyle = '#7A5612'; og.font = '900 58px Archivo, Arial, sans-serif'; og.textAlign = 'center'; og.textBaseline = 'middle'; og.fillText('£1', 0, 4);
+      og.restore();
+    }
+    if (texture) texture.needsUpdate = true;
+  }
+  function rub(p, from) {
+    fg.globalCompositeOperation = 'destination-out'; fg.lineCap = 'round'; fg.lineJoin = 'round'; fg.lineWidth = 64;
+    fg.beginPath(); fg.moveTo((from || p).x, (from || p).y); fg.lineTo(p.x + .1, p.y); fg.stroke();
+    // flecks of silver flying off
+    if (Math.random() < .5) for (let i = 0; i < 3; i++) { fg.globalCompositeOperation = 'source-over'; fg.fillStyle = 'rgba(190,193,194,.9)'; fg.fillRect(p.x + (Math.random() - .5) * 140, p.y + 30 + Math.random() * 40, 3, 3); }
+    fg.globalCompositeOperation = 'source-over';
+    if (Math.random() < .15) {                                 // once almost all of it is gone, the last bits flake away
+      const d = fg.getImageData(WIN.x, WIN.y, WIN.w, WIN.h).data; let n = 0, k = 0;
+      for (let i = 3; i < d.length; i += 160) { k++; if (d[i] > 40) n++; }
+      left = n / k; if (left < .12) { fg.clearRect(WIN.x - 4, WIN.y - 4, WIN.w + 8, WIN.h + 8); left = 0; }
+    }
+    if (!raf) raf = requestAnimationFrame(() => { raf = 0; draw(); });
+  }
+  function at(e) {                                             // pointer -> point on the card's front, only over the silver
+    if (!cfg || !cfg.frontMesh) return null;
+    const r = renderer.domElement.getBoundingClientRect();
+    ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+    ray.setFromCamera(ndc, camera);
+    const hit = ray.intersectObject(cfg.frontMesh, false)[0];
+    if (!hit || !hit.uv) return null;
+    const p = { x: hit.uv.x * CW, y: (1 - hit.uv.y) * CH };
+    return p.x > WIN.x - 30 && p.x < WIN.x + WIN.w + 30 && p.y > WIN.y - 30 && p.y < WIN.y + WIN.h + 30 ? p : null;
+  }
+  function demo() {                                            // the coin scratches panel 1 by itself, then hands over
+    if (reduceMotion || demoT) return;
+    const { x, y, w, h } = WIN, bh = h / 3, pts = [];
+    for (let k = 0; k <= 7; k++) pts.push({ x: x + 40 + (k % 2 ? w - 80 : 0), y: y + 22 + k * (bh - 40) / 7 });
+    const t0 = performance.now(), dur = 1500; let last = null;
+    const step = (now) => {
+      if (!active || active.item !== cfg || active.dir === -1) { coin = null; demoT = null; draw(); return; }
+      const t = Math.max(0, Math.min(1, (now - t0) / dur)), f = t * (pts.length - 1), i = Math.min(pts.length - 2, Math.floor(f)), u = f - i;
+      const p = { x: pts[i].x + (pts[i + 1].x - pts[i].x) * u, y: pts[i].y + (pts[i + 1].y - pts[i].y) * u };
+      coin = { x: p.x, y: p.y - 30, a: -.4 + Math.sin(t * 20) * .12 };
+      const from = last ? last.i : 0;                             // follow every corner passed since the last frame, even on a slow machine
+      let prev = last ? last.p : pts[0];
+      for (let k = from + 1; k <= i; k++) { rub(pts[k], prev); prev = pts[k]; }
+      rub(p, prev); last = { p, i }; draw();
+      if (t < 1) demoT = requestAnimationFrame(step);
+      else { const lift = performance.now(); const fly = (n) => { if (!coin) return; const k = Math.max(0, Math.min(1, (n - lift) / 350)); coin.x += 14; coin.y -= 10; draw(); if (k < 1) requestAnimationFrame(fly); else { coin = null; demoT = null; draw(); } }; requestAnimationFrame(fly); }
+    };
+    demoT = requestAnimationFrame(step);
+  }
+  return {
+    init(c) {
+      cfg = c; paintFoil();
+      cfg.frontMesh = cfg.group.children.find((m) => m.material === cfg.frontMat);
+      texture = new THREE.CanvasTexture(out); texture.colorSpace = THREE.SRGBColorSpace; texture.anisotropy = maxAniso;
+      cfg.frontMat.map = texture; cfg.frontMat.needsUpdate = true;
+      const img = new Image(); img.onload = () => { base = img; draw(); }; img.src = cfg.front;
+    },
+    reset() { if (demoT) cancelAnimationFrame(demoT); demoT = null; coin = null; paintFoil(); draw(); },
+    at, rub, demo, canvas: out,
+  };
+})();
 
 /* ---------- Build the wallet ---------- */
 const wallet = new THREE.Group(); scene.add(wallet);
@@ -1078,7 +1178,7 @@ const linePath = (x0, z0, x1, z1) => { const p = new THREE.Path(); p.moveTo(x0, 
 // Real sizes. Cards stand portrait in their slots and nearly fill the wallet, as in the product photo.
 for (const cfg of ITEMS) {
   if (cfg.kind === 'receipt') Object.assign(cfg, { w: 8.0, h: 33.6, t: 0.01, folds: 4 });   // 80 mm till roll, the CV is 336 mm long
-  else if (cfg.kind === 'biz') Object.assign(cfg, { w: 8.5, h: 5.5, t: 0.02 });
+  else if (cfg.kind === 'biz' || cfg.kind === 'scratch') Object.assign(cfg, { w: 8.5, h: 5.5, t: 0.02 });
   else Object.assign(cfg, { w: CARD.w, h: CARD.w * 650 / 1004, t: CARD.t });
   cfg.rotated = cfg.kind !== 'receipt';
   cfg.zLen = cfg.rotated ? cfg.w : cfg.kind === 'receipt' ? cfg.h / cfg.folds : cfg.h;   // the receipt sits folded
@@ -1091,7 +1191,7 @@ for (const cfg of ITEMS) {
 // Right half: a strip by the fold holding one card upright in a hidden slot (only a sliver shows), then the card
 // section: a backing layer with seven cards stepped behind one plain pocket front.
 const STRIP = 0.96;                                   // width of the centre strip on each side of the fold
-const SIDE_ID = null;                                // the slot by the fold is kept free for a future card (it would slide out to the left)
+const SIDE_ID = 'scratch';                           // the hidden slot by the fold, under the project cards: the scratchcard slides out to the left
 const RIGHT_IDS = ['stack', 'folio', 'quotable', 'pat', 'brandomizer', 'big-brother', 'fly', 'rolla'];
 const CARD_STEP = 0.28, CARD_TOPS = RIGHT_IDS.map((_, k) => -5.13 + k * CARD_STEP);
 const CARD_LIFT = 0.012; // cards overlap almost flat, so the pocket keeps one slim thickness however full it is
@@ -1692,6 +1792,7 @@ function pull(cfg) {
   receiptScroll = receiptScrollT = 0;
   yaw = yawT = 0; pitch = pitchT = 0;
   active = { item: cfg, p: 0, dir: 1, homePos, homeQuat, dist, dirV };
+  if (cfg.kind === 'scratch') scratchCard.reset();
   document.body.classList.add('item-out');
   controls.enabled = false;
   setHover(null);
@@ -1731,7 +1832,7 @@ function finishReturn() {
 
 /* ---------- No on-screen controls: the wallet itself is the navigation ---------- */
 const cardHint = document.getElementById('cardHint');
-function showSheet(item) { cardHint.textContent = item.kind === 'biz' ? 'Click to see the project · drag to turn it' : item.kind === 'licence' ? 'Click to flip · drag to turn it' : ''; cardHint.classList.toggle('on', !!cardHint.textContent); }
+function showSheet(item) { cardHint.textContent = item.kind === 'biz' ? 'Click to see the project · drag to turn it' : item.kind === 'licence' ? 'Click to flip · drag to turn it' : item.kind === 'scratch' ? 'Drag over the silver to scratch · click to flip' : ''; cardHint.classList.toggle('on', !!cardHint.textContent); }
 function hideSheet() { cardHint.classList.remove('on'); }
 function openProject(cfg) {                               // a card in your hand opens its page in the menu
   hideSheet(); setMenu(true); openDetail(cfg);
@@ -1765,10 +1866,11 @@ let down = null, dragging = false;
 const el = renderer.domElement;
 el.addEventListener('pointerdown', (e) => {
   down = { x: e.clientX, y: e.clientY, lx: e.clientX, ly: e.clientY };
-  if (active && active.p >= 2) { dragging = true; el.setPointerCapture(e.pointerId); }
+  if (active && active.p >= 2) { dragging = true; el.setPointerCapture(e.pointerId); down.scratch = active.item.kind === 'scratch' && scratchCard.at(e); if (down.scratch) scratchCard.rub(down.scratch); }
 });
 el.addEventListener('pointermove', (e) => {
   if (dragging && down) {
+    if (down.scratch) { const p = scratchCard.at(e); if (p) { scratchCard.rub(p, down.scratch); down.scratch = p; } down.lx = e.clientX; down.ly = e.clientY; return; }
     if (active.item.kind === 'receipt') receiptScrollT = Math.max(0, Math.min(1, receiptScrollT - (e.clientY - down.ly) * 0.0016));
     else { yawT += (e.clientX - down.lx) * 0.009; pitchT = Math.max(-1.45, Math.min(1.45, pitchT + (e.clientY - down.ly) * 0.009)); }
     down.lx = e.clientX; down.ly = e.clientY; el.classList.add('can-grab'); return;
@@ -1783,7 +1885,8 @@ el.addEventListener('pointermove', (e) => {
 el.addEventListener('pointerup', (e) => {
   if (phoneTarget === 1 || phoneP > 0) { closePhone(); down = null; return; }   // click off the phone to put it down
   const moved = down ? Math.hypot(e.clientX - down.x, e.clientY - down.y) : 99;
-  const wasDragging = dragging; dragging = false; el.classList.toggle('can-grab', !!hovered);
+  const wasDragging = dragging, wasScratch = down && down.scratch; dragging = false;
+  if (wasScratch) { down = null; return; } el.classList.toggle('can-grab', !!hovered);
   down = null;
   if (moved > 6) return;
   if (!active) { const pp = pickProp(e); if (pp && pp === phoneProp) { openPhone(); return; } }
@@ -2687,7 +2790,7 @@ function frame() {
     yaw += (yawT - yaw) * Math.min(1, dt * 8); pitch += (pitchT - pitch) * Math.min(1, dt * 8);
     receiptScroll += (receiptScrollT - receiptScroll) * Math.min(1, dt * 10);
     poseActive();
-    if (active.dir === 1 && before < 2 && active.p === 2) showSheet(active.item);
+    if (active.dir === 1 && before < 2 && active.p === 2) { showSheet(active.item); if (active.item.kind === 'scratch') scratchCard.demo(); }
     if (active.dir === -1 && active.p === 0) finishReturn();
   }
   wobbleProps(dt);
@@ -2723,7 +2826,7 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
-window.__wallet = { state: () => ({ phoneP, phoneTarget, openVal, openTarget, active: !!active }), phoneNow: (step) => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); resetPhoneScreen(); phoneUI.classList.add('on'); if (step) phoneUI.dataset.step = step; }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS }; // handle for automated checks
+window.__wallet = { state: () => ({ phoneP, phoneTarget, openVal, openTarget, active: !!active }), phoneNow: (step) => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); resetPhoneScreen(); phoneUI.classList.add('on'); if (step) phoneUI.dataset.step = step; }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS, scratchCard }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
