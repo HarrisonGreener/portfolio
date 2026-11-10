@@ -424,7 +424,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
     <img class="me-photo" src="assets/me/me-photo.webp" alt="Harrison Greener" width="678" height="760">
     <div class="me-toon-layer" hidden>
       <img class="me-toon" src="assets/me/me-toon.webp" alt="" width="678" height="760">
-      <svg class="me-eyes" viewBox="0 0 678 760" aria-hidden="true"><g class="me-eye" transform="translate(259 269)"><path d="M-31 0 Q0 -19 31 0 Q0 19 -31 0Z" fill="#fff" stroke="#1F1F1F" stroke-width="3.5"/><g class="me-pupil"><circle r="10.5" fill="#6F8E95"/><circle r="5.5" fill="#1F1F1F"/><circle cx="3" cy="-3.5" r="2.4" fill="#fff"/></g></g><g class="me-eye" transform="translate(383 265)"><path d="M-31 0 Q0 -19 31 0 Q0 19 -31 0Z" fill="#fff" stroke="#1F1F1F" stroke-width="3.5"/><g class="me-pupil"><circle r="10.5" fill="#6F8E95"/><circle r="5.5" fill="#1F1F1F"/><circle cx="3" cy="-3.5" r="2.4" fill="#fff"/></g></g></svg>
+      <svg class="me-eyes" viewBox="0 0 678 760" aria-hidden="true"><g class="me-eye" transform="translate(258 270)"><clipPath id="meClip0"><path d="M-24 0 Q0 -14 24 0 Q0 12 -24 0Z"/></clipPath><path d="M-24 0 Q0 -14 24 0 Q0 12 -24 0Z" fill="#FBFBFA"/><g clip-path="url(#meClip0)"><g class="me-pupil"><circle r="9.5" fill="#647A99" stroke="#2E3A4E" stroke-width="1.6"/><circle r="4.6" fill="#1F1F1F"/><circle cx="2.6" cy="-3" r="2" fill="#fff"/></g></g></g><g class="me-eye" transform="translate(384 264)"><clipPath id="meClip1"><path d="M-23 0 Q0 -14 23 0 Q0 12 -23 0Z"/></clipPath><path d="M-23 0 Q0 -14 23 0 Q0 12 -23 0Z" fill="#FBFBFA"/><g clip-path="url(#meClip1)"><g class="me-pupil"><circle r="9.5" fill="#647A99" stroke="#2E3A4E" stroke-width="1.6"/><circle r="4.6" fill="#1F1F1F"/><circle cx="2.6" cy="-3" r="2" fill="#fff"/></g></g></g></svg>
     </div>
   </figure>
   </div></section>
@@ -1936,14 +1936,14 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
 (() => {
   const me = document.getElementById('miMe'); if (!me) return;
   const pupils = [...me.querySelectorAll('.me-pupil')], eyes = [...me.querySelectorAll('.me-eye')];
-  const EYE = [[259, 269], [383, 265]];
+  const EYE = [[258, 270], [384, 264]];
   let lr = 0, lrT = 0, raf = 0, mx = -1, my = -1;
   function look() {
     const b = me.getBoundingClientRect(), k = b.width / 678;
     pupils.forEach((p, i) => {
       const ex = b.left + EYE[i][0] * k, ey = b.top + EYE[i][1] * k;
       const dx = mx - ex, dy = my - ey, d = Math.hypot(dx, dy) || 1, f = Math.min(1, d / 260);
-      p.setAttribute('transform', `translate(${(dx / d * 13 * f).toFixed(2)} ${(dy / d * 6 * f).toFixed(2)})`);
+      p.setAttribute('transform', `translate(${(dx / d * 10 * f).toFixed(2)} ${(dy / d * 3.5 * f).toFixed(2)})`);
     });
   }
   function tick() {
@@ -1952,7 +1952,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   }
   addEventListener('pointermove', (e) => { if (menu.hidden) return; mx = e.clientX; my = e.clientY; look(); }, { passive: true });
   me.addEventListener('pointermove', (e) => { const b = me.getBoundingClientRect(); me.style.setProperty('--lx', (e.clientX - b.left) + 'px'); me.style.setProperty('--ly', (e.clientY - b.top) + 'px'); });
-  const toonLayer = me.querySelector('.me-toon-layer'), TOON_READY = false;   // set true when the drawn version is in assets/me/me-toon.webp
+  const toonLayer = me.querySelector('.me-toon-layer'), TOON_READY = true;
   if (TOON_READY) toonLayer.hidden = false;
   me.addEventListener('pointerenter', () => { if (!TOON_READY) return; lrT = me.getBoundingClientRect().width * 0.24; if (!raf) raf = requestAnimationFrame(tick); });
   me.addEventListener('pointerleave', () => { lrT = 0; if (!raf) raf = requestAnimationFrame(tick); });
