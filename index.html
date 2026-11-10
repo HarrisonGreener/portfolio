@@ -180,8 +180,8 @@ canvas.can-grab{cursor:var(--hand-grab)}
    It paints above each band's background but below the content, so it reads as part of the layout. */
 .mp-orb{position:fixed;left:0;top:0;width:100%;height:100%;z-index:1;pointer-events:none}
 .mp-orb-top{z-index:3}   /* spare layer above the content; the orb ducks under the project cards */
-.menu .mp-head,.menu .mi-pin>.mp-wrap,.menu .mw-head,.menu .mw-viewport,.menu .mw-foot,.menu .mp-cvband>.mp-wrap,.menu .mf-in,.menu .mg-box,.menu .mf-end{position:relative;z-index:2}
-.menu .mi-pin,.menu .mw-pin{z-index:2}   /* sticky panels are their own layers: lift them over the orb */
+.menu .mp-head,.menu .mi-pin>.mp-wrap,.menu .mw-head,.menu .mw-viewport,.menu .mw-foot,.menu .mf-in,.menu .mg-box,.menu .mf-end{position:relative;z-index:2}
+.menu .mi-pin,.menu .mw-pin,.menu .cv-pin{z-index:2}   /* sticky panels are their own layers: lift them over the orb */
 .menu-btn:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:6px}
 .menu{position:fixed;inset:0;z-index:8;background:var(--paper);color:var(--ink);overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
   font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;letter-spacing:-.025em;
@@ -289,54 +289,50 @@ canvas.can-grab{cursor:var(--hand-grab)}
   .mw-track{transform:none!important}.mw-card{width:78vw;scroll-snap-align:center}.mw-next{width:60vw}
   .mp-intro{height:auto}.mi-pin{position:static;height:auto;padding:96px 0}
 }
-/* CV: summary + downloads stay put on the left; the timeline's bars slide out along a 2020–now axis */
-.mp-cvband{background:var(--green);padding:96px 0 120px}
-.mp-cvband h2{margin:0 0 36px;font-size:clamp(34px,5vw,64px);line-height:.95;display:flex;gap:10px;align-items:flex-start}
-.mp-cvband h2 span{font-size:14px;letter-spacing:0;margin-top:.45em;opacity:.55}
-.mp-cv{display:grid;grid-template-columns:minmax(0,320px) 1fr;gap:clamp(28px,5vw,72px);align-items:start}
-.mp-cv-side{position:sticky;top:24px}
-.mp-facts a{color:inherit;font-weight:700}
-.mp-cv-side .mp-big{font-size:clamp(20px,1.8vw,26px);line-height:1.2}
-.cv-dl .mp-btn{font-size:15px;padding:12px 18px}
-.cv-dl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
-.cv-dl>b{flex-basis:100%;font-size:13px;opacity:.65}
+/* CV: a pinned green band. Scrolling plays the years from school to now: blocks grow along the timeline,
+   the travelling circle parks top right as a year counter, and each step's caption drops in from above */
+.mp-cvband{background:var(--green);height:calc(100vh + 16 * 26vh);height:calc(100svh + 16 * 26svh);position:relative}
+.cv-pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.cv-wrap{height:100%;box-sizing:border-box;display:grid;grid-template-rows:auto 1fr auto;padding-top:clamp(64px,10vh,110px);padding-bottom:clamp(20px,5vh,56px)}
+.cv-top{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-right:72px}
+.cv-top h2{margin:0;font-size:clamp(34px,5vw,64px);line-height:.95;display:flex;gap:10px;align-items:flex-start}
+.cv-top h2 span{font-size:14px;letter-spacing:0;margin-top:.45em;opacity:.55}
+.cv-dl{display:flex;flex-wrap:wrap;gap:8px}
+.cv-dl .mp-btn{font-size:15px;padding:11px 18px}
 .mp-btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
 .mp-btn.ghost:hover{background:var(--ink);color:var(--paper)}
-.cv-main{min-width:0}
-.cv-h{margin:40px 0 6px;font-size:13px;letter-spacing:.02em;opacity:.65}
-.cvt-axis+.cv-h{margin-top:18px}
-.cvt{list-style:none;margin:0;padding:0}
-.cvt-row,.cvt-axis{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:24px;align-items:center}
-.cvt-row{padding:12px 0;border-top:1px solid rgba(31,31,31,.18)}
-.cvt-txt{display:flex;flex-direction:column;gap:1px;line-height:1.3}
-.cvt-txt b{font-size:16px}
-.cvt-txt span{font-size:14px}
-.cvt-txt em{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.04em;opacity:.65;margin-top:2px}
-.cvt-track{position:relative;height:28px;background:repeating-linear-gradient(90deg,rgba(31,31,31,.14) 0 1px,transparent 1px calc(100%/7))}
-.cvt-track::after{content:"";position:absolute;left:var(--now);top:-12px;bottom:-12px;width:2px;background:var(--ink);opacity:.35}
-.cvt-bar{position:absolute;left:var(--s);width:max(var(--w),10px);top:4px;bottom:4px;border-radius:999px;background:var(--ink);transform-origin:left center;transform:scaleX(0);transition:transform 1.1s cubic-bezier(.16,.8,.2,1) calc(var(--d,0s) + .25s),background .2s ease}
-.cvt.hosp .cvt-bar{background:transparent;box-shadow:inset 0 0 0 2px var(--ink)}
-.cvt-row.in .cvt-bar{transform:scaleX(1)}
-.cvt-row.now .cvt-bar{border-radius:999px 0 0 999px}
-.cvt-row.now .cvt-bar::after{content:"";position:absolute;right:-5px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--paper);box-shadow:0 0 0 2px var(--ink);animation:cvPulse 1.6s ease-in-out infinite}
-@keyframes cvPulse{50%{transform:scale(1.5)}}
-.cvt-bar span{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);white-space:nowrap;font-family:var(--mono);font-size:11px;opacity:0;transition:opacity .2s}
-.cvt-row.now .cvt-bar span{left:auto;right:calc(100% + 8px)}
-.cvt-row:hover .cvt-bar{background:var(--paper);box-shadow:inset 0 0 0 2px var(--ink)}
-.cvt-row:hover .cvt-bar span{opacity:1}
-.cvt-axis .cvt-track{height:20px;background:none}
-.cvt-axis .cvt-track::after{display:none}
-.cvt-axis .cvt-track span{position:absolute;left:var(--s);bottom:0;font-family:var(--mono);font-size:11px;opacity:.65;transform:translateX(-1px)}
-.cvt-axis .cvt-track .cvt-nowtag{opacity:1;font-weight:600;transform:translateX(-80%)}
-.cv-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(24px,4vw,56px)}
-.cv-ed{list-style:none;margin:0;padding:0}
-.cv-ed li{display:grid;grid-template-columns:1fr auto;column-gap:16px;padding:10px 0;border-top:1px solid rgba(31,31,31,.18);line-height:1.3}
-.cv-ed b{font-size:15px}.cv-ed span{grid-column:1;font-size:14px}
-.cv-ed em{grid-row:1/3;grid-column:2;align-self:center;font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.04em}
-.cv-skills{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
-.cv-skills li{border:2px solid var(--ink);border-radius:999px;padding:7px 14px;font-weight:700;font-size:14px}
-.cv-ref{margin:22px 0 0;font-size:14px;opacity:.7}
-@media (max-width:900px){.cvt-row,.cvt-axis{grid-template-columns:1fr;gap:8px}.cvt-axis .cvt-txt{display:none}.cv-grid{grid-template-columns:1fr}}
+.cv-cap{position:relative;align-self:center;min-height:9em;max-width:min(620px,58%)}
+.cv-cap .cap{position:absolute;left:0;right:0;top:50%;transform:translateY(-50%)}
+.cv-cap .cap.in{animation:capIn .7s cubic-bezier(.16,.8,.2,1) both}
+.cv-cap .cap.out{animation:capOut .35s ease both}
+@keyframes capIn{from{opacity:0;transform:translateY(calc(-50% - 46px))}}
+@keyframes capOut{to{opacity:0;transform:translateY(calc(-50% + 30px))}}
+.cap small{display:block;font-size:14px;font-weight:700;opacity:.65;margin-bottom:8px}
+.cap strong{display:block;font-size:clamp(28px,3.6vw,52px);line-height:1;letter-spacing:-.03em}
+.cap span{display:block;font-size:clamp(17px,1.6vw,22px);font-weight:700;margin-top:10px}
+.cap ul{list-style:none;margin:16px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.cap li{border:2px solid var(--ink);border-radius:999px;padding:6px 13px;font-weight:700;font-size:14px}
+.cv-year{position:absolute;left:var(--x);top:var(--y);width:var(--d);height:var(--d);margin:calc(var(--d) / -2) 0 0 calc(var(--d) / -2);display:grid;place-items:center;pointer-events:none;z-index:1}
+.cv-year b{font-size:calc(var(--d) * .26);letter-spacing:-.05em;font-variant-numeric:tabular-nums;opacity:0;transition:opacity .4s}
+.cv-year.on b{opacity:1}
+.cv-chart{position:relative;display:grid;grid-template-columns:clamp(84px,12vw,150px) 1fr;column-gap:16px;row-gap:6px;align-content:end}
+.cv-lab{font-size:13px;font-weight:700;opacity:.7;align-self:center;line-height:1.15}
+.cv-lane{position:relative;height:clamp(28px,4.6vh,44px)}
+.cv-lane::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(31,31,31,.12) 0 1px,transparent 1px calc(100% / 15))}
+.cv-blk{all:unset;position:absolute;top:0;bottom:0;left:var(--s);width:max(var(--w),8px);box-sizing:border-box;border-radius:6px;background:var(--ink);color:var(--paper);font-weight:700;font-size:clamp(11px,1.05vw,14px);display:flex;align-items:center;padding:0 10px;white-space:nowrap;overflow:hidden;clip-path:inset(0 calc(100% - var(--g,0) * 100%) 0 0);transition:transform .25s ease,box-shadow .25s ease;cursor:inherit}
+.cv-blk.p{background:var(--paper);color:var(--ink)}
+.cv-blk.tiny{padding:0;color:transparent}
+.cv-blk.act{transform:translateY(-4px);box-shadow:0 6px 0 -1px rgba(31,31,31,.35)}
+.cv-axis{position:relative;height:18px;grid-column:2;margin-top:4px}
+.cv-axis span{position:absolute;left:var(--s);font-size:12px;font-weight:700;opacity:.65}
+.cv-head{position:absolute;top:-8px;bottom:22px;left:calc(clamp(84px,12vw,150px) + 16px + (100% - clamp(84px,12vw,150px) - 16px) * var(--p,0));width:2px;background:var(--ink);pointer-events:none}
+.cv-sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);margin:0;padding:0}
+@media (max-width:760px){
+  .cv-cap{max-width:none;min-height:11em}
+  .cv-top{padding-right:56px}
+  .cv-axis span:nth-child(even){display:none}
+  .cv-lab{font-size:11px}
+}
 .mp-big{font-size:clamp(22px,2.6vw,32px);font-weight:700;line-height:1.15;margin:0 0 24px;max-width:24ch}
 .mp-facts{list-style:none;margin:0 0 28px;padding:0;display:flex;flex-direction:column;gap:14px;font-size:16px;line-height:1.4}
 .mp-facts b{display:block;font-size:13px;letter-spacing:0;opacity:.65;margin-bottom:2px}
@@ -452,7 +448,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .pd-gallery figure{margin:0}
 .pd-gallery img{width:100%;height:auto;display:block;border-radius:12px;box-shadow:0 12px 26px rgba(31,31,31,.25)}
 .pd-gallery figcaption{font-size:14px;margin-top:8px;opacity:.8}
-@media (max-width:760px){.mp-cv,.mp-contact,.pd-cols{grid-template-columns:1fr}.mp-cv-side{position:static}}
+@media (max-width:760px){.mp-contact,.pd-cols{grid-template-columns:1fr}}
 @media (prefers-reduced-motion:reduce){.menu,.menu-under,.menu-btn i,[data-rv],[data-rv]>*{transition:none!important}.menu,.menu-under{transform:none;opacity:0}.menu.open,.menu-under.open{opacity:1}}
 </style>
 
@@ -506,59 +502,17 @@ canvas.can-grab{cursor:var(--hand-grab)}
     </div></div>
   </section>
 
-  <section class="mp-cvband" id="mp-cv">
-    <div class="mp-wrap">
-      <h2 data-rv="rise"><span>02</span>CV</h2>
-      <div class="mp-cv">
-        <div class="mp-cv-side">
-          <p data-rv="up" class="mp-big">Designer, web and brand. Third-year Digital Media &amp; Communications at Manchester Met, freelance web designer since December 2024.</p>
-          <ul data-rv="up" class="mp-facts">
-            <li><b>Based</b>Brighton &amp; Manchester, UK</li>
-            <li><b>Email</b><a href="mailto:harrygreener@hotmail.co.uk">harrygreener@hotmail.co.uk</a></li>
-            <li><b>Experience</b>6 years across design, digital marketing and hospitality</li>
-          </ul>
-          <div data-rv="up" class="cv-dl">
-            <b>Download CV</b>
-            <a class="mp-btn" href="cv/Harrison-Greener-CV.pdf" target="_blank" rel="noopener">Standard CV <span aria-hidden="true">↓</span></a>
-            <a class="mp-btn ghost" href="receipt/Harrison-Greener-CV-receipt.pdf" target="_blank" rel="noopener">Receipt CV <span aria-hidden="true">↓</span></a>
-          </div>
-        </div>
-        <div class="cv-main" style="--now:98.21%">
-          <div data-rv="up" class="cvt-axis" aria-hidden="true"><div class="cvt-txt"></div><div class="cvt-track"><span style="--s:0.00%">2020</span><span style="--s:14.29%">2021</span><span style="--s:28.57%">2022</span><span style="--s:42.86%">2023</span><span style="--s:57.14%">2024</span><span style="--s:71.43%">2025</span><span style="--s:85.71%">2026</span><span class="cvt-nowtag" style="--s:var(--now)">Now</span></div></div>
-          <h3 data-rv="up" class="cv-h">Design &amp; digital</h3>
-          <ul class="cvt">
-            <li data-rv="up" class="cvt-row now"><div class="cvt-txt"><b>Freelance Web Designer</b><span>Self-employed</span><em>Dec 2024 – now</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:70.24%;--w:28.57%"><span>2 yrs</span></i></div></li>
-            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Digital Marketing Executive</b><span>Pure Performance Media</span><em>Sep – Oct 2022</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:38.10%;--w:2.38%"><span>2 mos</span></i></div></li>
-            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Digital Marketing Executive</b><span>Neonify</span><em>Apr – Sep 2022</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:32.14%;--w:7.14%"><span>6 mos</span></i></div></li>
-            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Social Media Marketing Specialist</b><span>Citrus Orange</span><em>Feb – Sep 2022</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:29.76%;--w:9.52%"><span>8 mos</span></i></div></li>
-          </ul>
-          <h3 data-rv="up" class="cv-h">Hospitality</h3>
-          <ul class="cvt hosp">
-            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Assistant Bar Manager</b><span>Third Avenue</span><em>Jul 2025 – Jan 2026</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:78.57%;--w:8.33%"><span>7 mos</span></i></div></li>
-            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Bartender</b><span>Manahatta</span><em>Oct – Dec 2024</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:67.86%;--w:3.57%"><span>3 mos</span></i></div></li>
-            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Bar Supervisor</b><span>Horatio&rsquo;s, Brighton Pier</span><em>Jun – Aug 2023</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:48.81%;--w:3.57%"><span>3 mos</span></i></div></li>
-            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Barman</b><span>Charles Street Tap</span><em>Mar 2021 – Dec 2022</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:16.67%;--w:26.19%"><span>1 yr 10 mos</span></i></div></li>
-            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Barman / Chef</b><span>Revolution</span><em>Aug 2020 – Feb 2021</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:8.33%;--w:8.33%"><span>7 mos</span></i></div></li>
-          </ul>
-          <div class="cv-grid">
-            <div>
-              <h3 data-rv="up" class="cv-h">Education</h3>
-              <ul class="cv-ed">
-                <li data-rv="up"><b>BA Digital Media &amp; Communications</b><span>Manchester Metropolitan University</span><em>Year 3</em></li>
-                <li data-rv="up"><b>Graphic Design, Digital Marketing, Web Design</b><span>Brighton Met</span><em>Pass</em></li>
-                <li data-rv="up"><b>Graphic Design, Media Studies</b><span>Varndean College</span><em>B, B</em></li>
-                <li data-rv="up"><b>Carpentry Diploma</b><span>Brighton Met</span><em>Distinction</em></li>
-                <li data-rv="up"><b>8 GCSEs, A*–C</b><span>Cardinal Newman</span><em>2017</em></li>
-              </ul>
-            </div>
-            <div>
-              <h3 data-rv="up" class="cv-h">Skills</h3>
-              <ul data-rv="up" class="cv-skills"><li>Logo &amp; brand identity</li><li>Web design</li><li>Social media campaigns</li><li>Pitch decks &amp; adverts</li></ul>
-              <p data-rv="up" class="cv-ref">References available on request.</p>
-            </div>
-          </div>
-        </div>
+  <section class="mp-cvband" id="mp-cv" aria-label="CV">
+    <div class="cv-pin"><div class="mp-wrap cv-wrap">
+      <div class="cv-top">
+        <h2><span>02</span>CV</h2>
+        <div class="cv-dl"><a class="mp-btn" href="cv/Harrison-Greener-CV.pdf" target="_blank" rel="noopener">Standard CV ↓</a><a class="mp-btn ghost" href="receipt/Harrison-Greener-CV-receipt.pdf" target="_blank" rel="noopener">Receipt CV ↓</a></div>
       </div>
+      <div class="cv-cap" id="cvCap" aria-live="polite"></div>
+      <div class="cv-chart" id="cvChart" aria-hidden="true"></div>
+    </div>
+    <div class="cv-year" id="cvYear" aria-hidden="true"><b>2012</b></div>
+    <ol class="cv-sr" id="cvList"></ol>
     </div>
   </section>
 
@@ -2159,7 +2113,7 @@ function orbStops() {
   const intro = at(mpIntro), introEnd = intro + mpIntro.offsetHeight - H, rail = at(mwRail), cv = document.getElementById('mp-cv'), cvTop = at(cv), foot = at(document.querySelector('.mp-footer'));
   const end = menu.scrollHeight - H, pinned = stripPinned() && galTravel > 0;
   const bar = document.querySelector('.mw-progress').getBoundingClientRect(), barY = bar.top + bar.height / 2 - mwPin.getBoundingClientRect().top;   // where the line sits while the strip is pinned
-  const S = (s, x, y, d, c) => ({ s, x, y, d, c });
+  const S = (s, x, y, d, c) => ({ s, x, y, d, c }), cvG = cvGeom();
   return [
     S(0, bx, by, 44, C_GREEN),                                                        // behind the X
     S(Math.max(1, intro + H * 0.75), mob ? W * 0.82 : W * 0.78, H * 0.5, (mob ? 46 : 34) * vm, C_PAPER),     // drops into the green intro, slowly
@@ -2167,8 +2121,8 @@ function orbStops() {
     pinned ? S(Math.max(3, rail - H * 0.3), bar.left + W * 0.08, H * 0.62, 11 * vm, C_PAPER) : S(Math.max(3, rail - H * 0.3), W * 0.88, H * 0.3, 10 * vm, C_PAPER),   // still a clear disc as it heads into the projects
     pinned ? S(rail, bar.left, barY, 26, C_INK) : S(rail, W * 0.9, H * 0.2, 24, C_INK),   // shrinks to a bead...
     pinned ? S(rail + galTravel, bar.right, barY, 26, C_INK) : S(rail + mwRail.offsetHeight * 0.5, W * 0.9, H * 0.2, 24, C_INK),            // ...that runs along the strip's progress line
-    S(Math.max(rail + galTravel + 2, cvTop - H * 0.1), mob ? W * 0.62 : W * 0.5, H * 0.52, (mob ? 70 : 50) * vm, C_PAPER),   // a disc behind the CV timeline
-    S(Math.max(rail + galTravel + 3, cvTop + cv.offsetHeight - H * 0.55), mob ? W * 0.62 : W * 0.52, H * 0.6, (mob ? 64 : 46) * vm, C_PAPER),   // drifts down with it
+    S(Math.max(rail + galTravel + 2, cvTop), cvG.x, cvG.y, cvG.d, C_PAPER),                 // parks top right of the CV as its year counter...
+    S(Math.max(rail + galTravel + 3, cvTop + cv.offsetHeight - H), cvG.x, cvG.y, cvG.d, C_PAPER),   // ...and stays there while the years play
     S(Math.max(rail + galTravel + 4, foot - H * 0.05), mob ? W * 0.6 : W * 0.53, H * 1.05, (mob ? 30 : 24) * vm, C_PAPER),   // sinks into the dark footer...
     S(Math.max(rail + galTravel + 5, foot + H * 0.15), mob ? W * 0.6 : W * 0.54, H * 1.2, 0, C_PAPER),                       // ...and is gone
     S(Math.max(rail + galTravel + 6, end), mob ? W * 0.6 : W * 0.54, H * 1.2, 0, C_PAPER),
@@ -2408,6 +2362,105 @@ function goTo(id) {
   if (active) { if (active.item.id === id) return; queuedGo = run; putBack(); return; }
   run();
 }
+/* CV timeline: data, chart, and the pinned scroll that plays it */
+const CV_A0 = 2012, CV_SPAN = 15 * 12, CV_NOW = [2026, 11];
+const cvM = (d) => (d[0] - CV_A0) * 12 + d[1] - 1;
+const CV_ITEMS = [   // lane: 0 education, 1-3 design & digital, 4 hospitality
+  { k: 'Education', t: '8 GCSEs, A*–C', at: 'Cardinal Newman', s: [2012, 9], e: [2017, 6], lane: 0, sh: 'Cardinal Newman' },
+  { k: 'Education', t: 'Carpentry Diploma, Distinction', at: 'Brighton Met', s: [2017, 9], e: [2018, 6], lane: 0, sh: 'Carpentry' },
+  { k: 'Education', t: 'Graphic Design and Media Studies, B and B', at: 'Varndean College', s: [2018, 9], e: [2020, 6], lane: 0, sh: 'Varndean' },
+  { k: 'Hospitality', t: 'Barman and chef', at: 'Revolution', s: [2020, 8], e: [2021, 2], lane: 4, sh: 'Revolution' },
+  { k: 'Education', t: 'Graphic Design, Digital Marketing and Web Design, Pass', at: 'Brighton Met', s: [2020, 9], e: [2021, 6], lane: 0, sh: 'Graphics' },
+  { k: 'Hospitality', t: 'Barman', at: 'Charles Street Tap', s: [2021, 3], e: [2022, 12], lane: 4, sh: 'Charles St Tap' },
+  { k: 'Design & digital', t: 'Social Media Marketing Specialist', at: 'Citrus Orange', s: [2022, 2], e: [2022, 9], lane: 1, sh: 'Citrus Orange' },
+  { k: 'Design & digital', t: 'Digital Marketing Executive', at: 'Neonify', s: [2022, 4], e: [2022, 9], lane: 2, sh: 'Neonify' },
+  { k: 'Design & digital', t: 'Digital Marketing Executive', at: 'Pure Performance Media', s: [2022, 9], e: [2022, 10], lane: 3, sh: 'PPM' },
+  { k: 'Hospitality', t: 'Bar Supervisor', at: 'Horatio’s, Brighton Pier', s: [2023, 6], e: [2023, 8], lane: 4, sh: 'Horatio’s' },
+  { k: 'Education', t: 'BA Digital Media & Communications', at: 'Manchester Metropolitan University, third year', s: [2023, 9], e: null, lane: 0, sh: 'Manchester Met' },
+  { k: 'Hospitality', t: 'Bartender', at: 'Manahatta', s: [2024, 10], e: [2024, 12], lane: 4, sh: 'Manahatta' },
+  { k: 'Design & digital', t: 'Freelance Web Designer', at: 'Self-employed', s: [2024, 12], e: null, lane: 1, sh: 'Freelance' },
+  { k: 'Hospitality', t: 'Assistant Bar Manager', at: 'Third Avenue', s: [2025, 7], e: [2026, 1], lane: 4, sh: 'Third Ave' },
+];
+const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const cvDate = (d) => d ? `${MON[d[1] - 1]} ${d[0]}` : 'now';
+function cvGeom() {   // where the year counter sits; the travelling circle parks on the same spot
+  const W = innerWidth, H = menu.clientHeight || innerHeight, vm = Math.min(W, H) / 100, mob = W < 760;
+  return mob ? { x: W * 0.8, y: H * 0.275, d: 22 * vm } : { x: W * 0.77, y: H * 0.38, d: 34 * vm };
+}
+const cvCap = document.getElementById('cvCap'), cvChart = document.getElementById('cvChart'), cvYear = document.getElementById('cvYear'), cvSec = document.getElementById('mp-cv');
+let cvBlocks = [], cvStep = -1, cvHover = -1;
+(function buildCV() {
+  const lanes = [['Education', 0, 1], ['Design & digital', 1, 3], ['Hospitality', 4, 1]];
+  let html = '', row = 1;
+  for (const [name, first, n] of lanes) {
+    html += `<div class="cv-lab" style="grid-row:${row}/span ${n}">${name}</div>`;
+    for (let l = first; l < first + n; l++) html += `<div class="cv-lane" data-lane="${l}" style="grid-column:2;grid-row:${row++}"></div>`;
+  }
+  html += `<div class="cv-axis" style="grid-row:${row}">${Array.from({ length: 15 }, (_, i) => `<span style="--s:${(i * 12 / CV_SPAN * 100).toFixed(2)}%">${CV_A0 + i}</span>`).join('')}</div><i class="cv-head"></i>`;
+  cvChart.innerHTML = html;
+  cvBlocks = CV_ITEMS.map((it, i) => {
+    const a = cvM(it.s), b = cvM(it.e || CV_NOW) + 1;
+    it.a = a; it.b = b;
+    const el = document.createElement('button');
+    el.type = 'button'; el.className = 'cv-blk' + (it.lane === 4 ? ' p' : ''); el.textContent = it.sh; el.tabIndex = -1;
+    el.style.setProperty('--s', (a / CV_SPAN * 100).toFixed(3) + '%'); el.style.setProperty('--w', ((b - a) / CV_SPAN * 100).toFixed(3) + '%');
+    el.addEventListener('pointerenter', () => { cvHover = i; cvShow(); });
+    el.addEventListener('pointerleave', () => { if (cvHover === i) { cvHover = -1; cvShow(); } });
+    cvChart.querySelector(`[data-lane="${it.lane}"]`).appendChild(el);
+    return el;
+  });
+  document.getElementById('cvList').innerHTML = CV_ITEMS.map((it) => `<li>${esc(it.k)}: ${esc(it.t)}, ${esc(it.at)}, ${cvDate(it.s)} to ${cvDate(it.e)}</li>`).join('');
+})();
+let cvFitW = 0;
+function cvFit() {   // names show inside a block only when they fit
+  cvFitW = cvChart.clientWidth;
+  const G = cvGeom(), pin = cvSec.querySelector('.cv-pin').getBoundingClientRect();
+  cvYear.style.setProperty('--x', (G.x - pin.left) + 'px'); cvYear.style.setProperty('--y', G.y + 'px'); cvYear.style.setProperty('--d', G.d + 'px');
+  cvBlocks.forEach((el) => { el.classList.remove('tiny'); if (el.scrollWidth > el.clientWidth + 1) el.classList.add('tiny'); });
+  orbCache = null;
+}
+function cvCaption(i) {
+  if (i < 0) return `<small>Harrison J. Greener</small><strong>Designer, web and brand.</strong><span>Scroll through the years, from school to now.</span>`;
+  if (i >= CV_ITEMS.length) return `<small>Now</small><strong>Third year at Manchester Met, freelancing alongside.</strong><ul><li>Logo &amp; brand identity</li><li>Web design</li><li>Social media campaigns</li><li>Pitch decks &amp; adverts</li></ul><span>References available on request.</span>`;
+  const it = CV_ITEMS[i];
+  return `<small>${esc(it.k)} · ${cvDate(it.s)} – ${cvDate(it.e)}</small><strong>${esc(it.t)}</strong><span>${esc(it.at)}</span>`;
+}
+let cvShown = null;
+function cvShow() {
+  const i = cvHover >= 0 ? cvHover : cvStep - 1;
+  const key = cvHover >= 0 ? 'h' + i : 's' + cvStep;
+  if (key === cvShown) return;
+  cvShown = key;
+  const shown = cvHover >= 0 ? cvHover : (cvStep >= 1 && cvStep <= CV_ITEMS.length ? cvStep - 1 : -9);
+  cvBlocks.forEach((el, k) => el.classList.toggle('act', k === shown));
+  cvCap.querySelectorAll('.cap').forEach((c) => { c.classList.remove('in'); c.classList.add('out'); setTimeout(() => c.remove(), reduceMotion ? 0 : 360); });
+  const c = document.createElement('div');
+  c.className = 'cap' + (reduceMotion ? '' : ' in');
+  c.innerHTML = cvCaption(cvStep > CV_ITEMS.length && cvHover < 0 ? CV_ITEMS.length : i);
+  cvCap.appendChild(c);
+}
+function cvTick() {
+  if (menu.hidden) return;
+  if (cvChart.clientWidth && cvChart.clientWidth !== cvFitW) cvFit();
+  const vh = menu.clientHeight, top = cvSec.getBoundingClientRect().top - menu.getBoundingClientRect().top;
+  const p = Math.min(1, Math.max(0, -top / Math.max(1, cvSec.offsetHeight - vh)));
+  const N = CV_ITEMS.length, f = p * (N + 2);   // beat 0: summary · 1..N: each item as it starts · N+1: now
+  // playhead: at the first start for beat 0..1, then from each start to the next, ending at now
+  let ph;
+  if (f <= 1) ph = CV_ITEMS[0].a;
+  else if (f >= N + 1) ph = cvM(CV_NOW) + 1;
+  else { const k = Math.floor(f) - 1, t = f - Math.floor(f), a = CV_ITEMS[k].a, b = k + 1 < N ? CV_ITEMS[k + 1].a : cvM(CV_NOW) + 1; ph = a + (b - a) * t; }
+  CV_ITEMS.forEach((it, k) => cvBlocks[k].style.setProperty('--g', Math.min(1, Math.max(0, (ph - it.a) / Math.max(1, it.b - it.a))).toFixed(3)));
+  cvChart.style.setProperty('--p', (ph / CV_SPAN).toFixed(4));
+  const yr = Math.min(CV_NOW[0], CV_A0 + Math.floor(Math.max(0, ph - 0.01) / 12));
+  cvYear.querySelector('b').textContent = f >= N + 1 ? 'Now' : yr;
+  cvYear.classList.toggle('on', top < vh * 0.15 && top > -(cvSec.offsetHeight - vh * 0.85));
+  const step = Math.min(N + 1, Math.floor(f));
+  if (step !== cvStep) { cvStep = step; cvShow(); }
+}
+menu.addEventListener('scroll', cvTick, { passive: true });
+addEventListener('resize', () => { cvFit(); cvTick(); });
+requestAnimationFrame(() => { cvFit(); cvTick(); });
 /* Contact orbs: drop in when the footer comes into view, settle on the floor, and get knocked about
    when the cursor sweeps through them. A still cursor doesn't push, so they stay easy to click. */
 (() => {
