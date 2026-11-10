@@ -203,7 +203,6 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .menu [data-rv=tile]:not(.in)>.fly-t{opacity:0;transform:translateY(20px)}
 .menu [data-rv=tile]:not(.in)>b{opacity:0}
 .menu [data-rv].in{opacity:1;transform:none;clip-path:inset(-60% -30% -60% -30%)}
-.menu .mp-receipt[data-rv].in{transform:rotate(-1.5deg)}
 .menu [data-rv=tile].in{clip-path:inset(0)}
 .menu [data-rv=tile].in:hover>*{transition:transform .9s cubic-bezier(.2,.7,.2,1),opacity .4s ease}
 .mp-wrap{max-width:1180px;margin:0 auto;padding:28px clamp(16px,4vw,48px) 0}
@@ -290,13 +289,54 @@ canvas.can-grab{cursor:var(--hand-grab)}
   .mw-track{transform:none!important}.mw-card{width:78vw;scroll-snap-align:center}.mw-next{width:60vw}
   .mp-intro{height:auto}.mi-pin{position:static;height:auto;padding:96px 0}
 }
-/* CV: a green band; the receipt scrolls past while the summary stays put */
+/* CV: summary + downloads stay put on the left; the timeline's bars slide out along a 2020–now axis */
 .mp-cvband{background:var(--green);padding:96px 0 120px}
 .mp-cvband h2{margin:0 0 36px;font-size:clamp(34px,5vw,64px);line-height:.95;display:flex;gap:10px;align-items:flex-start}
 .mp-cvband h2 span{font-size:14px;letter-spacing:0;margin-top:.45em;opacity:.55}
-.mp-cv{display:grid;grid-template-columns:minmax(0,340px) 1fr;gap:clamp(24px,5vw,72px);align-items:start}
-.mp-receipt{width:100%;height:auto;display:block;transform:rotate(-1.5deg);filter:drop-shadow(0 14px 26px rgba(31,31,31,.3))}
+.mp-cv{display:grid;grid-template-columns:minmax(0,320px) 1fr;gap:clamp(28px,5vw,72px);align-items:start}
 .mp-cv-side{position:sticky;top:24px}
+.mp-facts a{color:inherit;font-weight:700}
+.mp-cv-side .mp-big{font-size:clamp(20px,1.8vw,26px);line-height:1.2}
+.cv-dl .mp-btn{font-size:15px;padding:12px 18px}
+.cv-dl{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.cv-dl>b{flex-basis:100%;font-size:13px;opacity:.65}
+.mp-btn.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.mp-btn.ghost:hover{background:var(--ink);color:var(--paper)}
+.cv-main{min-width:0}
+.cv-h{margin:40px 0 6px;font-size:13px;letter-spacing:.02em;opacity:.65}
+.cvt-axis+.cv-h{margin-top:18px}
+.cvt{list-style:none;margin:0;padding:0}
+.cvt-row,.cvt-axis{display:grid;grid-template-columns:minmax(0,260px) 1fr;gap:24px;align-items:center}
+.cvt-row{padding:12px 0;border-top:1px solid rgba(31,31,31,.18)}
+.cvt-txt{display:flex;flex-direction:column;gap:1px;line-height:1.3}
+.cvt-txt b{font-size:16px}
+.cvt-txt span{font-size:14px}
+.cvt-txt em{font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.04em;opacity:.65;margin-top:2px}
+.cvt-track{position:relative;height:28px;background:repeating-linear-gradient(90deg,rgba(31,31,31,.14) 0 1px,transparent 1px calc(100%/7))}
+.cvt-track::after{content:"";position:absolute;left:var(--now);top:-12px;bottom:-12px;width:2px;background:var(--ink);opacity:.35}
+.cvt-bar{position:absolute;left:var(--s);width:max(var(--w),10px);top:4px;bottom:4px;border-radius:999px;background:var(--ink);transform-origin:left center;transform:scaleX(0);transition:transform 1.1s cubic-bezier(.16,.8,.2,1) calc(var(--d,0s) + .25s),background .2s ease}
+.cvt.hosp .cvt-bar{background:transparent;box-shadow:inset 0 0 0 2px var(--ink)}
+.cvt-row.in .cvt-bar{transform:scaleX(1)}
+.cvt-row.now .cvt-bar{border-radius:999px 0 0 999px}
+.cvt-row.now .cvt-bar::after{content:"";position:absolute;right:-5px;top:50%;width:10px;height:10px;margin-top:-5px;border-radius:50%;background:var(--paper);box-shadow:0 0 0 2px var(--ink);animation:cvPulse 1.6s ease-in-out infinite}
+@keyframes cvPulse{50%{transform:scale(1.5)}}
+.cvt-bar span{position:absolute;left:calc(100% + 8px);top:50%;transform:translateY(-50%);white-space:nowrap;font-family:var(--mono);font-size:11px;opacity:0;transition:opacity .2s}
+.cvt-row.now .cvt-bar span{left:auto;right:calc(100% + 8px)}
+.cvt-row:hover .cvt-bar{background:var(--paper);box-shadow:inset 0 0 0 2px var(--ink)}
+.cvt-row:hover .cvt-bar span{opacity:1}
+.cvt-axis .cvt-track{height:20px;background:none}
+.cvt-axis .cvt-track::after{display:none}
+.cvt-axis .cvt-track span{position:absolute;left:var(--s);bottom:0;font-family:var(--mono);font-size:11px;opacity:.65;transform:translateX(-1px)}
+.cvt-axis .cvt-track .cvt-nowtag{opacity:1;font-weight:600;transform:translateX(-80%)}
+.cv-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:clamp(24px,4vw,56px)}
+.cv-ed{list-style:none;margin:0;padding:0}
+.cv-ed li{display:grid;grid-template-columns:1fr auto;column-gap:16px;padding:10px 0;border-top:1px solid rgba(31,31,31,.18);line-height:1.3}
+.cv-ed b{font-size:15px}.cv-ed span{grid-column:1;font-size:14px}
+.cv-ed em{grid-row:1/3;grid-column:2;align-self:center;font-style:normal;font-family:var(--mono);font-size:11px;letter-spacing:.04em}
+.cv-skills{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.cv-skills li{border:2px solid var(--ink);border-radius:999px;padding:7px 14px;font-weight:700;font-size:14px}
+.cv-ref{margin:22px 0 0;font-size:14px;opacity:.7}
+@media (max-width:900px){.cvt-row,.cvt-axis{grid-template-columns:1fr;gap:8px}.cvt-axis .cvt-txt{display:none}.cv-grid{grid-template-columns:1fr}}
 .mp-big{font-size:clamp(22px,2.6vw,32px);font-weight:700;line-height:1.15;margin:0 0 24px;max-width:24ch}
 .mp-facts{list-style:none;margin:0 0 28px;padding:0;display:flex;flex-direction:column;gap:14px;font-size:16px;line-height:1.4}
 .mp-facts b{display:block;font-size:13px;letter-spacing:0;opacity:.65;margin-bottom:2px}
@@ -470,15 +510,53 @@ canvas.can-grab{cursor:var(--hand-grab)}
     <div class="mp-wrap">
       <h2 data-rv="rise"><span>02</span>CV</h2>
       <div class="mp-cv">
-        <img data-rv="up" class="mp-receipt" src="assets/receipt.png" alt="Harrison Greener's CV laid out as a till receipt" loading="lazy">
         <div class="mp-cv-side">
           <p data-rv="up" class="mp-big">Designer, web and brand. Third-year Digital Media &amp; Communications at Manchester Met, freelance web designer since December 2024.</p>
           <ul data-rv="up" class="mp-facts">
-            <li><b>Design &amp; digital</b>Freelance web design, Pure Performance Media, Neonify, Citrus Orange</li>
-            <li><b>Skills</b>Logo &amp; brand identity, web design, social campaigns, pitch decks &amp; adverts</li>
             <li><b>Based</b>Brighton &amp; Manchester, UK</li>
+            <li><b>Email</b><a href="mailto:harrygreener@hotmail.co.uk">harrygreener@hotmail.co.uk</a></li>
+            <li><b>Experience</b>6 years across design, digital marketing and hospitality</li>
           </ul>
-          <a data-rv="up" class="mp-btn" href="receipt/Harrison-Greener-CV-receipt.pdf" target="_blank" rel="noopener">Open CV (PDF)</a>
+          <div data-rv="up" class="cv-dl">
+            <b>Download CV</b>
+            <a class="mp-btn" href="cv/Harrison-Greener-CV.pdf" target="_blank" rel="noopener">Standard CV <span aria-hidden="true">↓</span></a>
+            <a class="mp-btn ghost" href="receipt/Harrison-Greener-CV-receipt.pdf" target="_blank" rel="noopener">Receipt CV <span aria-hidden="true">↓</span></a>
+          </div>
+        </div>
+        <div class="cv-main" style="--now:98.21%">
+          <div data-rv="up" class="cvt-axis" aria-hidden="true"><div class="cvt-txt"></div><div class="cvt-track"><span style="--s:0.00%">2020</span><span style="--s:14.29%">2021</span><span style="--s:28.57%">2022</span><span style="--s:42.86%">2023</span><span style="--s:57.14%">2024</span><span style="--s:71.43%">2025</span><span style="--s:85.71%">2026</span><span class="cvt-nowtag" style="--s:var(--now)">Now</span></div></div>
+          <h3 data-rv="up" class="cv-h">Design &amp; digital</h3>
+          <ul class="cvt">
+            <li data-rv="up" class="cvt-row now"><div class="cvt-txt"><b>Freelance Web Designer</b><span>Self-employed</span><em>Dec 2024 – now</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:70.24%;--w:28.57%"><span>2 yrs</span></i></div></li>
+            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Digital Marketing Executive</b><span>Pure Performance Media</span><em>Sep – Oct 2022</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:38.10%;--w:2.38%"><span>2 mos</span></i></div></li>
+            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Digital Marketing Executive</b><span>Neonify</span><em>Apr – Sep 2022</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:32.14%;--w:7.14%"><span>6 mos</span></i></div></li>
+            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Social Media Marketing Specialist</b><span>Citrus Orange</span><em>Feb – Sep 2022</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:29.76%;--w:9.52%"><span>8 mos</span></i></div></li>
+          </ul>
+          <h3 data-rv="up" class="cv-h">Hospitality</h3>
+          <ul class="cvt hosp">
+            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Assistant Bar Manager</b><span>Third Avenue</span><em>Jul 2025 – Jan 2026</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:78.57%;--w:8.33%"><span>7 mos</span></i></div></li>
+            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Bartender</b><span>Manahatta</span><em>Oct – Dec 2024</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:67.86%;--w:3.57%"><span>3 mos</span></i></div></li>
+            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Bar Supervisor</b><span>Horatio&rsquo;s, Brighton Pier</span><em>Jun – Aug 2023</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:48.81%;--w:3.57%"><span>3 mos</span></i></div></li>
+            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Barman</b><span>Charles Street Tap</span><em>Mar 2021 – Dec 2022</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:16.67%;--w:26.19%"><span>1 yr 10 mos</span></i></div></li>
+            <li data-rv="up" class="cvt-row"><div class="cvt-txt"><b>Barman / Chef</b><span>Revolution</span><em>Aug 2020 – Feb 2021</em></div><div class="cvt-track"><i class="cvt-bar" style="--s:8.33%;--w:8.33%"><span>7 mos</span></i></div></li>
+          </ul>
+          <div class="cv-grid">
+            <div>
+              <h3 data-rv="up" class="cv-h">Education</h3>
+              <ul class="cv-ed">
+                <li data-rv="up"><b>BA Digital Media &amp; Communications</b><span>Manchester Metropolitan University</span><em>Year 3</em></li>
+                <li data-rv="up"><b>Graphic Design, Digital Marketing, Web Design</b><span>Brighton Met</span><em>Pass</em></li>
+                <li data-rv="up"><b>Graphic Design, Media Studies</b><span>Varndean College</span><em>B, B</em></li>
+                <li data-rv="up"><b>Carpentry Diploma</b><span>Brighton Met</span><em>Distinction</em></li>
+                <li data-rv="up"><b>8 GCSEs, A*–C</b><span>Cardinal Newman</span><em>2017</em></li>
+              </ul>
+            </div>
+            <div>
+              <h3 data-rv="up" class="cv-h">Skills</h3>
+              <ul data-rv="up" class="cv-skills"><li>Logo &amp; brand identity</li><li>Web design</li><li>Social media campaigns</li><li>Pitch decks &amp; adverts</li></ul>
+              <p data-rv="up" class="cv-ref">References available on request.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -2089,7 +2167,7 @@ function orbStops() {
     pinned ? S(Math.max(3, rail - H * 0.3), bar.left + W * 0.08, H * 0.62, 11 * vm, C_PAPER) : S(Math.max(3, rail - H * 0.3), W * 0.88, H * 0.3, 10 * vm, C_PAPER),   // still a clear disc as it heads into the projects
     pinned ? S(rail, bar.left, barY, 26, C_INK) : S(rail, W * 0.9, H * 0.2, 24, C_INK),   // shrinks to a bead...
     pinned ? S(rail + galTravel, bar.right, barY, 26, C_INK) : S(rail + mwRail.offsetHeight * 0.5, W * 0.9, H * 0.2, 24, C_INK),            // ...that runs along the strip's progress line
-    S(Math.max(rail + galTravel + 2, cvTop - H * 0.1), mob ? W * 0.62 : W * 0.5, H * 0.52, (mob ? 70 : 50) * vm, C_PAPER),   // a disc behind the receipt
+    S(Math.max(rail + galTravel + 2, cvTop - H * 0.1), mob ? W * 0.62 : W * 0.5, H * 0.52, (mob ? 70 : 50) * vm, C_PAPER),   // a disc behind the CV timeline
     S(Math.max(rail + galTravel + 3, cvTop + cv.offsetHeight - H * 0.55), mob ? W * 0.62 : W * 0.52, H * 0.6, (mob ? 64 : 46) * vm, C_PAPER),   // drifts down with it
     S(Math.max(rail + galTravel + 4, foot - H * 0.05), mob ? W * 0.6 : W * 0.53, H * 1.05, (mob ? 30 : 24) * vm, C_PAPER),   // sinks into the dark footer...
     S(Math.max(rail + galTravel + 5, foot + H * 0.15), mob ? W * 0.6 : W * 0.54, H * 1.2, 0, C_PAPER),                       // ...and is gone
