@@ -21,25 +21,23 @@ body{margin:0;min-height:100vh;background:#E3E3E0;font-family:var(--font);color:
 .price b{font-size:4.2mm;font-weight:900;font-stretch:115%}.price i{font-style:normal;font-size:1.25mm;font-weight:800;letter-spacing:.08em;margin-top:.3mm}
 .title{position:absolute;left:3.6mm;top:8.6mm;margin:0;font-weight:900;font-stretch:122%;font-size:8.4mm;line-height:.8;letter-spacing:-.02em;text-transform:uppercase;color:var(--paper);text-shadow:.5mm .5mm 0 var(--ink)}
 .title span{display:block}
-.sub{position:absolute;left:4mm;top:23.8mm;margin:0;font-size:2.2mm;font-weight:800;color:var(--ink)}
-.grid{position:absolute;left:3.6mm;bottom:8.6mm;display:grid;grid-template-columns:repeat(3,8.6mm);gap:1.3mm}
-.grid::before{content:"MATCH 3 G’S";position:absolute;left:0;top:-3.2mm;font-size:1.5mm;font-weight:800;letter-spacing:.12em;color:var(--ink)}
-.cell{position:relative;width:8.6mm;height:8.6mm;border-radius:50%;background:var(--paper);display:grid;place-items:center;overflow:hidden}
-.cell svg{width:5.2mm;height:5.2mm}
-.prize{position:absolute;right:3.6mm;bottom:5.4mm;width:44mm;height:15mm;z-index:2;border-radius:2mm;background:var(--paper);color:var(--ink);overflow:hidden;padding:2.2mm 2.6mm;display:flex;flex-direction:column;justify-content:center}
-.prize small{font-size:1.6mm;font-weight:800;letter-spacing:.12em;opacity:.6}
-.prize b{font-size:2.8mm;line-height:1.05;font-weight:800;margin-top:.8mm;letter-spacing:-.01em}
+.sub{position:absolute;left:4mm;top:23.6mm;margin:0;font-size:2.2mm;font-weight:800;color:var(--ink)}
+.prize{position:absolute;left:3.6mm;right:3.6mm;bottom:5mm;height:21mm;z-index:2;border-radius:2mm;background:var(--paper);color:var(--ink);overflow:hidden;padding:2.2mm 2.8mm;display:grid;grid-template-columns:19mm 1fr;gap:2.6mm;align-items:center}
+.won small{display:block;font-size:1.55mm;font-weight:800;letter-spacing:.12em;opacity:.6}
+.won b{display:block;font-size:3.6mm;line-height:.95;font-weight:900;font-stretch:115%;margin-top:.8mm;letter-spacing:-.02em}
+.prize ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);gap:2.2mm;counter-reset:r}
+.prize li{counter-increment:r;font-size:1.95mm;line-height:1.18;font-weight:700;border-left:.35mm solid var(--green);padding-left:1.6mm}
+.prize li::before{content:counter(r);display:block;font-size:3.2mm;font-weight:900;font-stretch:120%;color:var(--green);line-height:1;margin-bottom:.5mm}
 .foot{position:absolute;left:4mm;right:4mm;bottom:1.5mm;display:flex;justify-content:space-between;font-size:1.45mm;font-weight:700;color:var(--ink);opacity:.75}
 /* the silver: a canvas laid over each scratch area */
 .foil{position:absolute;inset:0;width:100%;height:100%;touch-action:none;cursor:crosshair;border-radius:inherit}
-.cell .foil{border-radius:50%}
 /* ---------- back ---------- */
 .back{background:var(--paper);padding:3.4mm 4mm}
 .back h2{margin:0 0 1.2mm;font-size:3.4mm;font-weight:900;font-stretch:120%;text-transform:uppercase;letter-spacing:-.01em}
 .back ol{margin:0 0 2mm;padding:0 0 0 3.6mm;font-size:2.1mm;font-weight:600;line-height:1.35}
 .table{position:absolute;right:4mm;top:7.6mm;width:33mm;border-collapse:collapse;font-size:1.75mm}
 .table td{padding:.65mm 0;border-top:.2mm solid rgba(31,31,31,.2)}.table tr:first-child td{border-top:0}
-.table td:first-child{width:9mm;font-weight:900;color:var(--green)}.table td:last-child{font-weight:700}
+.table td:first-child{width:11mm;font-weight:900;color:var(--green)}.table td:last-child{font-weight:700}
 .table caption{caption-side:top;text-align:left;font-size:1.5mm;font-weight:800;letter-spacing:.12em;opacity:.6;padding-bottom:.6mm}
 .back .steps{width:40mm}
 .back .tc{position:absolute;left:4mm;right:4mm;top:28.5mm;font-size:1.48mm;line-height:1.38;opacity:.75}
@@ -66,8 +64,7 @@ body{margin:0;min-height:100vh;background:#E3E3E0;font-family:var(--font);color:
     <div class="price"><b>£0</b><i>TO PLAY</i></div>
     <h1 class="title"><span>Instant</span><span>Hire</span></h1>
     <p class="sub">Scratch to see why.</p>
-    <div class="grid" id="grid"></div>
-    <div class="prize"><small>REASON TO HIRE ME</small><b id="prize"></b><canvas class="foil" data-label="SCRATCH HERE"></canvas></div>
+    <div class="prize"><div class="won"><small>YOU’VE WON</small><b>A designer. Here’s why:</b></div><ol id="reasons"></ol><canvas class="foil" data-label="SCRATCH HERE"></canvas></div>
     <div class="foot"><span>Odds of finding a keen designer: 1 in 1</span><span>No. <span id="no">0001</span></span></div>
   </div>
   <small>Front</small>
@@ -78,13 +75,12 @@ body{margin:0;min-height:100vh;background:#E3E3E0;font-family:var(--font);color:
   <div class="card back">
     <div class="no">TICKET No. <span id="no2">0001</span></div>
     <div class="steps"><h2>How to play</h2>
-    <ol><li>Scratch the silver.</li><li>Read the reason.</li><li>Get in touch.</li></ol></div>
+    <ol><li>Scratch the silver.</li><li>Read the reasons.</li><li>Get in touch.</li></ol></div>
     <table class="table"><caption>WHAT YOU WIN</caption>
-      <tr><td>G G G</td><td>A graduate designer who designs it and builds it</td></tr>
-      <tr><td>Bonus</td><td>Six years of customer service, from behind a bar</td></tr>
-      <tr><td>Extra</td><td>A CV that folds into a wallet</td></tr>
+      <tr><td>Main prize</td><td>A graduate designer who designs it and builds it</td></tr>
+      <tr><td>Bonus</td><td>A CV that folds into a wallet</td></tr>
     </table>
-    <p class="tc"><b>Terms &amp; conditions:</b> One designer available, supplied fresh from Manchester Met. Comes with a portfolio, a sketchbook and strong opinions on kerning. Best claimed in person, ideally over an interview. References available on request. Coffee not included, but always appreciated.</p>
+    <p class="tc"><b>Terms &amp; conditions:</b> One designer available, supplied fresh from Manchester Met. Comes with a portfolio and a sketchbook. Best claimed in person, ideally over an interview. References available on request.</p>
     <div class="claim"><span>CLAIM YOUR DESIGNER AT</span>harrisongreener.co.uk</div>
     <svg class="barcode" id="barcode" viewBox="0 0 100 30" preserveAspectRatio="none" aria-hidden="true"></svg>
   </div>
@@ -92,15 +88,13 @@ body{margin:0;min-height:100vh;background:#E3E3E0;font-family:var(--font);color:
 </div>
 
 <script>
-const PRIZES = [   // real reasons, said lightly
-  'I design it and build it, so nothing gets lost in the handover',
-  'I’ve launched a real product. Quotable runs as my own company.',
-  'Years running a busy bar: deadlines don’t scare me',
+const PRIZES = [   // three of these turn up under the foil
+  'I design it and build it. Nothing gets lost in the handover.',
+  'I’ve launched a real product, run as my own company.',
   'I turned my CV into a wallet. Imagine what I’ll do with your brief.',
-  'Fluent in Figma, code and “leave it with me”',
-  'I’ve built furniture, apps and this card. I like making things real.',
-  'Brand, web, apps and print: one person, all of it',
-  'I’ll care about your project like it’s my own. I’ve had practice.',
+  'Fluent in Figma, code and “leave it with me”.',
+  'Brand, web, apps and print. One person, all of it.',
+  'I make things real: furniture, apps and this card.',
 ];
 const ICONS = {   // little symbols under the foil: three G's always turn up
   g: '<svg viewBox="0 0 24 24"><text x="12" y="19" text-anchor="middle" font-family="Archivo,Inter,sans-serif" font-weight="900" font-size="20" fill="#73956F">G</text></svg>',
@@ -124,7 +118,7 @@ function foil(canvas) {
   c.fillStyle = g; c.fillRect(0, 0, w, h);
   for (let i = 0; i < w * h / 6; i++) { c.fillStyle = `rgba(${Math.random() < .5 ? '255,255,255' : '90,95,98'},${Math.random() * .18})`; c.fillRect(Math.random() * w, Math.random() * h, .6, .6); }
   const label = canvas.dataset.label;
-  if (label) { c.fillStyle = 'rgba(31,31,31,.55)'; c.font = `900 ${h * .2}px Archivo, Inter, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, w / 2, h / 2); }
+  if (label) { c.fillStyle = 'rgba(31,31,31,.55)'; c.font = `900 ${h * .26}px Archivo, Inter, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, w / 2, h / 2); }
   else { c.fillStyle = 'rgba(31,31,31,.45)'; c.font = `900 ${h * .5}px Archivo, Inter, sans-serif`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('?', w / 2, h / 2 + h * .03); }
   canvas.style.opacity = 1; canvas.style.transition = '';
   let down = false, last = null, n = 0;
@@ -148,9 +142,7 @@ function barcode() {
   document.getElementById('barcode').innerHTML = s;
 }
 function deal() {
-  const cells = ['g', 'g', 'g'];   // you always win
-  document.getElementById('grid').innerHTML = cells.map((k) => `<div class="cell">${ICONS[k]}<canvas class="foil"></canvas></div>`).join('');
-  document.getElementById('prize').textContent = PRIZES[rnd(PRIZES.length)];
+  document.getElementById('reasons').innerHTML = shuffle([...PRIZES]).slice(0, 3).map((r) => `<li>${r}</li>`).join('');
   const no = String(1 + rnd(9999)).padStart(4, '0'); document.getElementById('no').textContent = no; document.getElementById('no2').textContent = no;
   document.querySelectorAll('.foil').forEach(foil);
   barcode();
