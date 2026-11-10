@@ -228,10 +228,10 @@ canvas.can-grab{cursor:var(--hand-grab)}
 @media (hover:hover){.mi-line .w:hover{color:transparent;background:radial-gradient(circle var(--dr,0px) at var(--dx,-999px) var(--dy,-999px),var(--green) 99.4%,transparent 100%),radial-gradient(circle var(--or,0px) at var(--ox,-999px) var(--oy,-999px),var(--green) 99.4%,var(--paper) 100%);-webkit-background-clip:text;background-clip:text;opacity:1;transform:translateY(-.09em);transition:opacity .2s ease,color .15s ease,transform .3s cubic-bezier(.3,1.7,.45,1)}}
 /* Page scrollbar: a slim line down the left that fills as you go; drag or click it to move through the page */
 .menu{scrollbar-width:none}.menu::-webkit-scrollbar{display:none}
-.mp-sbar{position:fixed;left:clamp(6px,1.2vw,18px);top:96px;bottom:32px;width:18px;z-index:4;cursor:inherit;touch-action:none}
-.mp-sbar::before{content:"";position:absolute;left:5px;right:5px;top:0;bottom:0;background:var(--paper);box-shadow:0 0 0 1.5px var(--ink)}
-.mp-sbar i{position:absolute;left:5px;right:5px;top:0;height:100%;background:var(--ink);transform-origin:top;transform:scaleY(var(--p,0))}
-.mp-sbar.light::before{background:var(--ink);box-shadow:0 0 0 1.5px var(--paper)}
+.mp-sbar{position:fixed;left:0;top:0;bottom:0;width:14px;z-index:4;cursor:inherit;touch-action:none}
+.mp-sbar::before{content:"";position:absolute;left:0;width:5px;top:0;bottom:0;background:rgba(31,31,31,.12)}
+.mp-sbar i{position:absolute;left:0;width:5px;top:0;height:100%;background:var(--ink);transform-origin:top;transform:scaleY(var(--p,0))}
+.mp-sbar.light::before{background:rgba(242,242,240,.16)}
 .mp-sbar.light i{background:var(--paper)}
 @media (hover:none){.mp-sbar{pointer-events:none}}
 .mi-scroll{margin:44px 0 0;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px}
@@ -247,8 +247,8 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-me .me-disc,.mi-me .me-ring{position:absolute;border-radius:50%;aspect-ratio:1}
 .mi-me .me-disc{left:-12.3%;top:-7.2%;width:118.6%;background:var(--paper)}   /* the drawing's own circle, made whole */
 .mi-me .me-ring{left:-16%;top:-10.4%;width:126%;border:2px solid var(--ink)}
-.mi-me .me-name{position:absolute;left:-16%;top:-10.4%;width:126%;aspect-ratio:1;overflow:visible;pointer-events:none}
-.mi-me .me-name text{font-size:7px;font-weight:700;letter-spacing:.03em;fill:var(--ink)}
+.mi-me .me-name{position:absolute;left:-16%;top:-10.4%;width:126%;height:calc(126% * 678 / 760);overflow:visible;pointer-events:none}
+.mi-me .me-name text{font-size:7.2px;font-weight:500;letter-spacing:.01em;fill:var(--ink);paint-order:stroke;stroke:var(--paper);stroke-width:1.4px;stroke-linejoin:round}
 
 .me-pupil{transition:transform .12s linear}
 @media (max-width:760px),(max-height:520px){.mi-me{position:relative;right:auto;top:auto;transform:none;width:min(62vw,300px);margin:40px auto 0}}
@@ -505,7 +505,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
     </div>
     <img class="me-photo" src="assets/me/me-photo.webp" alt="Harrison Greener" width="678" height="760" hidden>
     <canvas class="me-reveal" aria-hidden="true"></canvas>
-    <svg class="me-name" viewBox="0 0 100 100" aria-hidden="true"><path id="meArc" d="M100.66 20.75 A58.5 58.5 0 0 1 79.25 100.66" fill="none"/><text><textPath href="#meArc" startOffset="50%" text-anchor="middle">Harrison Greener</textPath></text></svg>
+    <svg class="me-name" viewBox="0 0 100 100" aria-hidden="true"><path id="meArc" d="M40.02 96.95 A48 48 0 0 0 97.74 55.02" fill="none"/><text><textPath href="#meArc" startOffset="50%" text-anchor="middle">Harrison Greener</textPath></text></svg>
   </figure>
   </div></section>
 
