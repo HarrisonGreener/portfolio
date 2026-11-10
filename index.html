@@ -220,7 +220,8 @@ canvas.can-grab{cursor:var(--hand-grab)}
 /* Intro band: green, pinned while its words light up */
 .mp-intro{background:var(--green);height:200vh;height:200svh}
 .mi-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;overflow:hidden}
-.mi-pin>.mp-wrap{width:100%;box-sizing:border-box;padding-top:0}
+.mi-pin>.mp-wrap{width:100%;box-sizing:border-box;padding-top:0;position:relative;z-index:1}
+@media (min-width:761px) and (min-height:521px){.mi-line{max-width:min(15ch,calc(100vw - min(34vmin,400px) * 1.3 - max(5vw,calc((100vw - 1180px) / 2 + 24px)) - 12vw))}}
 .mi-kicker{margin:0 0 26px;font-weight:700;font-size:15px}.mi-kicker span{opacity:.5;margin:0 4px}
 .mi-line{margin:0;font-weight:700;font-size:clamp(36px,6.4vw,92px);line-height:.98;letter-spacing:-.045em;max-width:15ch}
 .mi-line .w{display:inline-block;opacity:.16;transition:opacity .5s ease,color .25s ease,transform .45s cubic-bezier(.3,1.7,.45,1)}.mi-line .w.lit{opacity:1}
@@ -229,7 +230,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-scroll i{width:48px;height:2px;background:var(--ink);transform-origin:0 50%;animation:miScroll 2.2s cubic-bezier(.6,0,.2,1) infinite}
 @keyframes miScroll{0%{transform:scaleX(0)}55%{transform:scaleX(1);transform-origin:0 50%}56%{transform-origin:100% 50%}100%{transform:scaleX(0);transform-origin:100% 50%}}
 /* Me, drawn, beside the intro line: my eyes follow the cursor; hover and a lens shows the real photo underneath */
-.mi-me{position:absolute;z-index:3;margin:0;right:max(5vw,calc((100% - 1180px) / 2 + 24px));top:50%;width:min(34vmin,400px);aspect-ratio:678/760;transform:translateY(-46%);--lx:50%;--ly:50%;--lr:0px}
+.mi-me{position:absolute;z-index:0;margin:0;right:max(5vw,calc((100% - 1180px) / 2 + 24px));top:50%;width:min(34vmin,400px);aspect-ratio:678/760;transform:translateY(-46%);--lx:50%;--ly:50%;--lr:0px}
 .mi-me img,.mi-me svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .mi-me .me-toon-layer{position:absolute;inset:0}
 .mi-me .me-reveal{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
@@ -237,10 +238,8 @@ canvas.can-grab{cursor:var(--hand-grab)}
 /* the frame: the drawing's own circle as a paper disc, a thin offset ring, hair breaking out over the top */
 .mi-me .me-disc,.mi-me .me-ring{position:absolute;border-radius:50%;aspect-ratio:1}
 .mi-me .me-disc{left:-12.3%;top:-7.2%;width:118.6%;background:var(--paper)}   /* the drawing's own circle, made whole */
-.mi-me .me-ring{left:-16%;top:-10.4%;width:126%;border:2px solid var(--ink);transition:transform .8s cubic-bezier(.3,1.5,.5,1)}
-.mi-me:hover .me-ring{transform:scale(1.025)}
-.me-tag{position:absolute;left:47%;bottom:-7%;transform:translateX(-50%) rotate(-3deg);white-space:nowrap;font-weight:700;font-size:13px;background:var(--ink);color:var(--paper);padding:7px 13px;border-radius:999px;transition:opacity .3s ease}
-.mi-me:hover .me-tag{opacity:0}
+.mi-me .me-ring{left:-16%;top:-10.4%;width:126%;border:2px solid var(--ink)}
+
 .me-pupil{transition:transform .12s linear}
 @media (max-width:760px),(max-height:520px){.mi-me{position:relative;right:auto;top:auto;transform:none;width:min(62vw,300px);margin:40px auto 0}}
 /* Projects: a white band that pins and slides the work sideways as you scroll */
@@ -437,7 +436,6 @@ canvas.can-grab{cursor:var(--hand-grab)}
     </div>
     <img class="me-photo" src="assets/me/me-photo.webp" alt="Harrison Greener" width="678" height="760" hidden>
     <canvas class="me-reveal" aria-hidden="true"></canvas>
-    <figcaption class="me-tag">Hover for the real me</figcaption>
   </figure>
   </div></section>
 
