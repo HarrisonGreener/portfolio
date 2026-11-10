@@ -2098,6 +2098,14 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   b.dataset.cats = cats.join('|'); b.setAttribute('aria-label', `${cfg.title}: ${cfg.body}`);
   b.addEventListener('click', () => openDetail(cfg)); grid.appendChild(b); workCards.push(b);
 });
+{ // this site, as a project: its own case study page
+  const b = document.createElement('a'); b.className = 'mw-card'; b.href = 'making-of/'; const n = workCards.length, cats = ['Web', 'Brand'];
+  b.innerHTML = `<div class="mw-cover"><div class="mw-par"><div class="mw-art"><img class="logo" src="brand/greener-solid-black.svg" alt="" loading="lazy"></div></div></div>
+    <div class="mw-meta"><span class="mw-no">${String(n + 1).padStart(2, '0')}</span><b>The Wallet CV</b><span class="mw-tags">This site · ${cats.join(' · ')}</span></div>`;
+  b.style.setProperty('--bg', '#73956F'); b.style.setProperty('--w', '52%');
+  b.dataset.cats = cats.join('|'); b.setAttribute('aria-label', 'The Wallet CV: how I made this site and the real wallet behind it');
+  grid.appendChild(b); workCards.push(b);
+}
 { const next = document.createElement('div'); next.className = 'mw-next'; next.innerHTML = '<b>Next project</b><span>In the works. Check back soon.</span>'; grid.appendChild(next); }
 
 /* ===== Footer mini game: me, running, jumping blocks and ducking floating bars ===== */
