@@ -1854,7 +1854,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   const INK = '#1F1F1F', PAPER = '#F2F2F0';
   function block(x, y0, w, h, c) { g.fillStyle = c; rr(x, y0, w, h); }
   function drawObs(o, gy) {
-    if (o.k === 'bar') { block(o.x, gy - o.bottom - o.th, o.w, o.th, INK); return; }
+    if (o.k === 'bar') { block(o.x, gy - o.bottom - o.th, o.w, o.th, PAPER); return; }   // white: the ones to duck
     if (o.k === 'pair') { block(o.x, gy - o.h, o.w * 0.44, o.h, o.c); block(o.x + o.w * 0.56, gy - o.h * 0.7, o.w * 0.44, o.h * 0.7, o.c); return; }
     block(o.x, gy - o.h, o.w, o.h, o.c);
   }
@@ -1870,9 +1870,9 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
     const dt = Math.min(0.033, (now - last) / 1000 || 0); last = now;
     g.setTransform(dpr, 0, 0, dpr, 0, 0); g.imageSmoothingEnabled = true; g.clearRect(0, 0, W, H);
     const gy = groundY(), hx = px();
-    g.fillStyle = '#1F1F1F'; g.fillRect(0, gy, W, 3);
-    g.fillStyle = 'rgba(31,31,31,.3)'; const step = U * 0.5, off = (dist * 0.7) % step;
-    for (let x = -off; x < W; x += step) g.fillRect(Math.round(x), gy + 10, Math.round(step * 0.35), 2);
+    g.fillStyle = '#1F1F1F'; g.fillRect(0, gy, W, H - gy);                 // the ground is a dark band; blocks rise out of it
+    g.fillStyle = 'rgba(242,242,240,.12)'; const step = U * 0.5, off = (dist * 0.7) % step;
+    for (let x = -off; x < W; x += step) g.fillRect(Math.round(x), gy + 12, Math.round(step * 0.35), 2);
     if (state === 'play') {
       spd += dt * U * 0.07; dist += spd * dt;
       const wasUp = y > 0; vy -= dt * U * 12.5; y = Math.max(0, y + vy * dt);
@@ -1880,7 +1880,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
       gap -= spd * dt;
       if (gap <= 0) {
         if (score >= 3 && Math.random() < 0.28) obs.push({ k: 'bar', x: W + 10, w: U * 0.7, bottom: U * 0.66, th: U * 0.16, passed: false });
-        else { const k = KINDS[Math.floor(Math.random() * (score < 4 ? 3 : KINDS.length))]; obs.push({ k: k.k, x: W + 10, w: k.w * U, h: k.h * U, c: Math.random() < 0.5 ? INK : PAPER, passed: false }); }
+        else { const k = KINDS[Math.floor(Math.random() * (score < 4 ? 3 : KINDS.length))]; obs.push({ k: k.k, x: W + 10, w: k.w * U, h: k.h * U, c: INK, passed: false }); }
         gap = spd * (0.85 + Math.random() * 0.9) + U * 0.9;
       }
       for (const o of obs) { o.x -= spd * dt; if (!o.passed && o.x + o.w < hx - U * 0.15) { o.passed = true; score++; scoreEl.textContent = score; } }
@@ -1898,7 +1898,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
     }
     for (const o of obs) drawObs(o, gy);
     const sh = Math.max(0.4, 1 - y / (U * 0.9));
-    g.fillStyle = 'rgba(31,31,31,.2)'; g.beginPath(); g.ellipse(hx, gy + 1, U * 0.16 * sh, U * 0.022, 0, 0, 7); g.fill();
+    g.fillStyle = 'rgba(31,31,31,.25)'; g.beginPath(); g.ellipse(hx, gy - 1, U * 0.16 * sh, U * 0.022, 0, 0, 7); g.fill();
     if (state === 'over') { const k = Math.min(1, (now - hitT) / 450); drawMe('jump', hx, gy - y - Math.sin(k * Math.PI) * U * 0.12, k * 1.2); }
     else if (state === 'idle') drawMe('run1', hx, gy);
     else if (ducking && y === 0) drawMe('crouch', hx, gy);
