@@ -1,4 +1,5 @@
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <title>Wallet CV</title>
@@ -226,6 +227,16 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-line{margin:0;font-weight:700;font-size:clamp(36px,6.4vw,92px);line-height:.98;letter-spacing:-.045em;max-width:15ch}
 .mi-line .w{display:inline-block;opacity:.16;transition:opacity .5s ease,color .25s ease,transform .45s cubic-bezier(.3,1.7,.45,1)}.mi-line .w.lit{opacity:1}
 @media (hover:hover){.mi-line .w:hover{color:transparent;background:radial-gradient(circle var(--dr,0px) at var(--dx,-999px) var(--dy,-999px),var(--green) 99.4%,transparent 100%),radial-gradient(circle var(--or,0px) at var(--ox,-999px) var(--oy,-999px),var(--green) 99.4%,var(--paper) 100%);-webkit-background-clip:text;background-clip:text;opacity:1;transform:translateY(-.09em);transition:opacity .2s ease,color .15s ease,transform .3s cubic-bezier(.3,1.7,.45,1)}}
+/* Phone notice: shown once per visit on small touch screens */
+.desk-note{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:16px;background:rgba(31,31,31,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);font-family:var(--display);animation:dnFade .4s ease both}
+.desk-note[hidden]{display:none}
+.dn-card{width:min(420px,100%);box-sizing:border-box;background:var(--green);color:var(--ink);border-radius:22px;padding:28px 24px 24px;animation:dnUp .6s cubic-bezier(.16,.8,.2,1) both}
+.dn-ico{width:56px;height:auto;display:block;margin-bottom:14px}
+.dn-card h2{margin:0 0 10px;font-size:30px;line-height:1;letter-spacing:-.03em}
+.dn-card p{margin:0 0 20px;font-size:16px;line-height:1.45}
+.dn-btns{display:flex;flex-wrap:wrap;gap:10px}
+.dn-btns .mp-btn{font-size:15px;padding:12px 18px}
+@keyframes dnFade{from{opacity:0}}@keyframes dnUp{from{opacity:0;transform:translateY(40px)}}
 /* Page scrollbar: a slim line down the left that fills as you go; drag or click it to move through the page */
 .menu{scrollbar-width:none}.menu::-webkit-scrollbar{display:none}
 .mp-sbar{position:fixed;left:0;top:0;bottom:0;width:14px;z-index:4;cursor:inherit;touch-action:none}
@@ -249,7 +260,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-me .me-ring{left:-16%;top:-10.4%;width:126%;border:2px solid var(--ink)}
 
 .me-pupil{transition:transform .12s linear}
-@media (max-width:760px),(max-height:520px){.mi-me{position:relative;right:auto;top:auto;transform:none;width:min(62vw,300px);margin:40px auto 0}}
+@media (max-width:760px),(max-height:520px){.mi-pin{flex-direction:column;align-items:stretch}.mi-me{position:relative;right:auto;top:auto;transform:none;width:min(62vw,300px);margin:40px auto 0}}
 /* Projects: a white band that pins and slides the work sideways as you scroll */
 .mp-work{background:var(--paper)}
 .mw-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;flex-direction:column;justify-content:center;gap:clamp(18px,3.2vh,34px);overflow:hidden}
@@ -364,6 +375,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .pdb-strip:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
 .mp-footer{background:var(--ink);color:var(--paper)}
 .mf-in{max-width:1180px;margin:0 auto;padding:72px clamp(16px,4vw,48px) 28px}
+.mf-sub{margin:0;font-size:clamp(15px,1.3vw,18px);font-weight:500;opacity:.7}
 .mf-big{margin:0 0 14px;font-size:clamp(28px,4.4vw,56px);font-weight:700;line-height:1.02;max-width:16ch}
 .mf-mail{color:var(--green);font-weight:700;font-size:clamp(18px,2.2vw,26px);text-decoration:none;border-bottom:2px solid currentColor;word-break:break-all}
 .mf-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:64px 0 56px}
@@ -535,12 +547,12 @@ canvas.can-grab{cursor:var(--hand-grab)}
     <div class="mf-in">
       <div class="mf-top">
         <p data-rv="rise" class="mf-big">Got a role, a project or just a question?</p>
+        <p data-rv="up" class="mf-sub">Pick a way to say hello.</p>
       </div>
       <div class="mf-pit" id="mfPit" role="group" aria-label="Ways to get in touch">
         <a class="mf-orb" href="mailto:harrygreener@hotmail.co.uk" aria-label="Email me" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 6.5 9 7 9-7"/></svg></a>
         <a class="mf-orb g" href="https://github.com/HarrisonGreener" target="_blank" rel="noopener" aria-label="GitHub" title="GitHub"><svg viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg></a>
         <a class="mf-orb" href="https://www.linkedin.com/in/harrison-greener-521341231/" target="_blank" rel="noopener" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" fill="currentColor"><circle cx="4.9" cy="4.9" r="2.3"/><path d="M3 9h3.9v12H3zM9 9h3.7v1.7c.5-1 1.8-2 3.7-2 3.9 0 4.6 2.6 4.6 5.9V21h-3.9v-5.6c0-1.4 0-3.1-1.9-3.1s-2.2 1.5-2.2 3V21H9z"/></svg></a>
-        <a class="mf-orb g" href="receipt/Harrison-Greener-CV-receipt.pdf" target="_blank" rel="noopener" aria-label="CV (PDF)" title="CV"><span class="mf-orb-t">CV</span></a>
       </div>
     </div>
     <section class="mf-game" aria-label="Mini game">
@@ -633,6 +645,14 @@ canvas.can-grab{cursor:var(--hand-grab)}
   setTimeout(() => { if (!window.__walletReady) { const t = document.getElementById('veilText'); if (t) t.textContent = 'The 3D view could not load. Check your connection and refresh the page.'; } }, 15000);
 </script>
 
+<div class="desk-note" id="deskNote" role="dialog" aria-modal="true" aria-labelledby="deskNoteT" hidden>
+  <div class="dn-card">
+    <svg class="dn-ico" viewBox="0 0 64 44" aria-hidden="true"><rect x="8" y="3" width="48" height="31" rx="3" fill="none" stroke="currentColor" stroke-width="3"/><path d="M2 39h60" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>
+    <h2 id="deskNoteT">Best on a computer</h2>
+    <p>This portfolio is built around a 3D wallet, a mini game and scroll animations. It works on your phone, but it looks its best on a bigger screen.</p>
+    <div class="dn-btns"><button type="button" class="mp-btn" id="deskNoteGo">Continue anyway</button><button type="button" class="mp-btn ghost" id="deskNoteCopy">Copy link for later</button></div>
+  </div>
+</div>
 <script type="module">
 import * as THREE from 'three';
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
@@ -2522,6 +2542,21 @@ function cvTick() {
 menu.addEventListener('scroll', cvTick, { passive: true });
 addEventListener('resize', () => { cvFit(); cvTick(); });
 requestAnimationFrame(() => { cvFit(); cvTick(); });
+/* Phone notice */
+(() => {
+  const note = document.getElementById('deskNote');
+  const small = matchMedia('(pointer:coarse)').matches && Math.min(screen.width, screen.height) < 820;   // phones, whatever the page zoom
+  let seen = false; try { seen = sessionStorage.getItem('deskNote') === '1'; } catch (e) {}
+  if (!small || seen) return;
+  note.hidden = false;
+  const close = () => { note.hidden = true; try { sessionStorage.setItem('deskNote', '1'); } catch (e) {} };
+  document.getElementById('deskNoteGo').addEventListener('click', close);
+  document.getElementById('deskNoteCopy').addEventListener('click', async (e) => {
+    const url = location.href.startsWith('http') ? location.href : 'https://harrisongreener.github.io/portfolio/';
+    try { await navigator.clipboard.writeText(url); e.target.textContent = 'Link copied'; }
+    catch (err) { e.target.textContent = url; }
+  });
+})();
 /* Left-hand scrollbar for the menu page */
 (() => {
   const bar = document.getElementById('mpSbar'), foot = document.querySelector('.mp-footer');
