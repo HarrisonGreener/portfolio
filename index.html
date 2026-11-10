@@ -265,8 +265,8 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mw-next{flex:none;width:min(clamp(240px,26vw,380px),calc((100svh - 330px) * 1.0));box-sizing:border-box;align-self:flex-start;aspect-ratio:1008/643;border:2px dashed rgba(31,31,31,.35);border-radius:4px;display:flex;flex-direction:column;justify-content:flex-end;padding:20px;gap:4px}
 .mw-next b{font-size:20px}.mw-next span{font-size:14px;opacity:.6}
 .mw-foot{display:flex;align-items:center;gap:20px;width:100%;box-sizing:border-box;padding-top:0}
-.mw-progress{flex:1;height:2px;background:rgba(31,31,31,.14);position:relative;overflow:hidden}
-.mw-progress i{position:absolute;inset:0;background:var(--ink);transform-origin:0 50%;transform:scaleX(0)}
+.mw-progress{flex:1;height:2px;position:relative;overflow:hidden}   /* invisible: the orb's bead marks where you are */
+.mw-progress i{position:absolute;inset:0;display:none;background:var(--ink);transform-origin:0 50%;transform:scaleX(0)}
 #mwCount{font-size:13px;font-weight:700;opacity:.6;white-space:nowrap}
 @media (max-width:760px),(max-height:520px){
   .mw-rail{height:auto!important}.mw-pin{position:static;height:auto;padding:72px 0}
@@ -1980,10 +1980,11 @@ function orbStops() {
     S(Math.max(2, introEnd), mob ? W * 0.75 : W * 0.7, H * 0.52, (mob ? 60 : 50) * vm, C_PAPER),             // swells as the words light up
     pinned ? S(rail, bar.left, barY, 16, C_INK) : S(rail, W * 0.9, H * 0.2, 14, C_INK),   // shrinks to a bead...
     pinned ? S(rail + galTravel, bar.right, barY, 16, C_INK) : S(rail + mwRail.offsetHeight * 0.5, W * 0.9, H * 0.2, 14, C_INK),            // ...that runs along the strip's progress line
-    S(Math.max(rail + galTravel + 2, cvTop - H * 0.15), mob ? W * 0.5 : W * 0.29, H * 0.55, (mob ? 80 : 62) * vm, C_PAPER),   // a disc behind the receipt
-    S(Math.max(rail + galTravel + 3, cvTop + cv.offsetHeight - H), mob ? W * 0.5 : W * 0.31, H * 0.5, (mob ? 70 : 54) * vm, C_PAPER),
-    S(Math.max(rail + galTravel + 4, foot - H * 0.35), mob ? W * 0.85 : W * 0.86, H * 0.32, (mob ? 30 : 26) * vm, C_GREEN),   // into the dark footer
-    S(Math.max(rail + galTravel + 5, end), mob ? W * 0.88 : W * 0.9, H * 0.18, (mob ? 18 : 14) * vm, C_GREEN),
+    S(Math.max(rail + galTravel + 2, cvTop - H * 0.1), mob ? W * 0.5 : W * 0.29, H * 0.52, (mob ? 80 : 62) * vm, C_PAPER),   // a disc behind the receipt
+    S(Math.max(rail + galTravel + 3, cvTop + cv.offsetHeight - H * 0.55), mob ? W * 0.5 : W * 0.3, H * 0.6, (mob ? 72 : 56) * vm, C_PAPER),   // drifts down with it
+    S(Math.max(rail + galTravel + 4, foot - H * 0.05), mob ? W * 0.5 : W * 0.32, H * 1.05, (mob ? 30 : 24) * vm, C_PAPER),   // sinks into the dark footer...
+    S(Math.max(rail + galTravel + 5, foot + H * 0.15), mob ? W * 0.5 : W * 0.33, H * 1.2, 0, C_PAPER),                       // ...and is gone
+    S(Math.max(rail + galTravel + 6, end), mob ? W * 0.5 : W * 0.33, H * 1.2, 0, C_PAPER),
   ];
 }
 let orbCache = null;
@@ -2003,7 +2004,7 @@ const orbCtx = mpOrb.getContext('2d');
 // what colour the orb takes over each band, so it always shows
 const ORB_ON = () => [
   [document.querySelector('.mp-head'), C_GREEN], [mpIntro, C_PAPER], [document.getElementById('mp-projects'), C_GREEN],
-  [document.getElementById('mp-cv'), C_PAPER], [document.querySelector('.mf-in'), C_GREEN], [document.querySelector('.mf-game'), C_PAPER],
+  [document.getElementById('mp-cv'), C_PAPER], [document.querySelector('.mf-in'), C_INK], [document.querySelector('.mf-game'), C_PAPER],
 ];
 // a hovered intro word is white; wherever it crosses the white orb it turns green, worked out from the word's own box
 let hoverWord = null;
