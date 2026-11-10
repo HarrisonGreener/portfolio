@@ -1813,11 +1813,12 @@ function revealIn(root, delay = 0) {
   const pending = [...root.querySelectorAll('[data-rv]')].filter((el) => !el.closest('[hidden]') || el.closest('[hidden]') === root);
   const check = () => {                                   // plain geometry: works however the item is clipped
     queued = false;
-    const box = root.getBoundingClientRect(), bottom = box.top + root.clientHeight * 0.94;
+    const box = root.getBoundingClientRect(), bottom = box.top + root.clientHeight * 0.96;
+    const atEnd = root.scrollHeight - root.scrollTop - root.clientHeight < 4 && root.scrollTop > 0;
     const now = [];
     for (let i = pending.length - 1; i >= 0; i--) {
       const r = pending[i].getBoundingClientRect();
-      if (r.top < bottom && r.bottom > box.top) { now.unshift(pending[i]); pending.splice(i, 1); }
+      if ((r.top < bottom && r.bottom > box.top) || atEnd) { now.unshift(pending[i]); pending.splice(i, 1); }
     }
     const start = first ? delay : 0; first = false;
     now.forEach((el, i) => { el.style.setProperty('--d', (start + Math.min(i, 8) * 0.12).toFixed(2) + 's'); el.classList.add('in'); });
