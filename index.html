@@ -1841,8 +1841,10 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   const msg = document.getElementById('mgMsg'), scoreEl = document.getElementById('mgScore'), bestEl = document.getElementById('mgBest');
   box.tabIndex = 0;
   // sprite files: [width, height, torso x, feet y], all scaled so standing = 340px
-  const SPR = { run1: [140, 340, 40, 339], run2: [125, 338, 47, 337], jump: [193, 329, 121, 328], crouch: [149, 203, 65, 202] };
-  const img = {}; for (const k in SPR) { img[k] = new Image(); img[k].src = `assets/game/harry-${k}.webp`; }
+  const SPR = { run1: [142, 346, 40, 342], run2: [130, 344, 51, 340], jump: [198, 334, 124, 330], crouch: [154, 210, 68, 206] };
+  // two sets: smiling and straight-faced; he switches between them now and then
+  const img = { s: {}, n: {} }; for (const k in SPR) { img.s[k] = new Image(); img.s[k].src = `assets/game/harry-${k}.webp`; img.n[k] = new Image(); img.n[k].src = `assets/game/harry-${k}-n.webp`; }
+  let mood = 's', moodAt = 0;
   // obstacle sizes in units of my standing height
   const KINDS = [
     { k: 'box', w: 0.27, h: 0.27 }, { k: 'box', w: 0.44, h: 0.2 }, { k: 'stack', w: 0.3, h: 0.4 }, { k: 'pair', w: 0.6, h: 0.27 },
@@ -1883,7 +1885,8 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
     block(o.x, gy - o.h, o.w, o.h, o.c);
   }
   function drawMe(k, x, footY, rot = 0) {
-    const [w, h, ax, ay] = SPR[k], im = img[k]; if (!im.complete || !im.naturalWidth) return;
+    const now = performance.now(); if (now > moodAt) { mood = moodAt && Math.random() < 0.6 ? (mood === 's' ? 'n' : 's') : mood; moodAt = now + 2500 + Math.random() * 4500; }
+    const [w, h, ax, ay] = SPR[k], im = img[mood][k].complete && img[mood][k].naturalWidth ? img[mood][k] : img.s[k]; if (!im.complete || !im.naturalWidth) return;
     const sc = U / 340;
     g.save(); g.translate(x, footY);
     if (rot) { g.translate(0, -h * sc * 0.5); g.rotate(rot); g.translate(0, h * sc * 0.5); }
