@@ -2017,15 +2017,12 @@ function orbStops() {
   const at = (el) => el.getBoundingClientRect().top - menu.getBoundingClientRect().top + menu.scrollTop;   // where an element sits in the page
   const intro = at(mpIntro), introEnd = intro + mpIntro.offsetHeight - H, rail = at(mwRail), cv = document.getElementById('mp-cv'), cvTop = at(cv), foot = at(document.querySelector('.mp-footer'));
   const end = menu.scrollHeight - H, pinned = stripPinned() && galTravel > 0;
-  // the portrait's circle, measured where it sits while the intro is pinned
-  const meEl = document.getElementById('miMe'), mr = meEl.getBoundingClientRect(), pinTop = mpIntro.querySelector('.mi-pin').getBoundingClientRect().top;
-  const meX = mr.left + mr.width * 0.5, meY = mr.top - pinTop + mr.height * 0.54, meD = mr.width * 1.18;
   const bar = document.querySelector('.mw-progress').getBoundingClientRect(), barY = bar.top + bar.height / 2 - mwPin.getBoundingClientRect().top;   // where the line sits while the strip is pinned
   const S = (s, x, y, d, c) => ({ s, x, y, d, c });
   return [
     S(0, bx, by, 44, C_GREEN),                                                        // behind the X
-    S(Math.max(1, intro + H * 0.75), meX, meY, meD * 0.92, C_PAPER),      // drops into the green intro and frames my portrait
-    S(Math.max(2, introEnd), meX, meY, meD * 1.04, C_PAPER),             // swells a little as the words light up
+    S(Math.max(1, intro + H * 0.75), mob ? W * 0.82 : W * 0.78, H * 0.5, (mob ? 46 : 34) * vm, C_PAPER),     // drops into the green intro, slowly
+    S(Math.max(2, introEnd), mob ? W * 0.75 : W * 0.7, H * 0.52, (mob ? 60 : 50) * vm, C_PAPER),             // swells as the words light up, reaching under them
     pinned ? S(Math.max(3, rail - H * 0.3), bar.left + W * 0.08, H * 0.62, 11 * vm, C_PAPER) : S(Math.max(3, rail - H * 0.3), W * 0.88, H * 0.3, 10 * vm, C_PAPER),   // still a clear disc as it heads into the projects
     pinned ? S(rail, bar.left, barY, 26, C_INK) : S(rail, W * 0.9, H * 0.2, 24, C_INK),   // shrinks to a bead...
     pinned ? S(rail + galTravel, bar.right, barY, 26, C_INK) : S(rail + mwRail.offsetHeight * 0.5, W * 0.9, H * 0.2, 24, C_INK),            // ...that runs along the strip's progress line
