@@ -228,6 +228,12 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-scroll{margin:44px 0 0;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px}
 .mi-scroll i{width:48px;height:2px;background:var(--ink);transform-origin:0 50%;animation:miScroll 2.2s cubic-bezier(.6,0,.2,1) infinite}
 @keyframes miScroll{0%{transform:scaleX(0)}55%{transform:scaleX(1);transform-origin:0 50%}56%{transform-origin:100% 50%}100%{transform:scaleX(0);transform-origin:100% 50%}}
+/* Me, drawn, beside the intro line: my eyes follow the cursor; hover and a lens shows the real photo underneath */
+.mi-me{position:absolute;z-index:3;margin:0;right:max(5vw,calc((100% - 1180px) / 2 + 24px));top:50%;width:min(34vmin,400px);aspect-ratio:678/760;transform:translateY(-46%);--lx:50%;--ly:50%;--lr:0px}
+.mi-me img,.mi-me svg{position:absolute;inset:0;width:100%;height:100%;display:block}
+.mi-me .me-photo{-webkit-mask:radial-gradient(circle var(--lr) at var(--lx) var(--ly),#000 96%,transparent 100%);mask:radial-gradient(circle var(--lr) at var(--lx) var(--ly),#000 96%,transparent 100%)}
+.me-pupil{transition:transform .12s linear}
+@media (max-width:760px),(max-height:520px){.mi-me{position:relative;right:auto;top:auto;transform:none;width:min(62vw,300px);margin:40px auto 0}}
 /* Projects: a white band that pins and slides the work sideways as you scroll */
 .mp-work{background:var(--paper)}
 .mw-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;flex-direction:column;justify-content:center;gap:clamp(18px,3.2vh,34px);overflow:hidden}
@@ -413,7 +419,13 @@ canvas.can-grab{cursor:var(--hand-grab)}
     <p data-rv="up" class="mi-kicker">Harrison Greener <span>·</span> Designer, Manchester</p>
     <p class="mi-line" id="miLine">I design brands, websites and apps, then I build them myself. Here's what I've made so far.</p>
     <p data-rv="up" class="mi-scroll" aria-hidden="true">Scroll <i></i></p>
-  </div></div></section>
+  </div>
+  <figure class="mi-me" id="miMe" aria-label="Harry, drawn; hover to see the photo">
+    <img class="me-toon" src="assets/me/me-toon.webp" alt="" width="678" height="760">
+    <svg class="me-eyes" viewBox="0 0 678 760" aria-hidden="true"><g class="me-eye" transform="translate(259 269)"><path d="M-31 0 Q0 -19 31 0 Q0 19 -31 0Z" fill="#fff" stroke="#1F1F1F" stroke-width="3.5"/><g class="me-pupil"><circle r="10.5" fill="#6F8E95"/><circle r="5.5" fill="#1F1F1F"/><circle cx="3" cy="-3.5" r="2.4" fill="#fff"/></g></g><g class="me-eye" transform="translate(383 265)"><path d="M-31 0 Q0 -19 31 0 Q0 19 -31 0Z" fill="#fff" stroke="#1F1F1F" stroke-width="3.5"/><g class="me-pupil"><circle r="10.5" fill="#6F8E95"/><circle r="5.5" fill="#1F1F1F"/><circle cx="3" cy="-3.5" r="2.4" fill="#fff"/></g></g></svg>
+    <img class="me-photo" src="assets/me/me-photo.webp" alt="Harrison Greener" width="678" height="760">
+  </figure>
+  </div></section>
 
   <section class="mp-work" id="mp-projects" aria-labelledby="mwTitle">
     <div class="mw-rail" id="mwRail"><div class="mw-pin">
@@ -1918,6 +1930,33 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   size();
 })();
 
+/* ===== The drawn me: eyes follow the cursor, a lens reveals the photo ===== */
+(() => {
+  const me = document.getElementById('miMe'); if (!me) return;
+  const pupils = [...me.querySelectorAll('.me-pupil')], eyes = [...me.querySelectorAll('.me-eye')];
+  const EYE = [[259, 269], [383, 265]];
+  let lr = 0, lrT = 0, raf = 0, mx = -1, my = -1;
+  function look() {
+    const b = me.getBoundingClientRect(), k = b.width / 678;
+    pupils.forEach((p, i) => {
+      const ex = b.left + EYE[i][0] * k, ey = b.top + EYE[i][1] * k;
+      const dx = mx - ex, dy = my - ey, d = Math.hypot(dx, dy) || 1, f = Math.min(1, d / 260);
+      p.setAttribute('transform', `translate(${(dx / d * 13 * f).toFixed(2)} ${(dy / d * 6 * f).toFixed(2)})`);
+    });
+  }
+  function tick() {
+    raf = 0; lr += (lrT - lr) * 0.18; me.style.setProperty('--lr', lr.toFixed(1) + 'px');
+    if (Math.abs(lrT - lr) > 0.3) raf = requestAnimationFrame(tick);
+  }
+  addEventListener('pointermove', (e) => { if (menu.hidden) return; mx = e.clientX; my = e.clientY; look(); }, { passive: true });
+  me.addEventListener('pointermove', (e) => { const b = me.getBoundingClientRect(); me.style.setProperty('--lx', (e.clientX - b.left) + 'px'); me.style.setProperty('--ly', (e.clientY - b.top) + 'px'); });
+  me.addEventListener('pointerenter', () => { lrT = me.getBoundingClientRect().width * 0.24; if (!raf) raf = requestAnimationFrame(tick); });
+  me.addEventListener('pointerleave', () => { lrT = 0; if (!raf) raf = requestAnimationFrame(tick); });
+  // the odd blink
+  const blink = () => { if (!menu.hidden && !reduceMotion) { eyes.forEach((e, i) => { const t = `translate(${EYE[i][0]}px,${EYE[i][1]}px)`; e.animate([{ transform: t + ' scaleY(1)' }, { transform: t + ' scaleY(0.08)' }, { transform: t + ' scaleY(1)' }], { duration: 170 }); }); } setTimeout(blink, 2600 + Math.random() * 3800); };
+  setTimeout(blink, 3000);
+})();
+
 /* The strip: while its band is pinned, scrolling down slides the projects sideways */
 const mwRail = document.getElementById('mwRail'), mwPin = mwRail.querySelector('.mw-pin'), mwBar = document.getElementById('mwBar');
 const mwViewport = document.getElementById('mwViewport'), mwCount = document.getElementById('mwCount');
@@ -1974,12 +2013,15 @@ function orbStops() {
   const at = (el) => el.getBoundingClientRect().top - menu.getBoundingClientRect().top + menu.scrollTop;   // where an element sits in the page
   const intro = at(mpIntro), introEnd = intro + mpIntro.offsetHeight - H, rail = at(mwRail), cv = document.getElementById('mp-cv'), cvTop = at(cv), foot = at(document.querySelector('.mp-footer'));
   const end = menu.scrollHeight - H, pinned = stripPinned() && galTravel > 0;
+  // the portrait's circle, measured where it sits while the intro is pinned
+  const meEl = document.getElementById('miMe'), mr = meEl.getBoundingClientRect(), pinTop = mpIntro.querySelector('.mi-pin').getBoundingClientRect().top;
+  const meX = mr.left + mr.width * 0.5, meY = mr.top - pinTop + mr.height * 0.54, meD = mr.width * 1.18;
   const bar = document.querySelector('.mw-progress').getBoundingClientRect(), barY = bar.top + bar.height / 2 - mwPin.getBoundingClientRect().top;   // where the line sits while the strip is pinned
   const S = (s, x, y, d, c) => ({ s, x, y, d, c });
   return [
     S(0, bx, by, 44, C_GREEN),                                                        // behind the X
-    S(Math.max(1, intro + H * 0.75), mob ? W * 0.82 : W * 0.78, H * 0.5, (mob ? 46 : 34) * vm, C_PAPER),     // drops into the green intro, slowly
-    S(Math.max(2, introEnd), mob ? W * 0.75 : W * 0.7, H * 0.52, (mob ? 60 : 50) * vm, C_PAPER),             // swells as the words light up
+    S(Math.max(1, intro + H * 0.75), meX, meY, meD * 0.92, C_PAPER),      // drops into the green intro and frames my portrait
+    S(Math.max(2, introEnd), meX, meY, meD * 1.04, C_PAPER),             // swells a little as the words light up
     pinned ? S(Math.max(3, rail - H * 0.3), bar.left + W * 0.08, H * 0.62, 11 * vm, C_PAPER) : S(Math.max(3, rail - H * 0.3), W * 0.88, H * 0.3, 10 * vm, C_PAPER),   // still a clear disc as it heads into the projects
     pinned ? S(rail, bar.left, barY, 26, C_INK) : S(rail, W * 0.9, H * 0.2, 24, C_INK),   // shrinks to a bead...
     pinned ? S(rail + galTravel, bar.right, barY, 26, C_INK) : S(rail + mwRail.offsetHeight * 0.5, W * 0.9, H * 0.2, 24, C_INK),            // ...that runs along the strip's progress line
