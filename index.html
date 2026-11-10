@@ -5,7 +5,7 @@
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@700&display=swap">
 <style>
 /* Layout: full-bleed 3D tabletop; quiet HUD pinned to the corners; an item sheet slides in when something is pulled out. */
 :root{
@@ -196,6 +196,9 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mp-card>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .9s cubic-bezier(.2,.7,.2,1)}
 .mp-card>img.logo{inset:auto;left:50%;top:50%;width:auto;height:auto;max-width:var(--w,40%);max-height:54%;object-fit:contain;transform:translate(-50%,-50%)}
 .mp-card>img.pixel{image-rendering:pixelated}
+.mp-card{container-type:inline-size}
+.mp-card .fly-t{position:absolute;left:6cqw;top:6cqw;font-family:'Space Grotesk',var(--sans,sans-serif);font-weight:700;font-size:8.4cqw;line-height:.98;letter-spacing:-.02em;color:#0a0a0a}
+.mp-card>img.fly-i{inset:auto;right:0;bottom:0;width:70%;height:auto;object-fit:contain;transform-origin:100% 100%}
 .mp-card:hover>img{transform:scale(1.04)}
 .mp-card:hover>img.logo{transform:translate(-50%,-50%) scale(1.06)}
 .mp-card b{position:absolute;left:18px;bottom:16px;font-size:15px;color:var(--paper);background:var(--ink);border-radius:999px;padding:7px 14px;transition:transform .4s ease}
@@ -1668,18 +1671,21 @@ document.getElementById('puForm').addEventListener('submit', (e) => {
 let queuedGo = null;
 const menuBtn = document.getElementById('menuBtn'), menu = document.getElementById('menu'), grid = document.getElementById('mpGrid');
 const detail = document.getElementById('mpDetail');
-// Covers: each project's own logo on its brand colour. Rolla, Pat and the fly keep their card art.
+// Covers: each project's own logo on its brand colour. Rolla keeps its card art; the fly gets its title and the fly itself.
 const COVERS = {
   stack: { bg: '#E8742B', logo: 'assets/logos/stack.svg', w: '34%' },
   folio: { bg: '#0F0D0E', logo: 'assets/logos/folio.svg', w: '22%' },
   quotable: { bg: '#0B2742', logo: 'assets/logos/quotable.svg', w: '28%' },
   brandomizer: { bg: '#1A0D07', logo: 'assets/logos/brandomizer.jpg', w: '78%' },
   'big-brother': { bg: '#1E2024', logo: 'assets/logos/big-brother.png', w: '76%', pixel: true },
+  pat: { bg: '#FBFBF9', logo: 'assets/logos/pat.png', w: '36%' },
+  fly: { bg: '#F4F4F2', fly: true },
 };
 ITEMS.filter((i) => i.kind === 'biz').forEach((cfg) => {
   const b = document.createElement('button'); b.type = 'button'; b.className = 'mp-card';
   const c = COVERS[cfg.id];
-  if (c) { b.style.setProperty('--bg', c.bg); b.style.setProperty('--w', c.w); b.innerHTML = `<img class="logo${c.pixel ? ' pixel' : ''}" src="${c.logo}" alt="" loading="lazy"><b></b>`; }
+  if (c && c.fly) { b.style.setProperty('--bg', c.bg); b.innerHTML = `<span class="fly-t">Can a fly<br>play Tetris?</span><img class="fly-i" src="assets/logos/fly.webp" alt="" loading="lazy"><b></b>`; }
+  else if (c) { b.style.setProperty('--bg', c.bg); b.style.setProperty('--w', c.w); b.innerHTML = `<img class="logo${c.pixel ? ' pixel' : ''}" src="${c.logo}" alt="" loading="lazy"><b></b>`; }
   else b.innerHTML = `<img src="${cfg.front}" alt="" loading="lazy"><b></b>`;
   b.querySelector('b').textContent = cfg.title; b.setAttribute('aria-label', `${cfg.title}: ${cfg.body}`);
   b.addEventListener('click', () => openDetail(cfg)); grid.appendChild(b);
