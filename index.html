@@ -252,7 +252,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-me{position:absolute;z-index:0;margin:0;right:max(5vw,calc((100% - 1180px) / 2 + 24px));top:var(--me-y,42%);width:min(34vmin,400px);aspect-ratio:678/760;transform:translateY(-46%);--lx:50%;--ly:50%;--lr:0px}
 .mi-me img,.mi-me svg{position:absolute;inset:0;width:100%;height:100%;display:block}
 .mi-me .me-toon-layer{position:absolute;inset:0}
-.mi-me .me-reveal{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.mi-me .me-reveal{position:absolute;left:-12.3%;top:-7.2%;width:118.6%;height:auto;aspect-ratio:1;pointer-events:none}   /* covers the whole disc, so the photo is exactly the drawing's circle */
 .mi-me .me-photo{display:none}   /* only a source for the reveal */
 /* the frame: the drawing's own circle as a paper disc, a thin offset ring, hair breaking out over the top */
 .mi-me .me-disc,.mi-me .me-ring{position:absolute;border-radius:50%;aspect-ratio:1}
@@ -513,7 +513,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
       <img class="me-toon" src="assets/me/me-toon.webp" alt="" width="678" height="760">
       <svg class="me-eyes" viewBox="0 0 678 760" aria-hidden="true"><g class="me-eye" transform="translate(258 270)"><clipPath id="meClip0"><path d="M-24 0 Q0 -14 24 0 Q0 12 -24 0Z"/></clipPath><path d="M-24 0 Q0 -14 24 0 Q0 12 -24 0Z" fill="#FBFBFA"/><g clip-path="url(#meClip0)"><g class="me-pupil"><circle r="9.5" fill="#647A99" stroke="#2E3A4E" stroke-width="1.6"/><circle r="4.6" fill="#1F1F1F"/><circle cx="2.6" cy="-3" r="2" fill="#fff"/></g></g></g><g class="me-eye" transform="translate(384 264)"><clipPath id="meClip1"><path d="M-23 0 Q0 -14 23 0 Q0 12 -23 0Z"/></clipPath><path d="M-23 0 Q0 -14 23 0 Q0 12 -23 0Z" fill="#FBFBFA"/><g clip-path="url(#meClip1)"><g class="me-pupil"><circle r="9.5" fill="#647A99" stroke="#2E3A4E" stroke-width="1.6"/><circle r="4.6" fill="#1F1F1F"/><circle cx="2.6" cy="-3" r="2" fill="#fff"/></g></g></g></svg>
     </div>
-    <img class="me-photo" src="assets/me/me-photo.webp" alt="Harrison Greener" width="678" height="760" hidden>
+    <img class="me-photo" src="assets/me/me-photo.webp" alt="Harrison Greener" width="1200" height="1200" hidden>
     <canvas class="me-reveal" aria-hidden="true"></canvas>
   </figure>
   </div></section>
@@ -2227,7 +2227,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   const cv = me.querySelector('.me-reveal'), g = cv.getContext('2d'), photo = me.querySelector('.me-photo');
   let cells = [], cols = 0, rows = 0, cell = 12, W = 0, H = 0, dpr = 1, pat = null, patW = 0;
   function layout() {
-    const b = me.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = b.width; H = b.height;
+    const b = cv.getBoundingClientRect(); dpr = Math.min(2, devicePixelRatio || 1); W = b.width; H = b.height;
     cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
     cell = Math.max(8, Math.round(W / 32)); pat = null; cols = Math.ceil(W / cell); rows = Math.ceil(H / cell);
     cells = Array.from({ length: cols * rows }, () => ({ heat: 0, v: 0, n: Math.random(), sp: 5 + Math.random() * 7 }));
@@ -2269,8 +2269,8 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
     });
   }
   addEventListener('pointermove', (e) => { if (menu.hidden) return; mx = e.clientX; my = e.clientY; look(); }, { passive: true });
-  me.addEventListener('pointermove', (e) => { const b = me.getBoundingClientRect(); lx = e.clientX - b.left; ly = e.clientY - b.top; kick(); });
-  me.addEventListener('pointerenter', () => { over = true; if (cv.width !== Math.round(me.getBoundingClientRect().width * dpr)) layout(); kick(); });
+  me.addEventListener('pointermove', (e) => { const b = cv.getBoundingClientRect(); lx = e.clientX - b.left; ly = e.clientY - b.top; kick(); });
+  me.addEventListener('pointerenter', () => { over = true; if (cv.width !== Math.round(cv.getBoundingClientRect().width * dpr)) layout(); kick(); });
   me.addEventListener('pointerleave', () => { over = false; kick(); });
   // the odd blink
   const blink = () => { if (!menu.hidden && !reduceMotion) { eyes.forEach((e, i) => { const t = `translate(${EYE[i][0]}px,${EYE[i][1]}px)`; e.animate([{ transform: t + ' scaleY(1)' }, { transform: t + ' scaleY(0.08)' }, { transform: t + ' scaleY(1)' }], { duration: 170 }); }); } setTimeout(blink, 2600 + Math.random() * 3800); };
