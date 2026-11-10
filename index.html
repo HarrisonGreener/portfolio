@@ -1256,7 +1256,7 @@ for (const cfg of ITEMS) {
 // Right half: a strip by the fold holding one card upright in a hidden slot (only a sliver shows), then the card
 // section: a backing layer with seven cards stepped behind one plain pocket front.
 const STRIP = 0.96;                                   // width of the centre strip on each side of the fold
-const SIDE_ID = 'scratch';                           // the hidden slot by the fold, under the project cards: the scratchcard slides out to the left
+const SIDE_ID = 'scratch';                           // the hidden slot by the fold, under the project cards: the scratchcard slides up out of the top
 const RIGHT_IDS = ['stack', 'folio', 'quotable', 'pat', 'brandomizer', 'big-brother', 'fly', 'rolla'];
 const CARD_STEP = 0.28, CARD_TOPS = RIGHT_IDS.map((_, k) => -5.13 + k * CARD_STEP);
 const CARD_LIFT = 0.012; // cards overlap almost flat, so the pocket keeps one slim thickness however full it is
@@ -1270,7 +1270,7 @@ const lining = slab(rightShape, LAYER, y); wallet.add(lining); addPick(lining, '
 y += LAYER + 0.002;
 const liningTop = y;
 const sideCfg = SIDE_ID && ITEMS.find((i) => i.id === SIDE_ID);
-if (sideCfg) { sideCfg.home = { parent: 'right', y: y + sideCfg.t / 2, x: 0.32 + sideCfg.xLen / 2, zTop: -4.23 }; sideCfg.slide = new THREE.Vector3(-1, 0, 0); }
+if (sideCfg) { sideCfg.home = { parent: 'right', y: y + sideCfg.t / 2, x: 0.32 + sideCfg.xLen / 2, zTop: -4.23 }; sideCfg.slide = new THREE.Vector3(0, 0, -1); }   // slides up out of the top of its slot, like Rolla used to
 y += 0.02 + 0.002;
 const R_SECTION = [0.06, RAD_OUT, RAD_OUT, 0.06];
 const backing = slab(rr(STRIP, -H / 2, W, H / 2, R_SECTION), LAYER, y); wallet.add(backing); addPick(backing, 'wallet');
@@ -1302,7 +1302,7 @@ projectsLabel.position.set((STRIP + W) / 2, pocketTop + 0.001, POCKET_EDGE + 0.9
 y += LAYER + 0.003;
 const rightStack = y - PT;
 const rightTopAt = (x, z) => (x < STRIP + 0.05 ? liningTop : z >= POCKET_EDGE ? pocketTop : backingTop);
-const seamStitch = stitches(linePath(STRIP + 0.16, -H / 2 + 0.3, STRIP + 0.16, POCKET_EDGE), () => backingTop);   // hidden while the scratchcard rides over it
+const seamStitch = stitches(linePath(STRIP + 0.16, -H / 2 + 0.3, STRIP + 0.16, POCKET_EDGE), () => backingTop);
 const rightStitch = rr(0.18, -H / 2 + 0.18, W - 0.18, H / 2 - 0.18, [0.04, RAD_OUT - 0.12, RAD_OUT - 0.12, 0.04]);
 wallet.add(
   stitches(rightStitch, rightTopAt, false, (x, z) => (x > STRIP + 0.05 && z < POCKET_EDGE) || (sideCfg && x < STRIP + 0.05 && z > sideCfg.home.zTop - 0.05 && z < sideCfg.home.zTop + sideCfg.zLen + 0.05)), stitches(rightStitch, () => 0, true),
@@ -1870,28 +1870,13 @@ function putBack() {
   document.body.classList.remove('item-out');
   hideSheet(); updateUI();
 }
-// The scratchcard comes out of a slot by the fold, so it tilts up as it slides, clearing the stitching and the
-// left panel; the end still in the slot dips into the leather, out of sight.
-function scratchTilt(item, pos, quat, k) {
-  const up = (backingTop + 0.06 - item.home.y) * k;
-  const pivot = item.parent.localToWorld(new THREE.Vector3(STRIP + 0.22, item.home.y + up, item.home.zTop + item.zLen / 2));
-  const axis = new THREE.Vector3(0, 0, 1).applyQuaternion(item.parent.getWorldQuaternion(new THREE.Quaternion()));
-  const R = new THREE.Quaternion().setFromAxisAngle(axis, -0.14 * k);
-  pos.y += up; pos.sub(pivot).applyQuaternion(R).add(pivot); quat.premultiply(R);
-}
 function poseActive() {
   const { item, p, homePos, homeQuat, dist, dirV } = active; const g = item.group;
   const slideEnd = homePos.clone().addScaledVector(dirV, dist), startQ = homeQuat.clone();
-  // The scratchcard comes out of a slot by the fold, so it tilts up as it slides, clearing the stitching and the
-  // left panel; the end still in the slot dips into the leather, out of sight.
-  const tilt = (pos, quat, f, k = 1) => { if (item.kind === 'scratch') scratchTilt(item, pos, quat, k); };
-  tilt(slideEnd, startQ, 1);
-  if (item.kind === 'scratch') seamStitch.visible = p < 0.002;   // the card covers this run once it's out; never draw thread over it
   if (p <= 1) {
     const f = ease(p);
     g.position.copy(homePos).addScaledVector(dirV, dist * f);
     g.quaternion.copy(homeQuat); g.scale.setScalar(1);
-    tilt(g.position, g.quaternion, f, Math.min(1, p * 25));   // lifts clear in the first moment of the pull
   } else {
     const f = ease(p - 1); const t = expandedPose(item);
     g.position.lerpVectors(slideEnd, t.pos, f); g.position.y += Math.sin(Math.PI * f) * 2.2;
@@ -1905,7 +1890,6 @@ function finishReturn() {
   const cfg = active.item;
   cfg.parent.attach(cfg.group);
   cfg.group.position.copy(cfg.homePos); cfg.group.quaternion.copy(cfg.homeQuat); cfg.group.scale.setScalar(1);
-  seamStitch.visible = true;
   if (cfg.setFold) cfg.setFold(0);
   document.body.classList.remove('item-out');
   active = null; backdrop.material.opacity = 0; controls.enabled = true; updateUI();
@@ -2862,11 +2846,7 @@ function frame() {
     cfg.hover += (target - cfg.hover) * Math.min(1, dt * 12);
     cfg.group.position.copy(cfg.homePos).addScaledVector(cfg.slide, cfg.hover * 0.6);
     if (cfg.kind === 'biz') cfg.group.position.y += cfg.hover * 0.011;
-    if (cfg.kind === 'scratch') {                                     // the peek rides over the stitching too, like the full pull
-      cfg.group.quaternion.copy(cfg.homeQuat);
-      if (cfg.hover > 0.001) scratchTilt(cfg, cfg.group.position, cfg.group.quaternion, Math.min(1, cfg.hover * 4));
-      if (!active) seamStitch.visible = cfg.hover < 0.002;
-    }   // just clears the flattened stitches, stays under the pocket front
+   // just clears the flattened stitches, stays under the pocket front
     if (cfg.kind === 'receipt') cfg.group.position.z += (1 - ease(openVal)) * 1.5;   // tucked right in while closed
   }
   if (active) {
