@@ -4,7 +4,7 @@ An interactive 3D wallet that works as a CV. Open the wallet, pull out the Desig
 
 Part of Harrison Greener's Digital Media Project.
 
-**[View the website →](https://harrisongreener.github.io/portfolio/)**
+**[View the website →](https://harrisongreener.co.uk/)**
 
 ## Run it
 
