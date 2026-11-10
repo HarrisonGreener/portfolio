@@ -220,12 +220,13 @@ canvas.can-grab{cursor:var(--hand-grab)}
 /* Intro band: green, pinned while its words light up */
 .mp-intro{background:var(--green);height:200vh;height:200svh}
 .mi-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;align-items:center;overflow:hidden}
-.mi-pin>.mp-wrap{width:100%;box-sizing:border-box;padding-top:0;position:relative;z-index:1}
+.mi-pin>.mp-wrap{width:100%;box-sizing:border-box;padding-top:0;position:relative;z-index:1;pointer-events:none}
+.mi-pin>.mp-wrap .w{pointer-events:auto}   /* only the words catch the mouse; the portrait beside them stays hoverable */
 @media (min-width:761px) and (min-height:521px){.mi-line{max-width:min(15ch,calc(100vw - min(34vmin,400px) * 1.3 - max(5vw,calc((100vw - 1180px) / 2 + 24px)) - 12vw))}}
 .mi-kicker{margin:0 0 26px;font-weight:700;font-size:15px}.mi-kicker span{opacity:.5;margin:0 4px}
 .mi-line{margin:0;font-weight:700;font-size:clamp(36px,6.4vw,92px);line-height:.98;letter-spacing:-.045em;max-width:15ch}
 .mi-line .w{display:inline-block;opacity:.16;transition:opacity .5s ease,color .25s ease,transform .45s cubic-bezier(.3,1.7,.45,1)}.mi-line .w.lit{opacity:1}
-@media (hover:hover){.mi-line .w:hover{color:transparent;background:radial-gradient(circle var(--or,0px) at var(--ox,-999px) var(--oy,-999px),var(--green) 99.4%,var(--paper) 100%);-webkit-background-clip:text;background-clip:text;opacity:1;transform:translateY(-.09em);transition:opacity .2s ease,color .15s ease,transform .3s cubic-bezier(.3,1.7,.45,1)}}
+@media (hover:hover){.mi-line .w:hover{color:transparent;background:radial-gradient(circle var(--dr,0px) at var(--dx,-999px) var(--dy,-999px),var(--green) 99.4%,transparent 100%),radial-gradient(circle var(--or,0px) at var(--ox,-999px) var(--oy,-999px),var(--green) 99.4%,var(--paper) 100%);-webkit-background-clip:text;background-clip:text;opacity:1;transform:translateY(-.09em);transition:opacity .2s ease,color .15s ease,transform .3s cubic-bezier(.3,1.7,.45,1)}}
 .mi-scroll{margin:44px 0 0;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px}
 .mi-scroll i{width:48px;height:2px;background:var(--ink);transform-origin:0 50%;animation:miScroll 2.2s cubic-bezier(.6,0,.2,1) infinite}
 @keyframes miScroll{0%{transform:scaleX(0)}55%{transform:scaleX(1);transform-origin:0 50%}56%{transform-origin:100% 50%}100%{transform:scaleX(0);transform-origin:100% 50%}}
@@ -2102,6 +2103,8 @@ function orbOnWord() {
   if (!hoverWord) return;
   const b = hoverWord.getBoundingClientRect();
   hoverWord.style.setProperty('--ox', (orb.x - b.left).toFixed(1) + 'px'); hoverWord.style.setProperty('--oy', (orb.y - b.top).toFixed(1) + 'px'); hoverWord.style.setProperty('--or', (orb.d / 2).toFixed(1) + 'px');
+  const disc = document.querySelector('.mi-me .me-disc');            // the portrait's white disc gets the same treatment
+  if (disc) { const d = disc.getBoundingClientRect(); hoverWord.style.setProperty('--dx', (d.left + d.width / 2 - b.left).toFixed(1) + 'px'); hoverWord.style.setProperty('--dy', (d.top + d.height / 2 - b.top).toFixed(1) + 'px'); hoverWord.style.setProperty('--dr', (d.width / 2).toFixed(1) + 'px'); }
 }
 miLine.addEventListener('mouseover', (e) => { const w = e.target.closest('.w'); if (!w || w === hoverWord) return; hoverWord = w; orbOnWord(); requestAnimationFrame(orbOnWord); setTimeout(orbOnWord, 320); });
 miLine.addEventListener('mouseleave', () => { hoverWord = null; });
