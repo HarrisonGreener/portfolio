@@ -119,6 +119,15 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
 .tools div{background:var(--paper);padding:20px}
 .tools b{display:block;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:var(--rust)}
 .tools span{display:block;margin-top:6px;font-weight:600;line-height:1.35}
+/* live preview */
+.live{display:grid;grid-template-columns:1fr auto;gap:56px;align-items:center;background:var(--night);color:var(--cream);border-radius:22px;padding:clamp(28px,5vw,60px)}
+.live h2{color:var(--cream)}
+.live-txt p{color:rgba(240,227,206,.8);max-width:40ch}
+.live-phone{width:min(330px,80vw);aspect-ratio:390/844;border-radius:40px;padding:10px;background:#120b08;box-shadow:0 0 0 2px rgba(240,227,206,.12),0 30px 70px rgba(0,0,0,.45)}
+.lp-screen{position:relative;width:100%;height:100%;border-radius:31px;overflow:hidden;background:var(--esp)}
+.lp-screen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;background:transparent}
+.lp-fallback{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+@media (max-width:860px){.live{grid-template-columns:1fr;justify-items:center;text-align:center}.live-txt p{margin-left:auto;margin-right:auto}}
 /* repo */
 .repo{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:36px 0 0}
 .repo .rh{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;flex-wrap:wrap}
@@ -203,6 +212,21 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
     <figure><img class="phone" src="img/two-decks.webp" alt="Two decks and a crossfader" loading="lazy" width="420" height="910"><figcaption>Two decks and a crossfader</figcaption></figure>
     <figure><img class="phone" src="img/family-crate.webp" alt="Family Stack in crate view" loading="lazy" width="420" height="910"><figcaption>Family Stack, in crate view</figcaption></figure>
     <figure><img class="phone" src="img/marketplace.webp" alt="The marketplace" loading="lazy" width="420" height="910"><figcaption>The marketplace</figcaption></figure>
+  </div>
+</div></section>
+
+<section id="try"><div class="wrap">
+  <div class="live rv">
+    <div class="live-txt">
+      <p class="kick" style="color:var(--rust)">Live preview</p>
+      <h2>Try it <em>right here.</em></h2>
+      <p>This is the real prototype, running live. Tap around: open a record, flick through the crate, load two decks. On a computer, scroll inside the phone.</p>
+      <p><a class="btn" href="https://harrisongreener.github.io/stack/" target="_blank" rel="noopener">Open it full size ↗</a></p>
+    </div>
+    <div class="live-phone"><div class="lp-screen" id="lpScreen">
+      <img class="lp-fallback" src="img/my-stack.webp" alt="Stack's My Stack screen" width="420" height="910">
+      <iframe id="lpFrame" title="Live preview of Stack" src="https://harrisongreener.github.io/stack/?nofilm" width="390" height="844" loading="lazy" referrerpolicy="no-referrer" allow="autoplay; fullscreen"></iframe>
+    </div></div>
   </div>
 </div></section>
 
@@ -361,6 +385,13 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
   const go = (k) => { i = (k + n) % n; const p = String(i + 1).padStart(2, '0'); img.src = `../../assets/projects/stack/brand/p-${p}.jpg`; img.alt = `Stack brand guidelines, page ${i + 1} of ${n}`; num.textContent = `${i + 1} / ${n}`; };
   document.getElementById('bgPrev').onclick = () => go(i - 1);
   document.getElementById('bgNext').onclick = () => go(i + 1);
+})();
+</script>
+<script>
+(() => {   // fit the live 390-wide app into the phone frame
+  const box = document.getElementById('lpScreen'), f = document.getElementById('lpFrame');
+  const fit = () => { const k = box.clientWidth / 390; f.style.transform = `scale(${k})`; f.style.height = (box.clientHeight / k) + 'px'; };
+  addEventListener('resize', fit); fit(); new ResizeObserver(fit).observe(box);
 })();
 </script>
 </body>
