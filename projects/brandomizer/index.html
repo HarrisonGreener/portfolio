@@ -133,7 +133,7 @@ figcaption{font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.04em;colo
 <body>
 <header class="top"><div class="wrap">
   <a href="../../" aria-label="Harrison Greener, home"><img src="../../brand/greener-solid-white.svg" alt="Greener" width="110" height="28"></a>
-  <nav><a class="b" href="../../">← The wallet</a><a class="b r" href="https://harrisongreener.github.io/TheGreatBrandomizer/" target="_blank" rel="noopener">Pull the handle ↗</a></nav>
+  <nav><a data-back class="b" href="../../">← The wallet</a><a class="b r" href="https://harrisongreener.github.io/TheGreatBrandomizer/" target="_blank" rel="noopener">Pull the handle ↗</a></nav>
 </div></header>
 
 <div class="hero">
@@ -250,7 +250,7 @@ figcaption{font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.04em;colo
     <h2 style="color:var(--bulb)">Feeling <em>lucky?</em></h2>
     <p>Pick a theme, pull the handle and see what brand you walk away with.</p>
     <div class="btns"><a class="btn" href="https://harrisongreener.github.io/TheGreatBrandomizer/" target="_blank" rel="noopener">Pull the handle ↗</a><a class="btn g" href="https://github.com/HarrisonGreener/TheGreatBrandomizer" target="_blank" rel="noopener">View the code ↗</a></div>
-    <div class="small"><span><a href="../../" style="color:inherit">← Back to the wallet</a></span><span>Designed and built by Harrison Greener</span></div>
+    <div class="small"><span><a data-back href="../../" style="color:inherit">← Back to the wallet</a></span><span>Designed and built by Harrison Greener</span></div>
   </div>
 </footer>
 <div class="bulbs" aria-hidden="true"></div>
@@ -266,6 +266,16 @@ figcaption{font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.04em;colo
   const box = document.getElementById('brScreen'), f = document.getElementById('brFrame');
   const fit = () => { f.style.transform = `scale(${box.clientWidth / 1440})`; };
   addEventListener('resize', fit); fit(); new ResizeObserver(fit).observe(box);
+})();
+</script>
+<script>
+(() => {   // Back goes to wherever you came from: the projects in the menu, or the desk
+  let r = null; try { r = JSON.parse(sessionStorage.getItem('wcv-return') || 'null'); } catch (e) {}
+  const same = document.referrer && new URL(document.referrer).origin === location.origin;
+  document.querySelectorAll('a[data-back]').forEach((a) => {
+    if (r && r.menu) a.textContent = '← All projects';
+    a.addEventListener('click', (e) => { if (same && history.length > 1) { e.preventDefault(); history.back(); } });
+  });
 })();
 </script>
 </body>

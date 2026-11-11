@@ -579,7 +579,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
       </div>
     </section>
     <div class="mf-end">
-        <div data-rv="up" class="mf-site"><a href="#mp-projects" data-jump>Portfolio Projects</a><a href="#mp-cv" data-jump>CV</a><a href="making-of/">How I made this</a><button type="button" id="mpBack">Back to the desk</button></div>
+        <div data-rv="up" class="mf-site"><a href="#mp-projects" data-jump>Portfolio Projects</a><a href="#mp-cv" data-jump>CV</a><a href="making-of/" onclick="rememberReturn()">How I made this</a><button type="button" id="mpBack">Back to the desk</button></div>
         <div data-rv="up" class="mf-base"><span>© 2026</span><span>Designed and built by Harrison Greener</span></div>
     </div>
   </footer>
@@ -2120,7 +2120,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   b.innerHTML = `<div class="mw-cover"><div class="mw-par"><div class="mw-art"><img class="logo" src="brand/greener-solid-black.svg" alt="" loading="lazy"></div></div></div>
     <div class="mw-meta"><span class="mw-no">${String(n + 1).padStart(2, '0')}</span><b>The Wallet CV</b><span class="mw-tags">This site · ${cats.join(' · ')}</span></div>`;
   b.style.setProperty('--bg', '#73956F'); b.style.setProperty('--w', '52%');
-  b.dataset.cats = cats.join('|'); b.setAttribute('aria-label', 'The Wallet CV: how I made this site and the real wallet behind it');
+  b.dataset.cats = cats.join('|'); b.setAttribute('aria-label', 'The Wallet CV: how I made this site and the real wallet behind it'); b.addEventListener('click', () => rememberReturn());
   grid.appendChild(b); workCards.push(b);
 }
 { const next = document.createElement('div'); next.className = 'mw-next'; next.innerHTML = '<b>Next project</b><span>In the works. Check back soon.</span>'; grid.appendChild(next); }
@@ -2522,6 +2522,10 @@ const PD_THEMES = {
   fly:          { bg: '#F4F4F2', ink: '#0A0A0A', hero: '#0A0A0A', heroInk: '#F4F4F2', heroDark: 1, btn: '#D6241C', btnInk: '#FFFFFF', card: '#FFFFFF', display: "'Space Grotesk',sans-serif", hw: 700, ls: '-.03em', body: "'Space Grotesk',sans-serif", r: '0' },
   rolla:        { bg: '#F4F5F2', ink: '#0E0E0E', hero: '#7EE8C3', heroInk: '#0E0E0E', btn: '#0E0E0E', btnInk: '#7EE8C3', card: '#FFFFFF', display: "'Figtree',sans-serif", hw: 800, ls: '-.03em', body: "'Inter',sans-serif" },
 };
+// Case studies live on their own pages: remember where you came from (the projects in the menu, or the desk) so Back returns you there
+function rememberReturn() {
+  try { sessionStorage.setItem('wcv-return', JSON.stringify({ menu: !menu.hidden && menu.classList.contains('open'), top: menu.scrollTop })); } catch (e) {}
+}
 const CASE_STUDIES = { stack: 'projects/stack/', 'big-brother': 'projects/big-brother/', fly: 'projects/fly/', brandomizer: 'projects/brandomizer/' };   // projects with a full case-study page
 let pdFontsIn = false, pdTheme = {};
 function loadProjectFonts() {
@@ -2548,7 +2552,7 @@ let pdCur = null;
 document.getElementById('pdBack').addEventListener('click', () => closeDetail());
 document.getElementById('pdNext').addEventListener('click', () => { const n = BIZ[(BIZ.indexOf(pdCur) + 1) % BIZ.length]; detail.scrollTo({ top: 0 }); openDetail(n); });
 function openDetail(cfg) {
-  if (CASE_STUDIES[cfg.id]) { location.href = CASE_STUDIES[cfg.id]; return; }   // projects with a full case study open it instead
+  if (CASE_STUDIES[cfg.id]) { rememberReturn(); location.href = CASE_STUDIES[cfg.id]; return; }   // projects with a full case study open it instead
   pdCur = cfg; loadProjectFonts();
   const nx = BIZ[(BIZ.indexOf(cfg) + 1) % BIZ.length];
   document.getElementById('pdNext').innerHTML = `<small>Next project</small>${esc(nx.title)} →`;
@@ -2920,6 +2924,16 @@ for (const cfg of ITEMS) {
   if (!cfg.back) { cfg.backMat.map = tex(drawArt(cfg.art, 'back')); cfg.backMat.needsUpdate = true; }
 }
 window.__walletReady = true;
+// Coming back from a case study: reopen the menu where you left it
+(() => {
+  let r = null; try { r = JSON.parse(sessionStorage.getItem('wcv-return') || 'null'); sessionStorage.removeItem('wcv-return'); } catch (e) {}
+  const nav = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+  if (!r || !r.menu || !nav || nav.type !== 'back_forward') return;
+  setMenu(true);
+  const go = () => menu.scrollTo({ top: r.top, behavior: 'auto' });
+  requestAnimationFrame(go); setTimeout(go, 400); setTimeout(go, 1300);
+})();
+addEventListener('pageshow', (e) => { if (e.persisted) try { sessionStorage.removeItem('wcv-return'); } catch (_) {} });   // restored as it was, nothing to do
 window.__wallet = { state: () => ({ phoneP, phoneTarget, openVal, openTarget, active: !!active }), phoneNow: (step) => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); resetPhoneScreen(); phoneUI.classList.add('on'); if (step) phoneUI.dataset.step = step; }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS, scratchCard, THREE }; // handle for automated checks
 requestAnimationFrame(frame);
 setTimeout(() => $('#veil').classList.add('gone'), 150);

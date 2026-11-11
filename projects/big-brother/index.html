@@ -143,7 +143,7 @@ figcaption{font-size:20px;color:var(--dim);margin-top:8px}
 <header class="top"><div class="wrap">
   <a href="../../" aria-label="Harrison Greener, home"><img src="../../brand/greener-solid-white.svg" alt="Greener" width="110" height="28"></a>
   <span class="rec" aria-hidden="true"><i></i>REC</span>
-  <nav><a class="b g" href="../../">◀ Wallet</a><a class="b" href="https://harrisongreener.github.io/big-brother-inc/" target="_blank" rel="noopener">Enter ▶</a></nav>
+  <nav><a data-back class="b g" href="../../">◀ Wallet</a><a class="b" href="https://harrisongreener.github.io/big-brother-inc/" target="_blank" rel="noopener">Enter ▶</a></nav>
 </div></header>
 
 <div class="hero"><div class="wrap">
@@ -306,7 +306,7 @@ figcaption{font-size:20px;color:var(--dim);margin-top:8px}
   <h2>Big Brother is <em>waiting.</em></h2>
   <p>The demo runs in your browser. The full version runs on your own computer with Ollama.</p>
   <div class="btns"><a class="btn" href="https://harrisongreener.github.io/big-brother-inc/" target="_blank" rel="noopener">Enter the building ▶</a><a class="btn g" href="https://github.com/HarrisonGreener/big-brother-inc" target="_blank" rel="noopener">View the code ▶</a></div>
-  <div class="small"><span><a href="../../">◀ Back to the wallet</a></span><span>Inspired by George Orwell's Nineteen Eighty-Four (1949). An independent fan project; all slogans, dialogue and artwork are original.</span></div>
+  <div class="small"><span><a data-back href="../../">◀ Back to the wallet</a></span><span>Inspired by George Orwell's Nineteen Eighty-Four (1949). An independent fan project; all slogans, dialogue and artwork are original.</span></div>
 </div></footer>
 
 <script>
@@ -324,6 +324,16 @@ figcaption{font-size:20px;color:var(--dim);margin-top:8px}
 (() => {   // the date line: today, in 1984
   const d = new Date(), el = document.querySelector('.det .big');
   if (el) el.innerHTML = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase().replace(',', '') + '<br>1984';
+})();
+</script>
+<script>
+(() => {   // Back goes to wherever you came from: the projects in the menu, or the desk
+  let r = null; try { r = JSON.parse(sessionStorage.getItem('wcv-return') || 'null'); } catch (e) {}
+  const same = document.referrer && new URL(document.referrer).origin === location.origin;
+  document.querySelectorAll('a[data-back]').forEach((a) => {
+    if (r && r.menu) a.textContent = '← All projects';
+    a.addEventListener('click', (e) => { if (same && history.length > 1) { e.preventDefault(); history.back(); } });
+  });
 })();
 </script>
 </body>
