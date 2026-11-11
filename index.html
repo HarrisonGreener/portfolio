@@ -2543,7 +2543,7 @@ const PD_THEMES = {
 function rememberReturn() {
   try { sessionStorage.setItem('wcv-return', JSON.stringify({ menu: !menu.hidden && menu.classList.contains('open'), top: menu.scrollTop })); } catch (e) {}
 }
-const CASE_STUDIES = { stack: 'projects/stack/', 'big-brother': 'projects/big-brother/', fly: 'projects/fly/', brandomizer: 'projects/brandomizer/', quotable: 'projects/quotable/', rolla: 'projects/rolla/', pat: 'projects/pat/' };   // projects with a full case-study page
+const CASE_STUDIES = { stack: 'projects/stack/', 'big-brother': 'projects/big-brother/', fly: 'projects/fly/', brandomizer: 'projects/brandomizer/', quotable: 'projects/quotable/', rolla: 'projects/rolla/', pat: 'projects/pat/', folio: 'projects/folio/' };   // projects with a full case-study page
 let pdFontsIn = false, pdTheme = {};
 function loadProjectFonts() {
   if (pdFontsIn) return; pdFontsIn = true;
