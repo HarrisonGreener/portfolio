@@ -165,7 +165,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
 <body>
 <header class="top"><div class="wrap">
   <a href="../../" aria-label="Harrison Greener, home"><img src="../../brand/greener-solid-white.svg" alt="Greener" width="110" height="28"></a>
-  <nav><a class="b g" href="../../">← The wallet</a><a class="b" href="https://harrisongreener.github.io/stack/" target="_blank" rel="noopener">Open Stack ↗</a></nav>
+  <nav><a data-back class="b g" href="../../">← The wallet</a><a class="b" href="https://harrisongreener.github.io/stack/" target="_blank" rel="noopener">Open Stack ↗</a></nav>
 </div></header>
 
 <div class="hero">
@@ -376,7 +376,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
     <h2>Drop the <em>needle.</em></h2>
     <p>The prototype runs in your browser. On an iPhone, add it to your Home Screen and it opens full screen like a real app.</p>
     <div class="btns"><a class="btn" href="https://harrisongreener.github.io/stack/" target="_blank" rel="noopener">Open Stack ↗</a><a class="btn ghost" href="https://harrisongreener.github.io/stackPitch/" target="_blank" rel="noopener">See the pitch ↗</a><a class="btn ghost" href="https://github.com/HarrisonGreener/stack" target="_blank" rel="noopener">View the code ↗</a></div>
-    <div class="small"><span><a href="../../">← Back to the wallet</a></span><span>Album artwork in screenshots belongs to its artists and labels. Designed and built by Harrison Greener.</span></div>
+    <div class="small"><span><a data-back href="../../">← Back to the wallet</a></span><span>Album artwork in screenshots belongs to its artists and labels. Designed and built by Harrison Greener.</span></div>
   </div>
 </footer>
 <div class="stripe"><i></i><i></i><i></i><i></i></div>
@@ -400,6 +400,16 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
   const box = document.getElementById('lpScreen'), f = document.getElementById('lpFrame');
   const fit = () => { const k = box.clientWidth / 390; f.style.transform = `scale(${k})`; f.style.height = (box.clientHeight / k) + 'px'; };
   addEventListener('resize', fit); fit(); new ResizeObserver(fit).observe(box);
+})();
+</script>
+<script>
+(() => {   // Back goes to wherever you came from: the projects in the menu, or the desk
+  let r = null; try { r = JSON.parse(sessionStorage.getItem('wcv-return') || 'null'); } catch (e) {}
+  const same = document.referrer && new URL(document.referrer).origin === location.origin;
+  document.querySelectorAll('a[data-back]').forEach((a) => {
+    if (r && r.menu) a.textContent = '← All projects';
+    a.addEventListener('click', (e) => { if (same && history.length > 1) { e.preventDefault(); history.back(); } });
+  });
 })();
 </script>
 </body>

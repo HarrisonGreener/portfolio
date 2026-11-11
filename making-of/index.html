@@ -131,7 +131,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
 <body>
 <header class="top"><div class="wrap">
   <a href="../" aria-label="Harrison Greener, home"><img src="../brand/greener-solid-black.svg" alt="Greener" width="120" height="31"></a>
-  <a class="back" href="../">← Back to the wallet</a>
+  <a data-back class="back" href="../">← Back to the wallet</a>
 </div></header>
 
 <div class="hero">
@@ -361,6 +361,16 @@ figcaption{font-size:14px;line-height:1.45;color:var(--ink-soft);margin-top:10px
   document.getElementById('glPrev').onclick = () => go(i - 1);
   document.getElementById('glNext').onclick = () => go(i + 1);
   addEventListener('resize', fit); fit();
+})();
+</script>
+<script>
+(() => {   // Back goes to wherever you came from: the projects in the menu, or the desk
+  let r = null; try { r = JSON.parse(sessionStorage.getItem('wcv-return') || 'null'); } catch (e) {}
+  const same = document.referrer && new URL(document.referrer).origin === location.origin;
+  document.querySelectorAll('a[data-back]').forEach((a) => {
+    if (r && r.menu) a.textContent = '← All projects';
+    a.addEventListener('click', (e) => { if (same && history.length > 1) { e.preventDefault(); history.back(); } });
+  });
 })();
 </script>
 </body>
