@@ -276,7 +276,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mi-me .me-ring{left:-16%;top:-10.4%;width:126%;border:2px solid var(--ink)}
 
 .me-pupil{transition:transform .12s linear}
-@media (max-width:760px),(max-height:520px){.mi-pin{flex-direction:column;align-items:stretch}.mi-me{position:relative;right:auto;top:auto;transform:none;width:min(62vw,300px);margin:40px auto 0}}
+@media (max-width:760px),(max-height:520px){.mi-pin{flex-direction:column;align-items:stretch}.mi-me{display:none}}   /* the drawn portrait is a desktop-only touch */
 /* Projects: a white band that pins and slides the work sideways as you scroll */
 .mp-work{background:var(--paper)}
 .mw-pin{position:sticky;top:0;height:100vh;height:100svh;display:flex;flex-direction:column;justify-content:center;gap:clamp(18px,3.2vh,34px);overflow:hidden}
