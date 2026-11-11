@@ -2522,6 +2522,7 @@ const PD_THEMES = {
   fly:          { bg: '#F4F4F2', ink: '#0A0A0A', hero: '#0A0A0A', heroInk: '#F4F4F2', heroDark: 1, btn: '#D6241C', btnInk: '#FFFFFF', card: '#FFFFFF', display: "'Space Grotesk',sans-serif", hw: 700, ls: '-.03em', body: "'Space Grotesk',sans-serif", r: '0' },
   rolla:        { bg: '#F4F5F2', ink: '#0E0E0E', hero: '#7EE8C3', heroInk: '#0E0E0E', btn: '#0E0E0E', btnInk: '#7EE8C3', card: '#FFFFFF', display: "'Figtree',sans-serif", hw: 800, ls: '-.03em', body: "'Inter',sans-serif" },
 };
+const CASE_STUDIES = { stack: 'projects/stack/' };   // projects with a full case-study page
 let pdFontsIn = false, pdTheme = {};
 function loadProjectFonts() {
   if (pdFontsIn) return; pdFontsIn = true;
@@ -2561,6 +2562,7 @@ function openDetail(cfg) {
   const links = document.getElementById('pdLinks');
   links.innerHTML = pr ? [['Live demo ↗', pr.live], ['View on GitHub ↗', pr.url], ...pr.extra.map(([t, u]) => [t + ' ↗', u])]
     .map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join('') : '<p class="mp-note">Code coming soon.</p>';
+  if (CASE_STUDIES[cfg.id]) links.insertAdjacentHTML('afterbegin', `<a class="pd-case" href="${CASE_STUDIES[cfg.id]}">How I made it →</a>`);   // the full story, on its own page
   document.getElementById('pdGallery').innerHTML = pr ? pr.shots.map(([src, cap, w, h]) => `<figure><img src="${src}" alt="${esc(cap)}" width="${w}" height="${h}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('') : '';
   buildRepo(pr); buildBrand(cfg.id, cfg.title);
   resetReveal(detail); detail.classList.add('enter'); detail.hidden = false; applyTheme(cfg.id); detail.scrollTop = 0; if (pr) pr.cover = cfg.front; buildPreview(pr);
