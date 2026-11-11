@@ -38,7 +38,7 @@ img{max-width:100%;height:auto;display:block}
 .hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:center;padding-top:60px;padding-bottom:60px}
 .kick{font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:#F0A673;margin:0 0 16px}
 .brand{display:flex;align-items:center;gap:14px;margin-bottom:26px}
-.brand svg{width:54px;height:54px}
+
 .brand b{font-weight:800;font-stretch:115%;font-size:36px;letter-spacing:-.02em}
 h1{font-weight:800;font-stretch:118%;font-size:clamp(46px,7.4vw,96px);line-height:.92;letter-spacing:-.035em;margin:0}
 .lede{font-size:clamp(19px,2vw,23px);line-height:1.45;max-width:34ch;margin:24px 0 0;color:rgba(255,255,255,.82)}
@@ -55,6 +55,8 @@ h1{font-weight:800;font-stretch:118%;font-size:clamp(46px,7.4vw,96px);line-heigh
 .ln b{grid-row:1/3;grid-column:2;align-self:center;font-weight:600}
 .tot{display:flex;justify-content:space-between;align-items:baseline;padding-top:12px;margin-top:4px;border-top:2px solid var(--navy);font-weight:800}
 .tot b{color:var(--orange);font-size:30px;font-stretch:112%}
+.qw{display:inline-flex;align-items:baseline;font-family:Archivo,Arial,sans-serif;font-weight:800;font-stretch:112%;letter-spacing:-.03em;line-height:1;white-space:nowrap}
+.qw svg{width:.88em;height:.88em;flex:none;overflow:visible;transform:translateY(.115em);margin-right:-.01em}
 /* sections */
 section{padding:clamp(70px,9vw,120px) 0 0}
 .sec-head{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:baseline;border-top:2px solid var(--navy);padding-top:16px;margin-bottom:32px}
@@ -110,7 +112,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--graphite);margin-top:10px
 .old-lg img{width:78%;height:auto}
 .old-lg{background:#FBF8F4;overflow:hidden}
 .new-lg{display:flex;align-items:center;justify-content:center;gap:14px}
-.new-lg svg{width:clamp(48px,6vw,70px);height:auto}
+
 .new-lg b{font-weight:800;font-stretch:118%;font-size:clamp(36px,4.6vw,58px);color:#0B2742;letter-spacing:-.02em}
 @media (max-width:860px){.ba-logo{grid-template-columns:1fr}.ba-logo .arr{transform:rotate(90deg);justify-self:center}}
 /* guidelines viewer */
@@ -181,7 +183,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--graphite);margin-top:10px
 <div class="hero"><div class="wrap">
   <div>
     <p class="kick">Portfolio project · Launched product</p>
-    <div class="brand"><svg viewBox="12 12 82 82" aria-hidden="true"><defs><mask id="qc" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><line x1="66" y1="66" x2="94" y2="94" stroke="#000" stroke-width="23" stroke-linecap="round"/></mask></defs><g transform="translate(9 9) scale(.82)"><circle cx="47" cy="47" r="33" fill="none" stroke="#fff" stroke-width="15" mask="url(#qc)"/><line x1="66" y1="66" x2="94" y2="94" stroke="#E0702E" stroke-width="15" stroke-linecap="round"/></g></svg><b>Quotable</b></div>
+    <div class="brand"><span class="qw" style="font-size:44px;color:#fff" role="img" aria-label="Quotable"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><mask id="qh" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><line x1="66" y1="66" x2="94" y2="94" stroke="#000" stroke-width="23" stroke-linecap="round"/></mask></defs><circle cx="47" cy="47" r="33" fill="none" stroke="currentColor" stroke-width="15" mask="url(#qh)"/><line x1="66" y1="66" x2="94" y2="94" stroke="#E0702E" stroke-width="15" stroke-linecap="round"/></svg>uotable</span></div>
     <h1>Type the job. Get a priced quote.</h1>
     <p class="lede">AI quoting, invoicing and tax for UK tradespeople. Describe the work, and Quotable lists the materials, prices each one live at UK merchants and works out the labour, ready to send in about a minute.</p>
     <dl class="meta">
@@ -256,7 +258,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--graphite);margin-top:10px
   <div class="ba-logo rv">
     <figure><div class="lg old-lg"><img src="img/old-logo.png" alt="The old Quotable logo: an orange Q and a navy word in Montserrat" width="702" height="190"></div><figcaption><b>Before.</b> An orange Montserrat Q on a navy word: the default look of a hundred SaaS sites.</figcaption></figure>
     <span class="arr" aria-hidden="true">→</span>
-    <figure><div class="lg new-lg"><svg viewBox="12 12 82 82" aria-hidden="true"><defs><mask id="qc3" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><line x1="66" y1="66" x2="94" y2="94" stroke="#000" stroke-width="23" stroke-linecap="round"/></mask></defs><g transform="translate(9 9) scale(.82)"><circle cx="47" cy="47" r="33" fill="none" stroke="#0B2742" stroke-width="15" mask="url(#qc3)"/><line x1="66" y1="66" x2="94" y2="94" stroke="#E0702E" stroke-width="15" stroke-linecap="round"/></g></svg><b>Quotable</b></div><figcaption><b>After.</b> A Q drawn as a tape measure, with the word in wide, heavy Archivo.</figcaption></figure>
+    <figure><div class="lg new-lg"><span class="qw" style="font-size:clamp(40px,5vw,64px);color:#0B2742" role="img" aria-label="Quotable"><svg viewBox="0 0 100 100" aria-hidden="true"><defs><mask id="qn" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><line x1="66" y1="66" x2="94" y2="94" stroke="#000" stroke-width="23" stroke-linecap="round"/></mask></defs><circle cx="47" cy="47" r="33" fill="none" stroke="currentColor" stroke-width="15" mask="url(#qn)"/><line x1="66" y1="66" x2="94" y2="94" stroke="#E0702E" stroke-width="15" stroke-linecap="round"/></svg>uotable</span></div><figcaption><b>After.</b> The Q is drawn as a tape measure and stands in for the first letter, with the rest of the word in wide, heavy Archivo.</figcaption></figure>
   </div>
   <div class="grid2 rv">
     <figure class="shot"><img src="img/old-home.webp" alt="The old Quotable home page: Quoting, Invoicing and Scheduling, Built for Tradespeople, in Montserrat" loading="lazy" width="800" height="500"><figcaption><b>Before:</b> a generic feature headline, centred, with nothing to show what it does</figcaption></figure>
@@ -301,7 +303,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--graphite);margin-top:10px
   <div class="sec-head rv"><span class="no">06</span><h2>The small <em>details</em></h2></div>
   <div class="details">
     <article class="det rv"><div class="pic"><svg class="qmark" viewBox="12 12 82 82" aria-hidden="true"><defs><mask id="qc2" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><line x1="66" y1="66" x2="94" y2="94" stroke="#000" stroke-width="23" stroke-linecap="round"/></mask></defs><g transform="translate(9 9) scale(.82)"><circle cx="47" cy="47" r="33" fill="none" stroke="#0B2742" stroke-width="15" mask="url(#qc2)"/><line x1="66" y1="66" x2="94" y2="94" stroke="#E0702E" stroke-width="15" stroke-linecap="round"/></g></svg></div>
-      <div class="txt"><h3>A Q like a tape measure</h3><p>The Q in the logo is a navy ring with an orange tail, like a tape measure pulled out of its case. The gap between them is cut out, so the mark sits cleanly on paper, cards, the navy sidebar or a photo.</p></div></article>
+      <div class="txt"><h3>A Q like a tape measure</h3><p>The Q in the logo is a navy ring with an orange tail, like a tape measure pulled out of its case. In the wordmark it replaces the letter Q, sitting at cap height with the tail dropping below the line. When the app is loading, the ring draws itself on and the tail pulls out and springs back, like a real tape. The gap between them is cut out, so the mark sits cleanly on paper, cards, the navy sidebar or a photo.</p></div></article>
     <article class="det rv"><div class="pic"><div class="big">LIVE<small>Price checked today</small></div></div>
       <div class="txt"><h3>Real prices, linked on every line</h3><p>Materials are priced from the merchants' own product pages, at Toolstation, Wickes and Travis Perkins, with a link on every line. Your own stock and prices are used first, and anything it couldn't price is marked for you to check rather than guessed.</p></div></article>
     <article class="det rv"><div class="pic"><img src="img/create.webp" alt="" loading="lazy"></div>

@@ -36,6 +36,8 @@ p.lead{font-size:23px;line-height:1.45;max-width:46ch;margin:24px 0 0;color:var(
 .lbl small{display:block;font-weight:400;color:var(--graphite);font-size:15px;margin-top:3px;line-height:1.4}
 .dark .lbl small{color:rgba(255,255,255,.65)}
 .row{display:grid;gap:24px}
+.qw{display:inline-flex;align-items:baseline;font-family:Archivo,Arial,sans-serif;font-weight:800;font-stretch:112%;letter-spacing:-.03em;line-height:1;white-space:nowrap}
+.qw svg{width:.88em;height:.88em;flex:none;overflow:visible;transform:translateY(.115em);margin-right:-.01em}
 .mk{display:inline-flex;align-items:center;gap:22px}
 .mk b{font-weight:800;font-stretch:118%;letter-spacing:-.02em}
 /* cover */
@@ -91,12 +93,13 @@ html.embed{background:transparent;overflow:hidden}html.embed .pg{margin:0}html.e
 <div class="bar"><a href="./">← Quotable case study</a><span><a href="quotable-brand-guidelines.pdf" download style="margin-right:8px">Download PDF</a></span></div>
 
 <svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="qm" viewBox="0 0 100 100" overflow="visible"><mask id="qmk" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><line x1="66" y1="66" x2="94" y2="94" stroke="#000" stroke-width="23" stroke-linecap="round"/></mask><circle cx="47" cy="47" r="33" fill="none" stroke="currentColor" stroke-width="15" mask="url(#qmk)"/><line x1="66" y1="66" x2="94" y2="94" stroke="#E26928" stroke-width="15" stroke-linecap="round"/></symbol>
   <symbol id="q" viewBox="12 12 82 82"><mask id="qm" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><line x1="66" y1="66" x2="94" y2="94" stroke="#000" stroke-width="23" stroke-linecap="round"/></mask><g transform="translate(9 9) scale(.82)"><circle cx="47" cy="47" r="33" fill="none" stroke="var(--ring,#0B2741)" stroke-width="15" mask="url(#qm)"/><line x1="66" y1="66" x2="94" y2="94" stroke="var(--tail,#E26928)" stroke-width="15" stroke-linecap="round"/></g></symbol>
 </defs></svg>
 
 <!-- 1 cover -->
 <section class="pg dark cover">
-  <span class="mk" style="--ring:#fff"><svg width="58" height="58"><use href="#q"/></svg><b style="font-size:40px">Quotable</b></span>
+  <span class="qw" style="font-size:44px;color:#fff" role="img" aria-label="Quotable"><svg aria-hidden="true"><use href="#qm"/></svg>uotable</span>
   <svg class="bigq" viewBox="0 0 100 100" style="--ring:rgba(255,255,255,.1);--tail:#E26928"><use href="#q"/></svg>
   <h1>Brand<br><em>guidelines.</em></h1>
   <p class="meta">Version 2.0 · November 2026 · Quotable Ltd · Designed by Harrison Greener</p>
@@ -139,7 +142,7 @@ html.embed{background:transparent;overflow:hidden}html.embed .pg{margin:0}html.e
   <div class="row" style="grid-template-columns:1fr 70px 1fr;align-items:center;position:absolute;left:96px;right:96px;bottom:110px">
     <div><div class="box" style="height:260px;background:#FBF8F4"><img src="img/old-logo.png" alt="The old Quotable logo" style="width:72%"></div><p class="lbl">Before<small>Montserrat, an orange Q on a navy word.</small></p></div>
     <div style="text-align:center;font-size:44px;font-weight:800;color:var(--orange)">→</div>
-    <div><div class="box" style="height:260px;background:var(--card)"><span class="mk"><svg width="96" height="96"><use href="#q"/></svg><b style="font-size:76px;color:var(--navy)">Quotable</b></span></div><p class="lbl">After<small>Archivo set wide, with the tape-measure Q.</small></p></div>
+    <div><div class="box" style="height:260px;background:var(--card)"><span class="qw" style="font-size:76px;color:var(--navy)" role="img" aria-label="Quotable"><svg aria-hidden="true"><use href="#qm"/></svg>uotable</span></div><p class="lbl">After<small>The tape-measure Q replaces the letter, in wide Archivo.</small></p></div>
   </div>
   <div class="foot"><span><svg><use href="#q"/></svg>The rebrand</span><span>4 / 12</span></div><div class="tape"></div>
 </section>
@@ -162,7 +165,7 @@ html.embed{background:transparent;overflow:hidden}html.embed .pg{margin:0}html.e
   <p class="eyebrow">04 Logo system</p>
   <h2>One mark, <em>three uses.</em></h2>
   <div class="row" style="grid-template-columns:1.6fr 1fr 1fr;margin-top:56px">
-    <div><div class="box" style="height:300px;background:var(--card)"><span class="mk"><svg width="84" height="84"><use href="#q"/></svg><b style="font-size:66px;color:var(--navy)">Quotable</b></span></div><p class="lbl">Lockup<small>The main logo. The Q stands in for the word's first letter.</small></p></div>
+    <div><div class="box" style="height:300px;background:var(--card)"><span class="qw" style="font-size:66px;color:var(--navy)" role="img" aria-label="Quotable"><svg aria-hidden="true"><use href="#qm"/></svg>uotable</span></div><p class="lbl">Lockup<small>The main logo. The mark is the Q: set to cap height, with its tail dropping below the baseline like a real Q.</small></p></div>
     <div><div class="box" style="height:300px;background:var(--card)"><svg width="150" height="150"><use href="#q"/></svg></div><p class="lbl">Q mark<small>App icon, favicon, avatars and the sidebar.</small></p></div>
     <div><div class="box" style="height:300px;background:var(--navy)"><svg width="150" height="150" style="--ring:#fff"><use href="#q"/></svg></div><p class="lbl">Inverse<small>White ring on navy. The tail stays orange.</small></p></div>
   </div>
@@ -175,10 +178,10 @@ html.embed{background:transparent;overflow:hidden}html.embed .pg{margin:0}html.e
   <h2>Room to <em>breathe.</em></h2>
   <p class="lead">Keep clear space of at least <b>x</b> on every side, where x is the thickness of the Q's ring.</p>
   <div style="position:absolute;right:96px;top:110px;width:640px">
-    <div class="box" style="height:300px;background:var(--card);outline:2px dashed rgba(197,87,27,.6);outline-offset:-40px"><span class="mk"><svg width="70" height="70"><use href="#q"/></svg><b style="font-size:56px;color:var(--navy)">Quotable</b></span></div>
+    <div class="box" style="height:300px;background:var(--card);outline:2px dashed rgba(197,87,27,.6);outline-offset:-40px"><span class="qw" style="font-size:56px;color:var(--navy)" role="img" aria-label="Quotable"><svg aria-hidden="true"><use href="#qm"/></svg>uotable</span></div>
   </div>
   <div class="row" style="grid-template-columns:repeat(2,260px);position:absolute;left:96px;bottom:120px">
-    <div style="background:var(--card);border-radius:6px;padding:22px"><span class="mk" style="gap:6px"><svg width="20" height="20"><use href="#q"/></svg><b style="font-size:17px;color:var(--navy)">Quotable</b></span><p class="lbl">Lockup minimum<small>100 px on screen · 25 mm in print</small></p></div>
+    <div style="background:var(--card);border-radius:6px;padding:22px"><span class="qw" style="font-size:17px;color:var(--navy)" role="img" aria-label="Quotable"><svg aria-hidden="true"><use href="#qm"/></svg>uotable</span><p class="lbl">Lockup minimum<small>100 px on screen · 25 mm in print</small></p></div>
     <div style="background:var(--card);border-radius:6px;padding:22px"><svg width="20" height="20"><use href="#q"/></svg><p class="lbl">Q mark minimum<small>16 px on screen · 5 mm in print</small></p></div>
   </div>
   <div class="foot"><span><svg><use href="#q"/></svg>Clear space and sizes</span><span>7 / 12</span></div><div class="tape"></div>
@@ -189,10 +192,10 @@ html.embed{background:transparent;overflow:hidden}html.embed .pg{margin:0}html.e
   <p class="eyebrow">06 Logo on backgrounds</p>
   <h2>The right logo for <em>every surface.</em></h2>
   <div class="row" style="grid-template-columns:repeat(4,1fr);margin-top:60px">
-    <div><div class="box" style="height:220px;background:var(--paper)"><span class="mk" style="gap:10px"><svg width="44" height="44"><use href="#q"/></svg><b style="font-size:34px;color:var(--navy)">Quotable</b></span><span class="ok">✓</span></div><p class="lbl">Plasterboard paper</p></div>
-    <div><div class="box" style="height:220px;background:var(--card)"><span class="mk" style="gap:10px"><svg width="44" height="44"><use href="#q"/></svg><b style="font-size:34px;color:var(--navy)">Quotable</b></span><span class="ok">✓</span></div><p class="lbl">Clean sheet</p></div>
-    <div><div class="box" style="height:220px;background:var(--navy)"><span class="mk" style="gap:10px;--ring:#fff"><svg width="44" height="44"><use href="#q"/></svg><b style="font-size:34px;color:#fff">Quotable</b></span><span class="ok">✓</span></div><p class="lbl">Ink navy</p></div>
-    <div><div class="box" style="height:220px;background:var(--orange)"><span class="mk" style="gap:10px;--ring:var(--navy);--tail:#fff"><svg width="44" height="44"><use href="#q"/></svg><b style="font-size:34px;color:var(--navy)">Quotable</b></span><span class="no">✕</span></div><p class="lbl">Never on orange<small>Orange is for money and actions only.</small></p></div>
+    <div><div class="box" style="height:220px;background:var(--paper)"><span class="qw" style="font-size:34px;color:var(--navy)" role="img" aria-label="Quotable"><svg aria-hidden="true"><use href="#qm"/></svg>uotable</span><span class="ok">✓</span></div><p class="lbl">Plasterboard paper</p></div>
+    <div><div class="box" style="height:220px;background:var(--card)"><span class="qw" style="font-size:34px;color:var(--navy)" role="img" aria-label="Quotable"><svg aria-hidden="true"><use href="#qm"/></svg>uotable</span><span class="ok">✓</span></div><p class="lbl">Clean sheet</p></div>
+    <div><div class="box" style="height:220px;background:var(--navy)"><span class="qw" style="font-size:34px;color:#fff" role="img" aria-label="Quotable"><svg aria-hidden="true"><use href="#qm"/></svg>uotable</span><span class="ok">✓</span></div><p class="lbl">Ink navy</p></div>
+    <div><div class="box" style="height:220px;background:var(--orange)"><span class="qw" style="font-size:34px;color:var(--navy)" role="img" aria-label="Quotable"><svg aria-hidden="true"><use href="#qm"/></svg>uotable</span><span class="no">✕</span></div><p class="lbl">Never on orange<small>Orange is for money and actions only.</small></p></div>
   </div>
   <div class="foot"><span><svg><use href="#q"/></svg>Logo on backgrounds</span><span>8 / 12</span></div><div class="tape"></div>
 </section>
