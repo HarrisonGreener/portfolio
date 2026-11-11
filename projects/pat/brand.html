@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pat brand guidelines · Harrison Greener</title>
+<meta name="description" content="Brand guidelines for Pat, smart networking: the parrot P, the logo system, colour and type.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'DM Sans';src:url("fonts/DMSans.ttf") format("truetype");font-weight:100 1000}
+:root{--navy:#003453;--blue:#2274A4;--yellow:#F9B514;--paper:#FBFBF9;--white:#FFFFFF;--ink:#0F2233;--grey:#5D6B76;--rule:#DCE1E4}
+*{box-sizing:border-box}
+html{background:#c9ced1}
+body{margin:0;font:400 20px/1.45 'DM Sans',Arial,sans-serif;color:var(--ink)}
+@page{size:1600px 900px;margin:0}
+.pg{width:1600px;height:900px;position:relative;overflow:hidden;background:var(--paper);margin:0 auto 40px;padding:80px 96px 0;page-break-after:always;break-after:page}
+section.pg:last-of-type{break-after:auto;page-break-after:auto}
+@media print{html{background:none}.pg{margin:0}.bar{display:none!important}}
+.pg.dark{background:var(--navy);color:#fff}
+.pg.blue{background:var(--blue);color:#fff}
+.eyebrow{font-size:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--blue);margin:0 0 14px}
+.dark .eyebrow,.blue .eyebrow{color:var(--yellow)}
+h1,h2{font-weight:800;letter-spacing:-.035em;line-height:.95;margin:0;color:var(--navy)}
+.dark h1,.dark h2,.blue h1,.blue h2{color:#fff}
+h2{font-size:78px}
+h2 em,h1 em{font-style:normal;color:var(--blue)}
+.dark h2 em,.dark h1 em,.blue h2 em{color:var(--yellow)}
+p.lead{font-size:23px;line-height:1.45;max-width:46ch;margin:24px 0 0;color:var(--grey)}
+.dark p.lead,.blue p.lead{color:rgba(255,255,255,.78)}
+.foot{position:absolute;left:96px;right:96px;bottom:40px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:var(--grey)}
+.dark .foot,.blue .foot{color:rgba(255,255,255,.6)}
+.foot img{height:22px;width:auto;vertical-align:-6px;margin-right:10px}
+/* the stripe from the business card */
+.stripe{position:absolute;left:0;right:0;bottom:0;height:12px;display:flex}
+.stripe i{flex:1}.stripe i:nth-child(1){background:var(--navy)}.stripe i:nth-child(2){background:var(--blue)}.stripe i:nth-child(3){background:var(--yellow)}
+.vstripe{position:absolute;top:0;bottom:0;right:120px;width:46px;display:flex;flex-direction:column}
+.vstripe i{flex:1}.vstripe i:nth-child(1){background:var(--navy)}.vstripe i:nth-child(2){background:var(--blue)}.vstripe i:nth-child(3){background:var(--yellow)}
+.dark .vstripe i:nth-child(1){background:#0B4A72}
+/* single-colour logo, drawn through a mask so it takes any colour */
+.mono{display:block;-webkit-mask:var(--src) center/contain no-repeat;mask:var(--src) center/contain no-repeat;background:var(--c,#fff)}
+.box{border-radius:14px;display:grid;place-items:center;position:relative}
+.lbl{font-size:16px;font-weight:700;margin-top:14px}
+.lbl small{display:block;font-weight:400;color:var(--grey);font-size:15px;margin-top:3px;line-height:1.4}
+.dark .lbl small{color:rgba(255,255,255,.65)}
+/* cover */
+.cover .bigp{position:absolute;right:250px;top:96px;height:700px}
+.cover h1{font-size:150px;margin-top:190px}
+.cover .meta{margin-top:30px;font-size:17px;color:rgba(255,255,255,.6)}
+.toc{display:grid;grid-template-columns:repeat(2,1fr);gap:0 64px;margin-top:60px;max-width:1100px}
+.toc div{display:flex;gap:22px;padding:16px 0;border-bottom:1px solid var(--rule);font-size:24px;font-weight:600}
+.toc b{color:var(--blue);font-size:16px;width:28px;padding-top:6px}
+.vals{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;position:absolute;left:96px;right:96px;bottom:110px}
+.vals div{background:rgba(255,255,255,.07);border-radius:14px;padding:24px;border-top:4px solid var(--yellow)}
+.vals b{display:block;font-size:24px;margin-bottom:8px}
+.vals span{font-size:17px;line-height:1.45;color:rgba(255,255,255,.78)}
+.flip{display:flex;align-items:center;gap:40px;margin-top:54px;font-weight:800;font-size:120px;letter-spacing:-.04em;line-height:1}
+.flip .t{color:rgba(255,255,255,.35)}.flip .p{color:var(--yellow)}
+.flip .arr{font-size:60px;color:#fff;font-weight:400}
+.anat{display:grid;grid-template-columns:560px 1fr;gap:70px;margin-top:40px;align-items:center}
+.anat .fig{position:relative;height:560px;background:#fff;border-radius:18px;display:grid;place-items:center;box-shadow:0 1px 0 rgba(0,0,0,.05),0 2px 6px rgba(0,0,0,.08)}
+.anat .fig img{height:470px}
+.anat .tag{position:absolute;font-size:15px;font-weight:700;background:var(--navy);color:#fff;padding:6px 12px;border-radius:999px;white-space:nowrap}
+.anat ol{margin:0;padding:0;list-style:none;counter-reset:n}
+.anat li{counter-increment:n;position:relative;padding:0 0 24px 56px;font-size:19px;line-height:1.45;color:var(--grey)}
+.anat li::before{content:counter(n);position:absolute;left:0;top:-2px;width:36px;height:36px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px}
+.anat li b{display:block;color:var(--ink);font-size:21px}
+.sw{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin-top:48px}
+.sw .c{height:330px;border-radius:14px;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;font-size:15px;line-height:1.55;box-shadow:0 1px 0 rgba(0,0,0,.05),0 2px 6px rgba(0,0,0,.08)}
+.sw .c b{font-size:23px}
+.bal{display:flex;height:56px;border-radius:12px;overflow:hidden;margin-top:26px;font-size:15px;font-weight:700}
+.bal div{display:flex;align-items:center;padding:0 16px}
+.dos{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;margin-top:40px}
+.dos .box{height:250px;background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.05),0 2px 6px rgba(0,0,0,.08)}
+.no{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:17px;font-weight:800;color:#fff;background:#B3261E}
+.card{width:620px;aspect-ratio:1002/637;border-radius:16px;overflow:hidden;box-shadow:0 2px 4px rgba(0,0,0,.1),0 26px 50px rgba(0,0,0,.18)}
+.card img{width:100%;height:100%;object-fit:cover}
+.bar{position:relative;display:flex;justify-content:space-between;align-items:center;max-width:1600px;margin:0 auto 24px;padding:14px 0;font:700 15px 'DM Sans',Arial,sans-serif}
+.bar a{all:unset;cursor:pointer;background:var(--navy);color:#fff;padding:10px 16px;border-radius:999px}
+html.embed{background:transparent;overflow:hidden}html.embed .pg{margin:0}html.embed .bar{display:none}
+</style>
+<script>if (/[?&]embed/.test(location.search)) document.documentElement.classList.add('embed');</script>
+</head>
+<body>
+<div class="bar"><a href="./">← Pat case study</a><a href="pat-brand-guidelines.pdf" download>Download PDF</a></div>
+
+<!-- 1 cover -->
+<section class="pg dark cover">
+  <img src="img/pat-wordmark.svg" alt="Pat" style="height:70px">
+  <img class="bigp" src="img/pat-mark.svg" alt="">
+  <h1>Brand<br><em>guidelines.</em></h1>
+  <p class="meta">Version 1.0 · November 2026 · Pat, smart networking · Designed by Harrison Greener</p>
+  <div class="stripe"><i></i><i></i><i></i></div>
+</section>
+
+<!-- 2 contents -->
+<section class="pg">
+  <p class="eyebrow">Contents</p>
+  <h2>What's <em>inside.</em></h2>
+  <div class="toc">
+    <div><b>01</b>The idea</div><div><b>05</b>Clear space and misuse</div>
+    <div><b>02</b>The name</div><div><b>06</b>Colour</div>
+    <div><b>03</b>The parrot P</div><div><b>07</b>Typography</div>
+    <div><b>04</b>Logo versions</div><div><b>08</b>In use</div>
+  </div>
+  <div class="foot"><span><img src="img/pat-mark.svg" alt="">Contents</span><span>2 / 10</span></div><div class="stripe"><i></i><i></i><i></i></div>
+</section>
+
+<!-- 3 idea -->
+<section class="pg dark">
+  <p class="eyebrow">01 The idea</p>
+  <h2>Bring networking<br><em>back in person.</em></h2>
+  <p class="lead">Most networking happens online now. That has its upsides, but it misses the moment of actually meeting someone. Pat joins the two: you meet in person, tap, and the connection lives on your phone, kept apart from your personal contacts.</p>
+  <div class="vals">
+    <div><b>Physical first</b><span>The connection starts with a handshake and a tap, not a friend request.</span></div>
+    <div><b>One tap</b><span>No app needed on their side. If they don't have Pat, it opens in the browser.</span></div>
+    <div><b>Kept apart</b><span>Business contacts and your trusted trades, separate from friends and family.</span></div>
+    <div><b>Friendly</b><span>Bright, warm and a little bit cheeky. Networking shouldn't feel stiff.</span></div>
+  </div>
+  <div class="foot"><span><img src="img/pat-mark.svg" alt="">The idea</span><span>3 / 10</span></div><div class="stripe"><i></i><i></i><i></i></div>
+</section>
+
+<!-- 4 name -->
+<section class="pg blue">
+  <p class="eyebrow">02 The name</p>
+  <h2>Pat is tap,<br><em>backwards.</em></h2>
+  <div class="flip"><span class="t">TAP</span><span class="arr">→</span><span class="p">PAT</span></div>
+  <p class="lead" style="margin-top:44px">Both words are the same gesture: you tap, or pat, your card on someone's phone to make the connection. The name is the action, read either way round.</p>
+  <div class="foot"><span><img src="img/pat-mark.svg" alt="" style="filter:brightness(0) invert(1)">The name</span><span>4 / 10</span></div><div class="stripe"><i></i><i></i><i></i></div>
+</section>
+
+<!-- 5 parrot P -->
+<section class="pg">
+  <p class="eyebrow">03 The parrot P</p>
+  <h2>A parrot that's <em>also a P.</em></h2>
+  <div class="anat">
+    <div class="fig"><img src="img/pat-mark.svg" alt="The Pat parrot mark">
+      <span class="tag" style="left:24px;top:330px">Body = stem</span>
+      <span class="tag" style="left:200px;top:36px">Face = counter</span>
+      <span class="tag" style="right:22px;top:250px">Beak = bowl</span>
+    </div>
+    <ol>
+      <li><b>Hand-drawn</b>The mark was drawn by hand, then made from a few flat shapes in four colours.</li>
+      <li><b>The body is the stem</b>The long blue body forms the upright of the P.</li>
+      <li><b>The face is the counter</b>The white face, with its single navy eye, is the hole in the letter.</li>
+      <li><b>The beak is the bowl</b>The yellow beak closes the curve of the P.</li>
+      <li><b>A happy accident</b>Parrots repeat what they hear, which is exactly what Pat does with your details. That one wasn't planned.</li>
+    </ol>
+  </div>
+  <div class="foot"><span><img src="img/pat-mark.svg" alt="">The parrot P</span><span>5 / 10</span></div><div class="stripe"><i></i><i></i><i></i></div>
+</section>
+
+<!-- 6 versions -->
+<section class="pg">
+  <p class="eyebrow">04 Logo versions</p>
+  <h2>Three versions, <em>one parrot.</em></h2>
+  <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:20px;margin-top:44px">
+    <div><div class="box" style="height:240px;background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.05),0 2px 6px rgba(0,0,0,.08)"><img src="img/pat-logo.svg" alt="" style="height:180px"></div><p class="lbl">Primary lockup<small>The parrot with the wordmark. Use it wherever there's room.</small></p></div>
+    <div><div class="box" style="height:240px;background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.05),0 2px 6px rgba(0,0,0,.08)"><img src="img/pat-mark.svg" alt="" style="height:180px"></div><p class="lbl">The mark<small>App icon, avatar, favicon. Anywhere small.</small></p></div>
+    <div><div class="box" style="height:240px;background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.05),0 2px 6px rgba(0,0,0,.08)"><img src="img/pat-wordmark.svg" alt="" style="width:220px"></div><p class="lbl">The wordmark<small>Hand-lettered, yellow in a blue outline. Where the parrot is already nearby.</small></p></div>
+  </div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:22px">
+    <div class="box" style="height:150px;background:var(--navy)"><img src="img/pat-logo.svg" alt="" style="height:110px"></div>
+    <div class="box" style="height:150px;background:var(--blue)"><span class="mono" style="--src:url(img/pat-logo-mono.svg);--c:#fff;width:120px;height:110px"></span></div>
+    <div class="box" style="height:150px;background:var(--yellow)"><span class="mono" style="--src:url(img/pat-logo-mono.svg);--c:var(--navy);width:120px;height:110px"></span></div>
+    <div class="box" style="height:150px;background:#fff;box-shadow:0 1px 0 rgba(0,0,0,.05),0 2px 6px rgba(0,0,0,.08)"><span class="mono" style="--src:url(img/pat-logo-mono.svg);--c:var(--navy);width:120px;height:110px"></span></div>
+  </div>
+  <p class="lbl" style="margin-top:12px">On colour<small>Full colour on paper and navy. On blue or yellow, use a single colour: white on blue, navy on yellow. Navy alone for one-colour print.</small></p>
+  <div class="foot"><span><img src="img/pat-mark.svg" alt="">Logo versions</span><span>6 / 10</span></div><div class="stripe"><i></i><i></i><i></i></div>
+</section>
+
+<!-- 7 clear space + misuse -->
+<section class="pg">
+  <p class="eyebrow">05 Clear space and misuse</p>
+  <h2>Give it <em>room to fly.</em></h2>
+  <p class="lead">Keep clear space around the logo equal to the width of the beak on every side. Don't use the mark smaller than 16px on screen or 8mm in print, and the full lockup smaller than 40px or 18mm.</p>
+  <div class="dos">
+    <div><div class="box"><img src="img/pat-logo.svg" alt="" style="height:150px;transform:scaleX(1.45)"><span class="no">✕</span></div><p class="lbl">Don't stretch it</p></div>
+    <div><div class="box"><img src="img/pat-logo.svg" alt="" style="height:150px;filter:hue-rotate(150deg)"><span class="no">✕</span></div><p class="lbl">Don't recolour it</p></div>
+    <div><div class="box"><img src="img/pat-logo.svg" alt="" style="height:150px;transform:rotate(-22deg)"><span class="no">✕</span></div><p class="lbl">Don't rotate it</p></div>
+    <div><div class="box" style="background:var(--blue)"><img src="img/pat-logo.svg" alt="" style="height:150px"><span class="no">✕</span></div><p class="lbl">Don't put full colour on blue</p></div>
+  </div>
+  <div class="foot"><span><img src="img/pat-mark.svg" alt="">Clear space and misuse</span><span>7 / 10</span></div><div class="stripe"><i></i><i></i><i></i></div>
+</section>
+
+<!-- 8 colour -->
+<section class="pg">
+  <p class="eyebrow">06 Colour</p>
+  <h2>Taken from <em>the parrot.</em></h2>
+  <div class="sw">
+    <div class="c" style="background:var(--blue);color:#fff"><b>Parrot Blue</b>#2274A4<br>RGB 34 116 164</div>
+    <div class="c" style="background:var(--yellow);color:var(--navy)"><b>Beak Yellow</b>#F9B514<br>RGB 249 181 20</div>
+    <div class="c" style="background:var(--navy);color:#fff"><b>Eye Navy</b>#003453<br>RGB 0 52 83</div>
+    <div class="c" style="background:#fff;color:var(--navy)"><b>Face White</b>#FFFFFF<br>RGB 255 255 255</div>
+    <div class="c" style="background:var(--paper);color:var(--navy)"><b>Card Paper</b>#FBFBF9<br>RGB 251 251 249</div>
+  </div>
+  <div class="bal"><div style="flex:44;background:var(--paper);box-shadow:inset 0 0 0 1px var(--rule)">Paper 44%</div><div style="flex:26;background:var(--blue);color:#fff">Blue 26%</div><div style="flex:18;background:var(--navy);color:#fff">Navy 18%</div><div style="flex:12;background:var(--yellow)">Yellow 12%</div></div>
+  <p class="lbl" style="margin-top:14px">Balance<small>Mostly paper and blue, navy for text, yellow saved for the moment that matters: the beak, the wordmark and the tap.</small></p>
+  <div class="foot"><span><img src="img/pat-mark.svg" alt="">Colour</span><span>8 / 10</span></div><div class="stripe"><i></i><i></i><i></i></div>
+</section>
+
+<!-- 9 type -->
+<section class="pg dark">
+  <p class="eyebrow">07 Typography</p>
+  <h2>Hand-lettered logo,<br><em>clean everything else.</em></h2>
+  <div style="display:grid;grid-template-columns:1fr 1.2fr;gap:56px;margin-top:44px">
+    <div style="background:rgba(255,255,255,.06);border-radius:14px;padding:30px">
+      <img src="img/pat-wordmark.svg" alt="" style="height:120px">
+      <p style="font-size:16px;color:rgba(255,255,255,.75);margin:18px 0 0;line-height:1.55">The wordmark is drawn, not typed. Never recreate it in a font, and don't set other words in its style.</p>
+    </div>
+    <div>
+      <p style="font-size:16px;color:var(--yellow);font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin:0 0 10px">DM Sans, for everything else</p>
+      <div style="font-weight:800;font-size:64px;letter-spacing:-.03em;line-height:1">Smart networking.</div>
+      <div style="font-weight:700;font-size:34px;margin-top:18px">Tap to connect.</div>
+      <div style="font-weight:400;font-size:22px;margin-top:16px;color:rgba(255,255,255,.78);max-width:34ch">Body copy is set in DM Sans regular, in sentence case, with plenty of space around it.</div>
+      <div style="font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase;margin-top:20px;color:rgba(255,255,255,.6)">Labels · Bold · Tracked out</div>
+    </div>
+  </div>
+  <div class="foot"><span><img src="img/pat-mark.svg" alt="">Typography</span><span>9 / 10</span></div><div class="stripe"><i></i><i></i><i></i></div>
+</section>
+
+<!-- 10 in use -->
+<section class="pg">
+  <p class="eyebrow">08 In use</p>
+  <h2>The <em>business card.</em></h2>
+  <p class="lead">The card is the brand in one object: the lockup on paper, "Smart Networking" in DM Sans, and the navy, blue and yellow stripe down the edge.</p>
+  <div style="display:flex;gap:40px;margin-top:40px">
+    <div class="card"><img src="../../assets/cards/pat-front.jpg" alt="The front of the Pat business card"></div>
+    <div class="card"><img src="../../assets/cards/pat-back.jpg" alt="The back of the Pat business card"></div>
+  </div>
+  <div class="foot"><span><img src="img/pat-mark.svg" alt="">In use</span><span>10 / 10</span></div><div class="stripe"><i></i><i></i><i></i></div>
+</section>
+</body>
+</html>

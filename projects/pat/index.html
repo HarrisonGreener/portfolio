@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pat: smart networking · Harrison Greener</title>
+<meta name="description" content="Pat by Harrison Greener: a smart networking concept that brings networking back in person. Tap an NFC card on someone's phone to connect. The idea, the name, the parrot P and the brand guidelines.">
+<link rel="canonical" href="https://harrisongreener.co.uk/projects/pat/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Pat · Smart networking">
+<meta property="og:description" content="Pat is tap, backwards. A concept for bringing networking back in person, and a parrot that's also a P.">
+<meta property="og:image" content="https://harrisongreener.co.uk/assets/cards/pat-front.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Harrison Greener">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'DM Sans';src:url("fonts/DMSans.ttf") format("truetype");font-weight:100 1000}
+:root{--navy:#003453;--blue:#2274A4;--yellow:#F9B514;--paper:#FBFBF9;--ink:#0F2233;--grey:#5D6B76;--line:#DCE1E4;--w:1180px;--g:clamp(16px,4vw,48px);
+  --hand:image-set(url("../../assets/cursor/hand-point.png") 1x,url("../../assets/cursor/hand-point@2x.png") 2x) 9 1,url("../../assets/cursor/hand-point.png") 9 1,auto}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 'DM Sans',system-ui,sans-serif;cursor:var(--hand);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a,button{cursor:var(--hand);color:inherit}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 var(--g)}
+.stripe{display:flex;height:10px}.stripe i{flex:1}.stripe i:nth-child(1){background:var(--navy)}.stripe i:nth-child(2){background:var(--blue)}.stripe i:nth-child(3){background:var(--yellow)}
+.top{position:sticky;top:0;z-index:5;background:var(--navy);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.top img{height:20px;width:auto}
+.top a.b{font-weight:700;font-size:14px;text-decoration:none;padding:9px 16px;border-radius:999px;background:var(--yellow);color:var(--navy)}
+/* hero */
+.hero{background:var(--navy);color:#fff;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;padding-top:64px;padding-bottom:64px}
+.kick{font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--yellow);margin:0 0 18px}
+h1{margin:0;font-weight:800;letter-spacing:-.04em;font-size:clamp(52px,8vw,112px);line-height:.95}
+h1 em{font-style:normal;color:var(--yellow)}
+.lede{font-size:clamp(19px,2vw,24px);line-height:1.4;max-width:34ch;margin:26px 0 0;color:rgba(255,255,255,.82)}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px;margin:40px 0 0;padding-top:20px;border-top:2px solid rgba(255,255,255,.2)}
+.meta dt{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--yellow)}
+.meta dd{margin:4px 0 0;font-weight:600;font-size:16px;line-height:1.35}
+.hero-logo{justify-self:center;width:min(380px,80%)}
+/* sections */
+main{padding-top:20px}
+section{padding:clamp(70px,9vw,120px) 0 0}
+.sec-head{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:baseline;border-top:3px solid var(--navy);padding-top:18px;margin-bottom:34px}
+.no{font-weight:800;font-size:15px;letter-spacing:.06em;color:var(--blue)}
+h2{font-weight:800;font-size:clamp(34px,5vw,62px);line-height:.98;letter-spacing:-.035em;margin:0;color:var(--navy)}
+h2 em{font-style:normal;color:var(--blue)}
+.cols{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px}
+.prose{max-width:66ch}.prose p{margin:0 0 1.1em}
+.pull{font-weight:800;font-size:clamp(26px,3.2vw,40px);line-height:1.15;letter-spacing:-.025em;color:var(--navy);max-width:24ch;margin:6px 0 34px}
+.pull mark{background:linear-gradient(transparent 60%,var(--yellow) 60% 92%,transparent 92%);color:inherit}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:36px 0 0}
+.step{background:#fff;border:1px solid var(--line);border-radius:18px;padding:24px}
+.step i{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:var(--blue);color:#fff;font:800 18px 'DM Sans',sans-serif;font-style:normal;margin-bottom:14px}
+.step:nth-child(2) i{background:var(--yellow);color:var(--navy)}.step:nth-child(3) i{background:var(--navy)}
+.step b{display:block;font-size:21px;font-weight:800;letter-spacing:-.02em;color:var(--navy);margin-bottom:6px}
+.step p{margin:0;font-size:16px;line-height:1.55;color:var(--grey)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:16px 0 0}
+.two div{border-radius:18px;padding:26px}
+.two span{display:block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:6px}
+.two b{display:block;font-size:24px;font-weight:800;letter-spacing:-.02em;margin-bottom:8px}
+.two p{margin:0;font-size:16px;line-height:1.55}
+/* name */
+.flip{display:flex;align-items:center;gap:clamp(16px,3vw,40px);font-weight:800;font-size:clamp(64px,11vw,150px);letter-spacing:-.04em;line-height:1;margin:10px 0 0;background:var(--blue);color:#fff;border-radius:22px;padding:clamp(28px,5vw,56px)}
+.flip .t{color:rgba(255,255,255,.4)}.flip .p{color:var(--yellow)}.flip .arr{font-weight:400;font-size:.45em}
+/* parrot */
+.anat{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:40px;align-items:center;margin:36px 0 0}
+.anat .fig{position:relative;background:#fff;border:1px solid var(--line);border-radius:22px;padding:40px;display:grid;place-items:center}
+.anat .fig img{width:min(300px,80%)}
+.anat .tag{position:absolute;font-size:13px;font-weight:700;background:var(--navy);color:#fff;padding:5px 11px;border-radius:999px;white-space:nowrap}
+.anat ol{margin:0;padding:0;list-style:none;counter-reset:n}
+.anat li{counter-increment:n;position:relative;padding:0 0 20px 50px;font-size:16.5px;line-height:1.5;color:var(--grey)}
+.anat li::before{content:counter(n);position:absolute;left:0;top:-2px;width:34px;height:34px;border-radius:50%;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:15px}
+.anat li b{display:block;color:var(--navy);font-size:19px}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin:36px 0 0}
+.cards img{border-radius:14px;box-shadow:0 2px 4px rgba(0,0,0,.08),0 20px 40px rgba(0,52,83,.14)}
+figcaption{font-size:14px;color:var(--grey);margin-top:10px}
+.cards figure{margin:0}
+/* viewer */
+.viewer{margin:34px 0 0}
+.vscreen{position:relative;aspect-ratio:16/9;overflow:hidden;border-radius:14px;background:var(--navy);box-shadow:0 2px 4px rgba(0,0,0,.08),0 20px 40px rgba(0,52,83,.14)}
+.vscreen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;pointer-events:none}
+.vbar{display:flex;align-items:center;gap:14px;margin-top:16px;font-weight:700;flex-wrap:wrap}
+.vbar button{all:unset;cursor:var(--hand);width:46px;height:46px;border-radius:50%;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:20px}
+.vbar span{min-width:70px;text-align:center}
+.vbar a:first-of-type{margin-left:auto}
+.vbar a{font-size:15px}
+/* end */
+.end{background:var(--navy);color:#fff;margin-top:clamp(80px,10vw,140px);padding:clamp(60px,9vw,110px) 0 34px}
+.end h2{color:#fff;max-width:16ch}.end h2 em{color:var(--yellow)}
+.end p{color:rgba(255,255,255,.75);max-width:54ch}
+.btns{display:flex;gap:12px;flex-wrap:wrap;margin:28px 0 0}
+.btn{font-weight:700;text-decoration:none;padding:13px 22px;border-radius:999px;background:var(--yellow);color:var(--navy)}
+.btn.ghost{background:transparent;color:#fff;box-shadow:inset 0 0 0 2px rgba(255,255,255,.4)}
+.small{margin-top:64px;padding-top:20px;border-top:1px solid rgba(255,255,255,.15);font-size:14px;color:rgba(255,255,255,.6);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.small a{color:inherit}
+.rv{opacity:0;transform:translateY(28px);transition:opacity .9s ease,transform 1s cubic-bezier(.16,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:1fr}.hero-logo{width:min(240px,60%)}
+  .sec-head,.cols{grid-template-columns:1fr}.cols>.spacer{display:none}
+  .steps{grid-template-columns:1fr}.two,.anat,.cards{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="../../" aria-label="Harrison Greener, home"><img src="../../brand/greener-solid-white.svg" alt="Greener" width="110" height="28"></a>
+  <a data-back class="b" href="../../">← The wallet</a>
+</div></header>
+
+<div class="hero">
+  <div class="wrap">
+    <div>
+      <p class="kick">Portfolio project · Brand concept</p>
+      <h1>Tap. Pat.<br><em>Connected.</em></h1>
+      <p class="lede">Pat is a smart networking concept that brings networking back in person. Tap your card on someone's phone and you're connected. This is the idea, the name and the brand.</p>
+      <dl class="meta">
+        <div><dt>What</dt><dd>Brand identity and product concept</dd></div>
+        <div><dt>My role</dt><dd>Idea, name, logo and brand</dd></div>
+        <div><dt>Made with</dt><dd>Hand drawing, then vector</dd></div>
+        <div><dt>Status</dt><dd>Concept</dd></div>
+      </dl>
+    </div>
+    <img class="hero-logo" src="img/pat-logo.svg" alt="The Pat logo: a parrot that's also a P, with the Pat wordmark" width="480" height="455">
+  </div>
+  <div class="stripe"><i></i><i></i><i></i></div>
+</div>
+
+<main>
+<section id="idea"><div class="wrap">
+  <div class="sec-head rv"><span class="no">01</span><h2>Why I <em>made it</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p class="pull">“People don't network in person much these days. Pat is about bringing <mark>physical networking</mark> back.”</p>
+    <p>Most networking happens online now. That has real upsides, but it misses the moment of actually meeting someone: the handshake, the conversation, remembering where you met. Business cards used to cover that, but they end up in a drawer, and a number typed into your phone gets lost among friends and family.</p>
+    <p>Pat merges the two worlds. You meet in person, tap, and the connection lives on your phone, ready to use. The physical moment comes first, and the digital side keeps hold of it.</p>
+  </div></div>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <div class="sec-head rv"><span class="no">02</span><h2>How it <em>works</em></h2></div>
+  <div class="steps rv">
+    <div class="step"><i>1</i><b>Tap</b><p>Tap your Pat card on someone's phone. An NFC chip does the rest.</p></div>
+    <div class="step"><i>2</i><b>Connect</b><p>Your connection page opens: website, phone number and socials in one place. If they have the Pat app it opens there; if not, in the browser.</p></div>
+    <div class="step"><i>3</i><b>Keep</b><p>It's saved in Pat's own library on your phone, kept apart from your personal contacts.</p></div>
+  </div>
+  <div class="two rv">
+    <div style="background:var(--blue);color:#fff"><span style="color:var(--yellow)">For businesses</span><b>Your business card</b><p>Every detail people need, always up to date, handed over with a tap instead of a bit of card.</p></div>
+    <div style="background:var(--yellow);color:var(--navy)"><span>For everyone else</span><b>Your trusted trades</b><p>Keep your plumber, electrician and decorator in one place, not lost in your phone's contacts. Down the line, Pat would let you search for people by trade.</p></div>
+  </div>
+</div></section>
+
+<section id="name"><div class="wrap">
+  <div class="sec-head rv"><span class="no">03</span><h2>The <em>name</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>Pat is tap, backwards. Both words mean the same gesture: you tap, or pat, your card on someone's phone to make the connection. The name is the action, whichever way round you read it.</p>
+  </div></div>
+  <div class="flip rv" aria-label="TAP becomes PAT"><span class="t">TAP</span><span class="arr">→</span><span class="p">PAT</span></div>
+</div></section>
+
+<section id="parrot"><div class="wrap">
+  <div class="sec-head rv"><span class="no">04</span><h2>A parrot that's <em>also a P</em></h2></div>
+  <div class="anat rv">
+    <div class="fig"><img src="img/pat-mark.svg" alt="The Pat parrot mark" width="300" height="500">
+      <span class="tag" style="left:8%;top:62%">Body = stem</span>
+      <span class="tag" style="left:30%;top:6%">Face = counter</span>
+      <span class="tag" style="right:6%;top:44%">Beak = bowl</span>
+    </div>
+    <ol>
+      <li><b>Drawn by hand</b>The logo started as my own drawing of a parrot, then became a few flat shapes in four colours.</li>
+      <li><b>The body is the stem</b>The long blue body forms the upright of the P.</li>
+      <li><b>The face is the counter</b>The white face, with its one navy eye, is the hole in the letter.</li>
+      <li><b>The beak is the bowl</b>The yellow beak closes the curve.</li>
+      <li><b>A happy accident</b>It only clicked later that parrots repeat what they hear, which is exactly what Pat does with your details.</li>
+    </ol>
+  </div>
+  <div class="cards rv">
+    <figure><img src="../../assets/cards/pat-front.jpg" alt="The front of the Pat business card" loading="lazy" width="1002" height="637"><figcaption>The business card: the lockup and "Smart Networking"</figcaption></figure>
+    <figure><img src="../../assets/cards/pat-back.jpg" alt="The back of the Pat business card" loading="lazy" width="1002" height="637"><figcaption>The back, with the navy, blue and yellow stripe</figcaption></figure>
+  </div>
+</div></section>
+
+<section id="guide"><div class="wrap">
+  <div class="sec-head rv"><span class="no">05</span><h2>Brand <em>guidelines</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv"><p>A short brand book pulls it together: the idea, the name, the parrot P, the logo versions, clear space, colour, type and the card.</p></div></div>
+  <div class="viewer rv">
+    <div class="vscreen"><iframe id="pbFrame" src="brand.html?embed" title="Pat brand guidelines" width="1600" height="900" scrolling="no" loading="lazy"></iframe></div>
+    <div class="vbar"><button type="button" id="pbPrev" aria-label="Previous page">←</button><span id="pbNum">1 / 10</span><button type="button" id="pbNext" aria-label="Next page">→</button><a href="brand.html">Open full size ↗</a><a href="pat-brand-guidelines.pdf" download>Download PDF ↓</a></div>
+  </div>
+</div></section>
+</main>
+
+<footer class="end">
+  <div class="wrap">
+    <h2>Meet in person. <em>Keep in touch.</em></h2>
+    <p>Pat is a concept, shown here as a brand: the idea, the name and the parrot.</p>
+    <div class="btns"><a class="btn" href="pat-brand-guidelines.pdf" download>Download the brand guidelines ↓</a><a class="btn ghost" data-back href="../../">Back to the wallet</a></div>
+    <div class="small"><span><a data-back href="../../">← Back to the wallet</a></span><span>Designed by Harrison Greener.</span></div>
+  </div>
+</footer>
+<div class="stripe"><i></i><i></i><i></i></div>
+
+<script>
+(() => {
+  const els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  els.forEach((e) => io.observe(e));
+})();
+(() => {   // the brand book, one page at a time
+  const f = document.getElementById('pbFrame'), box = f.parentElement, num = document.getElementById('pbNum'); let i = 0, n = 10;
+  const fit = () => { f.style.transform = `scale(${box.clientWidth / 1600})`; };
+  const go = (k) => { i = (k + n) % n; num.textContent = `${i + 1} / ${n}`; try { f.contentWindow.scrollTo(0, i * 900); } catch (e) {} };
+  f.addEventListener('load', () => { try { n = f.contentDocument.querySelectorAll('.pg').length || n; } catch (e) {} go(i); });
+  document.getElementById('pbPrev').onclick = () => go(i - 1); document.getElementById('pbNext').onclick = () => go(i + 1);
+  addEventListener('resize', fit); fit(); new ResizeObserver(fit).observe(box);
+})();
+(() => {   // Back goes to wherever you came from: the projects in the menu, or the desk
+  let r = null; try { r = JSON.parse(sessionStorage.getItem('wcv-return') || 'null'); } catch (e) {}
+  const same = document.referrer && new URL(document.referrer).origin === location.origin;
+  document.querySelectorAll('a[data-back]').forEach((a) => {
+    if (r && r.menu && !a.classList.contains('btn')) a.textContent = '← All projects';
+    a.addEventListener('click', (e) => { if (same && history.length > 1) { e.preventDefault(); history.back(); } });
+  });
+})();
+</script>
+</body>
+</html>
