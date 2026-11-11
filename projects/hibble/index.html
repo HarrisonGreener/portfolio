@@ -56,7 +56,6 @@ a,button{cursor:var(--hand);color:inherit}
 .inks button[aria-pressed="true"]{box-shadow:inset 0 0 0 1.5px var(--line),0 0 0 3px var(--paper),0 0 0 5px var(--ink)}
 .sheet{position:relative;background:#FDFDF8;border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.05),0 18px 40px -16px rgba(0,0,0,.25);overflow:hidden}
 .sheet.lined{background-image:linear-gradient(90deg,transparent calc(var(--g) + 44px),var(--margin) calc(var(--g) + 44px) calc(var(--g) + 46px),transparent calc(var(--g) + 46px)),repeating-linear-gradient(transparent 0 calc(var(--lh) - 1px),var(--rule) calc(var(--lh) - 1px) var(--lh));background-position:0 0,0 var(--off)}
-.sheet.grid{background-image:linear-gradient(var(--rule) 1px,transparent 1px),linear-gradient(90deg,var(--rule) 1px,transparent 1px);background-size:calc(var(--lh) / 2) calc(var(--lh) / 2)}
 #type{display:block;width:100%;min-height:clamp(320px,52vh,560px);border:0;outline:0;resize:vertical;background:transparent;font-family:Hibble,cursive;color:var(--pen,#2A2A2A);font-size:var(--fs);line-height:var(--lh);padding:calc(var(--lh) * .62) var(--g) var(--lh) calc(var(--g) + 64px);caret-color:var(--green)}
 #type::placeholder{color:rgba(31,31,31,.3)}
 .hint{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:13.5px;color:var(--soft);margin:12px 0 0}
@@ -117,11 +116,6 @@ h2 .hb{font-weight:400;letter-spacing:0;font-size:1.12em;color:var(--accent)}
       <button class="chip" type="button" data-s="abc" aria-pressed="false">Alphabet</button>
       <button class="chip" type="button" data-s="note" aria-pressed="false">A note</button>
     </div>
-    <div class="chips" role="group" aria-label="Paper">
-      <button class="chip" type="button" data-p="lined" aria-pressed="true">Lined</button>
-      <button class="chip" type="button" data-p="grid" aria-pressed="false">Squared</button>
-      <button class="chip" type="button" data-p="plain" aria-pressed="false">Plain</button>
-    </div>
     <div class="inks" role="group" aria-label="Pencil colour">
       <button type="button" data-ink="#2A2A2A" style="background:#2A2A2A" aria-label="Graphite" aria-pressed="true"></button>
       <button type="button" data-ink="#2C4A8C" style="background:#2C4A8C" aria-label="Blue" aria-pressed="false"></button>
@@ -175,9 +169,8 @@ h2 .hb{font-weight:400;letter-spacing:0;font-size:1.12em;color:var(--accent)}
     sheet.style.setProperty('--off', Math.round(lh * .44) + 'px');
   };
   const press = (group, btn) => group.forEach((b) => b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'));
-  const sBtns = [...document.querySelectorAll('[data-s]')], pBtns = [...document.querySelectorAll('[data-p]')], iBtns = [...document.querySelectorAll('[data-ink]')];
+  const sBtns = [...document.querySelectorAll('[data-s]')], iBtns = [...document.querySelectorAll('[data-ink]')];
   sBtns.forEach((b) => b.addEventListener('click', () => { ta.value = SAMPLES[b.dataset.s]; press(sBtns, b); }));
-  pBtns.forEach((b) => b.addEventListener('click', () => { sheet.className = 'sheet ' + b.dataset.p; press(pBtns, b); }));
   iBtns.forEach((b) => b.addEventListener('click', () => { ta.style.setProperty('--pen', b.dataset.ink); press(iBtns, b); }));
   ta.addEventListener('input', () => press(sBtns, null));
   document.getElementById('clear').addEventListener('click', () => { ta.value = ''; press(sBtns, null); ta.focus(); });
