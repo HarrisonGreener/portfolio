@@ -166,15 +166,18 @@ canvas.can-grab{cursor:var(--hand-grab)}
 /* Menu: three uneven green bars that level out and twist into an X; the menu itself is a full green page */
 .menu-btn{position:fixed;z-index:9;top:calc(env(safe-area-inset-top,0px) + 24px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 8px);width:48px;height:48px;
   border:0;background:none;padding:0;cursor:inherit}
-/* two chunky bars to match the weight of the logo. On open they meet in the middle and spin in opposite directions,
-   past upright, landing as an X (like the classic Wix menu button); closing spins them back. */
-.menu-btn i{position:absolute;right:8px;height:5px;border-radius:1px;background:var(--green);transform-origin:50% 50%;
-  transition:top .5s cubic-bezier(.65,0,.35,1),width .5s cubic-bezier(.65,0,.35,1),right .5s cubic-bezier(.65,0,.35,1),transform .5s cubic-bezier(.65,0,.35,1),background .3s ease}
-.menu-btn i:nth-child(1){top:16px;width:32px}
-.menu-btn i:nth-child(2){top:27px;width:32px}
-.menu-btn[aria-expanded=true] i{top:21.5px;right:9px;width:30px;background:var(--ink)}
-.menu-btn[aria-expanded=true] i:nth-child(1){transform:rotate(135deg)}
-.menu-btn[aria-expanded=true] i:nth-child(2){transform:rotate(-135deg)}
+/* three chunky bars, staggered: short on the left, full in the middle, short on the right. On open they all tip into
+   parallel slashes; the bottom one keeps turning past upright to cross the top one into an X, and the middle one hides. */
+.menu-btn i{position:absolute;height:4.5px;border-radius:1px;background:var(--green);transform-origin:50% 50%;
+  transition:top .55s cubic-bezier(.65,0,.35,1),left .55s cubic-bezier(.65,0,.35,1),width .55s cubic-bezier(.65,0,.35,1),transform .55s cubic-bezier(.65,0,.35,1),opacity .2s ease,background .3s ease}
+.menu-btn i:nth-child(1){top:13.5px;left:9px;width:18px}
+.menu-btn i:nth-child(2){top:21.75px;left:9px;width:30px}
+.menu-btn i:nth-child(3){top:30px;left:21px;width:18px}
+.menu-btn[aria-expanded=true] i{top:21.75px;left:9px;width:30px;background:var(--ink)}
+.menu-btn[aria-expanded=true] i:nth-child(1){transform:rotate(-45deg)}
+.menu-btn[aria-expanded=true] i:nth-child(2){transform:rotate(-45deg);opacity:0;transition-delay:0s,0s,0s,0s,.3s,0s}
+.menu-btn[aria-expanded=true] i:nth-child(3){transform:rotate(-135deg)}
+.menu-btn i:nth-child(1),.menu-btn i:nth-child(2){transition-duration:.35s}   /* top two tip over quickly; the bottom one carries on round to cross them */
 .menu-btn[aria-expanded=true].x-light i{background:var(--paper)}
 /* The orb: a circle that sits behind the X and travels with you down the menu page.
    It paints above each band's background but below the content, so it reads as part of the layout. */
@@ -488,7 +491,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 
 <p class="card-hint" id="cardHint" aria-live="polite"></p>
 <div class="tag" id="tag" aria-hidden="true"><span class="tag-text" id="tagText"></span><i class="tag-line" id="tagLine"></i><i class="tag-dot"></i></div>
-<button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu"><i></i><i></i></button>
+<button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
 <div class="menu-under" id="menuUnder" aria-hidden="true"></div>
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Portfolio" hidden>
   <canvas class="mp-orb" id="mpOrb" aria-hidden="true"></canvas>
