@@ -1,0 +1,112 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Free Textures · Harrison Greener</title>
+<meta name="description" content="Free textures made by Harrison Greener: the grain, paper and surface textures I use in my own work, free to download.">
+<link rel="canonical" href="https://harrisongreener.co.uk/textures/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Free Textures · Harrison Greener">
+<meta property="og:description" content="The textures I make and use in my own work, free to download.">
+<meta property="og:image" content="https://harrisongreener.co.uk/assets/og-image.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Harrison Greener">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
+<style>
+:root{--ink:#1F1F1F;--ink-soft:#5C5C59;--paper:#F2F2F0;--card:#FBFBF9;--green:#73956F;--line:rgba(31,31,31,.14);
+  --hand:image-set(url("../assets/cursor/hand-point.png") 1x,url("../assets/cursor/hand-point@2x.png") 2x) 9 1,url("../assets/cursor/hand-point.png") 9 1,auto;
+  --w:1280px;--g:clamp(16px,4vw,48px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 Archivo,Arial,sans-serif;cursor:var(--hand);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a,button{cursor:var(--hand);color:inherit}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 var(--g)}
+.top{position:sticky;top:0;z-index:5;background:var(--ink);color:var(--paper)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:64px}
+.top img{height:22px;width:auto}
+.back{font-weight:700;font-size:15px;text-decoration:none;background:var(--green);color:var(--ink);padding:10px 16px;border-radius:999px;transition:transform .2s ease}
+.back:hover{transform:translateX(-3px)}
+/* hero sits on a live grain so the page shows what it's about */
+.hero{position:relative;background:var(--ink);color:var(--paper);padding:64px 0 56px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;opacity:.35;mix-blend-mode:screen;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.hero .wrap{position:relative}
+.kick{font-weight:700;font-size:14px;letter-spacing:.08em;text-transform:uppercase;margin:0 0 18px;color:var(--green)}
+h1{font-stretch:112%;font-weight:800;font-size:clamp(52px,10vw,148px);line-height:.88;letter-spacing:-.04em;margin:0}
+.lede{font-size:clamp(20px,2.2vw,27px);line-height:1.35;max-width:34ch;margin:28px 0 0;font-weight:500}
+.licence{margin:36px 0 0;padding:18px 0 0;border-top:2px solid var(--paper);font-size:15px;max-width:70ch}
+.licence b{display:block;font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--green)}
+
+.shelf{padding:64px 0 96px}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2.4vw,32px)}
+@media (max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.grid{grid-template-columns:1fr}}
+.t{display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line)}
+.sw{aspect-ratio:1;background:#DADAD6 center/cover;position:relative;overflow:hidden}
+.sw.soon{display:grid;place-items:center;background:repeating-linear-gradient(-45deg,#E6E6E2 0 10px,#DEDEDA 10px 20px)}
+.sw.soon span{font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);background:var(--card);padding:6px 12px;border-radius:99px}
+.info{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px}
+.info b{display:block;font-size:17px;line-height:1.2}
+.info small{color:var(--ink-soft);font-size:13px}
+.dl{flex:none;font-weight:700;font-size:14px;text-decoration:none;background:var(--ink);color:var(--paper);padding:9px 14px;border-radius:999px;transition:background .2s ease}
+.dl:hover{background:var(--green);color:var(--ink)}
+.dl[aria-disabled]{background:transparent;color:var(--ink-soft);border:1.5px solid var(--line);pointer-events:none}
+.foot{border-top:1px solid var(--line);padding:28px 0 40px;font-size:14px;color:var(--ink-soft)}
+.foot .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="../" aria-label="Harrison Greener, home"><img src="../brand/greener-solid-white.svg" alt="Greener" width="120" height="31"></a>
+  <a data-back class="back" href="../">← Back to the wallet</a>
+</div></header>
+
+<section class="hero"><div class="wrap">
+  <p class="kick">Free downloads</p>
+  <h1>Textures</h1>
+  <p class="lede">The grain, paper and surface textures I make and use in my own work. Take them, they're free.</p>
+  <div class="licence"><b>Using them</b>Free for personal and commercial work. You can't sell or redistribute the files themselves. A credit is never required, but always appreciated.</div>
+</div></section>
+
+<main class="shelf"><div class="wrap"><div class="grid" id="grid"></div></div></main>
+
+<footer class="foot"><div class="wrap"><span><a data-back href="../" style="color:inherit">← Back to the wallet</a></span><span>Made by Harrison Greener</span></div></footer>
+
+<script>
+/* Add a texture: put the full file in files/ and a small square preview (about 800px, .jpg) in previews/,
+   then add a line here. Empty slots below the real ones show as "Coming soon". */
+const TEXTURES = [
+  // { name: 'Riso grain', file: 'files/riso-grain.png', preview: 'previews/riso-grain.jpg', info: 'PNG · 4000 × 4000 · 12 MB' },
+];
+const SLOTS = 6;   // minimum tiles on the shelf
+const grid = document.getElementById('grid');
+TEXTURES.forEach((t) => {
+  const el = document.createElement('article'); el.className = 't';
+  el.innerHTML = `<div class="sw" role="img"></div><div class="info"><div><b></b><small></small></div><a class="dl" download>Download</a></div>`;
+  const sw = el.querySelector('.sw'); sw.style.backgroundImage = `url("${t.preview}")`; sw.setAttribute('aria-label', `${t.name} texture preview`);
+  el.querySelector('b').textContent = t.name; el.querySelector('small').textContent = t.info || '';
+  const a = el.querySelector('.dl'); a.href = t.file; a.setAttribute('aria-label', `Download ${t.name}`);
+  grid.appendChild(el);
+});
+for (let i = TEXTURES.length; i < SLOTS; i++) {
+  const el = document.createElement('article'); el.className = 't';
+  el.innerHTML = `<div class="sw soon"><span>Coming soon</span></div><div class="info"><div><b>Texture ${String(i + 1).padStart(2, '0')}</b><small>On the way</small></div><a class="dl" aria-disabled="true">Download</a></div>`;
+  grid.appendChild(el);
+}
+</script>
+<script>
+(() => {   // Back goes to wherever you came from: the projects in the menu, or the desk
+  let r = null; try { r = JSON.parse(sessionStorage.getItem('wcv-return') || 'null'); } catch (e) {}
+  const same = document.referrer && new URL(document.referrer).origin === location.origin;
+  document.querySelectorAll('a[data-back]').forEach((a) => {
+    if (r && r.menu) a.textContent = '← All projects';
+    a.addEventListener('click', (e) => { if (same && history.length > 1) { e.preventDefault(); history.back(); } });
+  });
+})();
+</script>
+</body>
+</html>

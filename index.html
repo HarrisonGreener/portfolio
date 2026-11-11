@@ -301,6 +301,11 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mw-art>img.logo{inset:auto;left:50%;top:50%;width:auto;height:auto;max-width:calc(var(--w,40%) * .86);max-height:54%;object-fit:contain;transform:translate(-50%,-50%)}
 .mw-art>img.pixel{image-rendering:pixelated}
 .mw-art .fly-t{position:absolute;left:calc(7% + 5cqw);top:6cqw;font-family:'Space Grotesk',var(--sans,sans-serif);font-weight:700;font-size:8cqw;line-height:.98;letter-spacing:-.02em;color:#0a0a0a}
+.gd-sheets{position:absolute;inset:14% 8%;display:flex;justify-content:center;align-items:center;gap:3%}
+.gd-sheets i{flex:none;width:13%;aspect-ratio:1/1.414;background:linear-gradient(var(--a) 0 0) 18% 62%/64% 9% no-repeat,linear-gradient(var(--a) 0 0) 18% 76%/40% 4% no-repeat,var(--b);box-shadow:0 10px 18px -10px rgba(0,0,0,.45)}
+.gd-sheets i:nth-child(odd){transform:translateY(-6%) rotate(-2deg)}.gd-sheets i:nth-child(even){transform:translateY(5%) rotate(2deg)}
+.gd-grain{position:absolute;inset:0;opacity:.5;mix-blend-mode:screen;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+.gd-word{position:absolute;left:8%;bottom:9%;font-stretch:112%;font-weight:800;font-size:11cqw;line-height:.86;letter-spacing:-.04em;color:#F2F2F0}
 .mw-art>img.fly-i{inset:auto;right:7%;bottom:0;width:62%;height:auto;object-fit:contain}
 .mw-meta{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:baseline;opacity:0;transform:translateY(16px);transition:opacity .9s ease calc(var(--d,0s) + .35s),transform 1.2s cubic-bezier(.16,.8,.2,1) calc(var(--d,0s) + .35s)}
 .mw-no{font-size:13px;font-weight:700;opacity:.45;grid-row:span 2}
@@ -579,7 +584,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
       </div>
     </section>
     <div class="mf-end">
-        <div data-rv="up" class="mf-site"><a href="#mp-projects" data-jump>Portfolio Projects</a><a href="#mp-cv" data-jump>CV</a><a href="making-of/" onclick="rememberReturn()">How I made this</a><button type="button" id="mpBack">Back to the desk</button></div>
+        <div data-rv="up" class="mf-site"><a href="#mp-projects" data-jump>Portfolio Projects</a><a href="#mp-cv" data-jump>CV</a><a href="making-of/" onclick="rememberReturn()">How I made this</a><a href="textures/" onclick="rememberReturn()">Free textures</a><button type="button" id="mpBack">Back to the desk</button></div>
         <div data-rv="up" class="mf-base"><span>© 2026</span><span>Designed and built by Harrison Greener</span></div>
     </div>
   </footer>
@@ -2095,7 +2100,7 @@ const COVERS = {
   rolla: { bg: '#0E0E0E', logo: 'assets/logos/rolla.png', w: '74%' },
 };
 // What each project is, for the filters. New projects: add a card to ITEMS, a cover here, and its categories.
-const CATS = ['Brand', 'App', 'Web', 'AI & experiments'];
+const CATS = ['Brand', 'App', 'Web', 'Graphic design', 'AI & experiments'];
 const PROJECT_CATS = {
   stack: ['App', 'Brand'], folio: ['App', 'Brand'], quotable: ['Web', 'Brand'], pat: ['Brand', 'Web'],
   brandomizer: ['Web'], 'big-brother': ['AI & experiments'], fly: ['AI & experiments'], rolla: ['App', 'Brand'],
@@ -2122,6 +2127,22 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   b.style.setProperty('--bg', '#73956F'); b.style.setProperty('--w', '52%');
   b.dataset.cats = cats.join('|'); b.setAttribute('aria-label', 'The Wallet CV: how I made this site and the real wallet behind it'); b.addEventListener('click', () => rememberReturn());
   grid.appendChild(b); workCards.push(b);
+}
+{ // graphic design: the poster series and the free textures, each on its own page
+  const SHEETS = [['#d8d8d8','#ff1f00'],['#1a1033','#3fe0f0'],['#fafafa','#0047ff'],['#2a1638','#ffd21f'],['#f5e9cf','#c8501e'],['#120a2a','#ff2fb2']];
+  const LINKS = [
+    { href: 'projects/posters/', title: 'Twelve Posters', cats: ['Graphic design'], bg: '#EDEBE6', label: 'Twelve Posters: twelve styles, every palette spun on the Brandomizer',
+      art: `<div class="gd-sheets">${SHEETS.map(([b, a]) => `<i style="--b:${b};--a:${a}"></i>`).join('')}</div>` },
+    { href: 'textures/', title: 'Textures', cats: ['Graphic design', 'Free downloads'], bg: '#1F1F1F', label: 'Textures: free downloads of the textures I make and use',
+      art: '<div class="gd-grain"></div><span class="gd-word">Free<br>textures</span>' },
+  ];
+  LINKS.forEach((l) => {
+    const b = document.createElement('a'); b.className = 'mw-card'; b.href = l.href; const n = workCards.length;
+    b.innerHTML = `<div class="mw-cover"><div class="mw-par"><div class="mw-art">${l.art}</div></div></div>
+      <div class="mw-meta"><span class="mw-no">${String(n + 1).padStart(2, '0')}</span><b>${l.title}</b><span class="mw-tags">${l.cats.join(' · ')}</span></div>`;
+    b.style.setProperty('--bg', l.bg); b.dataset.cats = l.cats.join('|'); b.setAttribute('aria-label', l.label);
+    b.addEventListener('click', () => rememberReturn()); grid.appendChild(b); workCards.push(b);
+  });
 }
 { const next = document.createElement('div'); next.className = 'mw-next'; next.innerHTML = '<b>Next project</b><span>In the works. Check back soon.</span>'; grid.appendChild(next); }
 
