@@ -166,14 +166,13 @@ canvas.can-grab{cursor:var(--hand-grab)}
 /* Menu: three uneven green bars that level out and twist into an X; the menu itself is a full green page */
 .menu-btn{position:fixed;z-index:9;top:calc(env(safe-area-inset-top,0px) + 24px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 8px);width:48px;height:48px;
   border:0;background:none;padding:0;cursor:inherit}
-/* two bars, the lower one shorter; on open they slide together, then cross into a thin X */
-.menu-btn i{position:absolute;right:9px;height:2.5px;border-radius:2px;background:var(--green);
-  transition:top .35s cubic-bezier(.6,0,.2,1) .28s,right .35s cubic-bezier(.6,0,.2,1) .28s,width .35s cubic-bezier(.6,0,.2,1) .28s,transform .45s cubic-bezier(.6,0,.2,1),background .4s ease}
-.menu-btn i:nth-child(1){top:19px;width:30px}
-.menu-btn i:nth-child(2){top:27px;width:18px}
-.menu-btn:hover i:nth-child(2){width:30px}
-.menu-btn[aria-expanded=true] i{top:22.75px;right:11px;width:26px;background:var(--ink);
-  transition:top .3s cubic-bezier(.6,0,.2,1),right .3s cubic-bezier(.6,0,.2,1),width .3s cubic-bezier(.6,0,.2,1),transform .5s cubic-bezier(.3,1.4,.5,1) .26s,background .4s ease}
+/* two chunky bars to match the weight of the logo, the lower one shorter; on open they turn straight into an X in one move */
+.menu-btn i{position:absolute;right:8px;height:5px;border-radius:1px;background:var(--green);
+  transition:top .32s cubic-bezier(.65,0,.35,1),right .32s cubic-bezier(.65,0,.35,1),width .32s cubic-bezier(.65,0,.35,1),transform .32s cubic-bezier(.65,0,.35,1),background .3s ease}
+.menu-btn i:nth-child(1){top:16px;width:32px}
+.menu-btn i:nth-child(2){top:27px;width:20px}
+.menu-btn:hover i:nth-child(2){width:32px}
+.menu-btn[aria-expanded=true] i{top:21.5px;right:9px;width:30px;background:var(--ink)}
 .menu-btn[aria-expanded=true] i:nth-child(1){transform:rotate(45deg)}
 .menu-btn[aria-expanded=true] i:nth-child(2){transform:rotate(-45deg)}
 .menu-btn[aria-expanded=true].x-light i{background:var(--paper)}
@@ -707,7 +706,7 @@ const ITEMS = [
     eyebrow: 'Project card', title: 'Rolla',
     body: 'Swipe into work. A gamified, swipe-style recruitment app concept.',
     facts: [], ...art('rolla'), art: 'biz-ink' },
-  { id: 'scratch', side: 'right', kind: 'scratch', label: 'Instant Hire',
+  { id: 'scratch', side: 'right', kind: 'scratch', label: 'Scratch card',
     eyebrow: 'Hidden slot', title: 'Instant Hire',
     body: 'A scratchcard with three reasons to hire me under the silver.',
     facts: [], front: 'scratch/print/instant-hire-front-600dpi.png', back: 'scratch/print/instant-hire-back-600dpi.png', art: 'biz-paper' },
