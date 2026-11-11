@@ -2082,7 +2082,7 @@ document.getElementById('puForm').addEventListener('submit', (e) => {
 let queuedGo = null;
 const menuBtn = document.getElementById('menuBtn'), menu = document.getElementById('menu'), grid = document.getElementById('mpGrid');
 const detail = document.getElementById('mpDetail');
-// Covers: each project's own logo on its brand colour. Rolla keeps its card art; the fly gets its title and the fly itself.
+// Covers: each project's own logo on its brand colour; the fly gets its title and the fly itself.
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const COVERS = {
   stack: { bg: '#E8742B', logo: 'assets/logos/stack.svg', w: '34%' },
@@ -2092,6 +2092,7 @@ const COVERS = {
   'big-brother': { bg: '#1E2024', logo: 'assets/logos/big-brother.png', w: '76%', pixel: true },
   pat: { bg: '#FBFBF9', logo: 'assets/logos/pat.png', w: '36%' },
   fly: { bg: '#F4F4F2', fly: true },
+  rolla: { bg: '#0E0E0E', logo: 'assets/logos/rolla.png', w: '74%' },
 };
 // What each project is, for the filters. New projects: add a card to ITEMS, a cover here, and its categories.
 const CATS = ['Brand', 'App', 'Web', 'AI & experiments'];
