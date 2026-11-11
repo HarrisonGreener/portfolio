@@ -2548,6 +2548,7 @@ let pdCur = null;
 document.getElementById('pdBack').addEventListener('click', () => closeDetail());
 document.getElementById('pdNext').addEventListener('click', () => { const n = BIZ[(BIZ.indexOf(pdCur) + 1) % BIZ.length]; detail.scrollTo({ top: 0 }); openDetail(n); });
 function openDetail(cfg) {
+  if (CASE_STUDIES[cfg.id]) { location.href = CASE_STUDIES[cfg.id]; return; }   // projects with a full case study open it instead
   pdCur = cfg; loadProjectFonts();
   const nx = BIZ[(BIZ.indexOf(cfg) + 1) % BIZ.length];
   document.getElementById('pdNext').innerHTML = `<small>Next project</small>${esc(nx.title)} →`;
@@ -2562,7 +2563,6 @@ function openDetail(cfg) {
   const links = document.getElementById('pdLinks');
   links.innerHTML = pr ? [['Live demo ↗', pr.live], ['View on GitHub ↗', pr.url], ...pr.extra.map(([t, u]) => [t + ' ↗', u])]
     .map(([t, u]) => `<a href="${u}" target="_blank" rel="noopener">${esc(t)}</a>`).join('') : '<p class="mp-note">Code coming soon.</p>';
-  if (CASE_STUDIES[cfg.id]) links.insertAdjacentHTML('afterbegin', `<a class="pd-case" href="${CASE_STUDIES[cfg.id]}">How I made it →</a>`);   // the full story, on its own page
   document.getElementById('pdGallery').innerHTML = pr ? pr.shots.map(([src, cap, w, h]) => `<figure><img src="${src}" alt="${esc(cap)}" width="${w}" height="${h}" loading="lazy"><figcaption>${esc(cap)}</figcaption></figure>`).join('') : '';
   buildRepo(pr); buildBrand(cfg.id, cfg.title);
   resetReveal(detail); detail.classList.add('enter'); detail.hidden = false; applyTheme(cfg.id); detail.scrollTop = 0; if (pr) pr.cover = cfg.front; buildPreview(pr);
