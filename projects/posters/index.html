@@ -4,11 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Twelve Posters · Harrison Greener</title>
-<meta name="description" content="Twelve posters in twelve clashing styles, from Brutalism and Bauhaus to Y2K, by Harrison Greener. Every palette and font pairing spun on The Great Brandomizer.">
+<meta name="description" content="A poster a day for twelve days by Harrison Greener, each in a different style from Brutalism to Y2K, with its colours and fonts spun on The Great Brandomizer.">
 <link rel="canonical" href="https://harrisongreener.co.uk/projects/posters/">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Twelve Posters · Harrison Greener">
-<meta property="og:description" content="Twelve posters, twelve styles, every palette and font pairing spun on The Great Brandomizer.">
+<meta property="og:description" content="A poster a day for twelve days, each one spun on The Great Brandomizer.">
 <meta property="og:image" content="https://harrisongreener.co.uk/assets/og-image.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="author" content="Harrison Greener">
@@ -85,9 +85,9 @@ dialog p{color:#F2F2F0;text-align:center;margin:10px 0 0;font-size:15px}
 <section class="hero"><div class="wrap">
   <p class="kick">Graphic design</p>
   <h1>Twelve<br>Posters</h1>
-  <p class="lede">Twelve posters in twelve styles that have nothing in common. Every palette and font pairing came out of <a href="../brandomizer/">The Great Brandomizer</a>: I spun until the card fit the style, then designed with only what was on it.</p>
+  <p class="lede">A poster a day for twelve days, each in a different style. Every morning I pulled the handle on <a href="../brandomizer/">The Great Brandomizer</a> and designed that day&rsquo;s poster with whatever colours and fonts came out.</p>
   <div class="meta">
-    <div><b>Posters</b>12</div>
+    <div><b>Posters</b>12, one a day</div>
     <div><b>Format</b>A2 portrait</div>
     <div><b>Assets</b>The Great Brandomizer</div>
     <div><b>Role</b>Design</div>
@@ -98,7 +98,7 @@ dialog p{color:#F2F2F0;text-align:center;margin:10px 0 0;font-size:15px}
   <div class="grid" id="grid"></div>
   <div class="how">
     <h2>The rule</h2>
-    <p>Each poster sits with the brand card it was made from. Once a card fits the style, its colours and fonts are the only ones allowed, so nothing drifts back towards my own taste.</p>
+    <p>One day, one spin, one poster. Each poster sits with the brand card it was made from, and the colours and fonts on that card are the only ones allowed.</p>
   </div>
 </div></main>
 
@@ -119,7 +119,7 @@ POSTERS.forEach((name, i) => {
   const b = document.createElement('button'); b.type = 'button'; b.className = 'p';
   b.innerHTML = `<div class="sheet"><div class="brief"><span class="no">Poster ${no}</span><span class="wip">In progress</span>
       <span class="t"></span><div class="sw">Brand card to come</div></div></div>
-    <div class="cap"><b>${no} · ${name}</b><span>In progress</span></div>`;
+    <div class="cap"><b>${no} · ${name}</b><span>Day ${i + 1}</span></div>`;
   const s = b.querySelector('.sheet'); s.style.cssText = `--bg:${bg};--fg:${fg};--ac:${fg}`;
   const t = b.querySelector('.t'); t.textContent = name; t.style.setProperty('--len', Math.max(...name.split(' ').map((w) => w.length)) * 1.05);
   b.disabled = true; b.setAttribute('aria-label', `Poster ${no}, ${name}: in progress`);
@@ -127,7 +127,7 @@ POSTERS.forEach((name, i) => {
   const card = new Image(); let hasCard = false; card.onload = () => { hasCard = true; }; card.src = `img/${no}-card.png`;
   img.onload = () => {   // the real poster replaces the placeholder
     s.innerHTML = ''; s.appendChild(img); b.disabled = false; b.setAttribute('aria-label', `Poster ${no}, ${name}: view with its brand card`);
-    b.querySelector('.cap span').textContent = 'Spun on the Brandomizer';
+    b.querySelector('.cap span').textContent = `Day ${i + 1}`;
   };
   img.src = `img/${no}.jpg`;
   b.addEventListener('click', () => {

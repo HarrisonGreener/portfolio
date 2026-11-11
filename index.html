@@ -304,8 +304,6 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .gd-sheets{position:absolute;inset:14% 8%;display:flex;justify-content:center;align-items:center;gap:3%}
 .gd-sheets i{flex:none;width:13%;aspect-ratio:1/1.414;background:linear-gradient(var(--a) 0 0) 18% 62%/64% 9% no-repeat,linear-gradient(var(--a) 0 0) 18% 76%/40% 4% no-repeat,var(--b);box-shadow:0 10px 18px -10px rgba(0,0,0,.45)}
 .gd-sheets i:nth-child(odd){transform:translateY(-6%) rotate(-2deg)}.gd-sheets i:nth-child(even){transform:translateY(5%) rotate(2deg)}
-.gd-grain{position:absolute;inset:0;opacity:.5;mix-blend-mode:screen;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
-.gd-word{position:absolute;left:8%;bottom:9%;font-stretch:112%;font-weight:800;font-size:11cqw;line-height:.86;letter-spacing:-.04em;color:#F2F2F0}
 .mw-art>img.fly-i{inset:auto;right:7%;bottom:0;width:62%;height:auto;object-fit:contain}
 .mw-meta{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:baseline;opacity:0;transform:translateY(16px);transition:opacity .9s ease calc(var(--d,0s) + .35s),transform 1.2s cubic-bezier(.16,.8,.2,1) calc(var(--d,0s) + .35s)}
 .mw-no{font-size:13px;font-weight:700;opacity:.45;grid-row:span 2}
@@ -584,7 +582,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
       </div>
     </section>
     <div class="mf-end">
-        <div data-rv="up" class="mf-site"><a href="#mp-projects" data-jump>Portfolio Projects</a><a href="#mp-cv" data-jump>CV</a><a href="making-of/" onclick="rememberReturn()">How I made this</a><a href="textures/" onclick="rememberReturn()">Free textures</a><button type="button" id="mpBack">Back to the desk</button></div>
+        <div data-rv="up" class="mf-site"><a href="#mp-projects" data-jump>Portfolio Projects</a><a href="#mp-cv" data-jump>CV</a><a href="making-of/" onclick="rememberReturn()">How I made this</a><button type="button" id="mpBack">Back to the desk</button></div>
         <div data-rv="up" class="mf-base"><span>© 2026</span><span>Designed and built by Harrison Greener</span></div>
     </div>
   </footer>
@@ -2133,8 +2131,6 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   const LINKS = [
     { href: 'projects/posters/', title: 'Twelve Posters', cats: ['Graphic design'], bg: '#EDEBE6', label: 'Twelve Posters: twelve styles, every palette spun on the Brandomizer',
       art: `<div class="gd-sheets">${SHEETS.map(([b, a]) => `<i style="--b:${b};--a:${a}"></i>`).join('')}</div>` },
-    { href: 'textures/', title: 'Textures', cats: ['Graphic design', 'Free downloads'], bg: '#1F1F1F', label: 'Textures: free downloads of the textures I make and use',
-      art: '<div class="gd-grain"></div><span class="gd-word">Free<br>textures</span>' },
   ];
   LINKS.forEach((l) => {
     const b = document.createElement('a'); b.className = 'mw-card'; b.href = l.href; const n = workCards.length;
