@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quotable brand guidelines · Harrison Greener</title>
+<meta name="description" content="Brand guidelines for Quotable, AI quoting software for UK tradespeople: the logo, the tape-measure Q, colour, type and voice.">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:Archivo;src:url("../../cv/fonts/Archivo.ttf") format("truetype");font-weight:100 900;font-stretch:62% 125%}
+:root{--navy:#0B2741;--ink:#0F1F2E;--paper:#F2F2EF;--card:#FFFFFF;--orange:#C5571B;--orange2:#E26928;--graphite:#5C6570;--rule:#D4D6D1}
+*{box-sizing:border-box}
+html{background:#c9cbc4}
+body{margin:0;font:400 20px/1.45 Archivo,Arial,sans-serif;color:var(--ink)}
+@page{size:1600px 900px;margin:0}
+.pg{width:1600px;height:900px;position:relative;overflow:hidden;background:var(--paper);margin:0 auto 40px;padding:80px 96px 0;page-break-after:always;break-after:page}
+section.pg:last-of-type{break-after:auto;page-break-after:auto}
+@media print{html{background:none}.pg{margin:0}.bar{display:none!important}}
+.pg.dark{background:var(--navy);color:#fff}
+.eyebrow{font-size:16px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--orange);margin:0 0 14px}
+.dark .eyebrow{color:var(--orange2)}
+h1,h2{font-weight:800;font-stretch:118%;letter-spacing:-.03em;line-height:.95;margin:0;color:var(--navy)}
+.dark h1,.dark h2{color:#fff}
+h2{font-size:76px}
+h2 em,h1 em{font-style:normal;color:var(--orange)}
+.dark h2 em,.dark h1 em{color:var(--orange2)}
+p.lead{font-size:23px;line-height:1.45;max-width:46ch;margin:24px 0 0;color:var(--graphite)}
+.dark p.lead{color:rgba(255,255,255,.72)}
+.foot{position:absolute;left:96px;right:96px;bottom:36px;display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:600;color:var(--graphite)}
+.dark .foot{color:rgba(255,255,255,.55)}
+.foot svg{width:20px;height:20px;vertical-align:-5px;margin-right:8px}
+.tape{position:absolute;left:0;right:0;bottom:0;height:10px;background:repeating-linear-gradient(90deg,var(--orange) 0 2px,transparent 2px 16px),var(--navy)}
+.dark .tape{background:repeating-linear-gradient(90deg,#fff 0 2px,transparent 2px 16px),var(--orange)}
+.box{border-radius:6px;display:grid;place-items:center;position:relative;box-shadow:0 1px 0 rgba(0,0,0,.08),0 2px 3px rgba(0,0,0,.16)}
+.lbl{font-size:16px;font-weight:700;margin-top:14px}
+.lbl small{display:block;font-weight:400;color:var(--graphite);font-size:15px;margin-top:3px;line-height:1.4}
+.dark .lbl small{color:rgba(255,255,255,.65)}
+.row{display:grid;gap:24px}
+.mk{display:inline-flex;align-items:center;gap:22px}
+.mk b{font-weight:800;font-stretch:118%;letter-spacing:-.02em}
+/* cover */
+.cover .mk{position:relative;z-index:2}
+.cover .bigq{position:absolute;right:60px;top:110px;width:640px}
+.cover h1{font-size:150px;margin-top:150px;position:relative;z-index:2}
+.cover .meta{margin-top:30px;font-size:17px;color:rgba(255,255,255,.6)}
+.toc{display:grid;grid-template-columns:repeat(2,1fr);gap:0 64px;margin-top:60px;max-width:1100px}
+.toc div{display:flex;gap:22px;padding:16px 0;border-bottom:1px solid var(--rule);font-size:24px;font-weight:600}
+.toc b{color:var(--orange);font-size:16px;width:28px;padding-top:6px}
+.vals{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;position:absolute;left:96px;right:96px;bottom:120px}
+.vals div{background:rgba(255,255,255,.07);border-radius:6px;padding:24px;border-top:4px solid var(--orange2)}
+.vals b{display:block;font-size:24px;font-stretch:112%;margin-bottom:8px}
+.vals span{font-size:17px;line-height:1.45;color:rgba(255,255,255,.75)}
+.pin{font-weight:800;font-size:18px}
+.notes{list-style:none;margin:0;padding:0;counter-reset:n}
+.notes li{counter-increment:n;position:relative;padding:0 0 22px 52px;font-size:18px;line-height:1.45;color:var(--graphite)}
+.notes li::before{content:counter(n);position:absolute;left:0;top:-2px;width:34px;height:34px;border-radius:50%;background:var(--orange);color:#fff;display:grid;place-items:center;font-weight:800;font-size:16px}
+.notes b{color:var(--ink);display:block;font-size:20px}
+.ok,.no{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-size:17px;font-weight:800;color:#fff}
+.ok{background:#2F7D4F}.no{background:#B3261E}
+.sw{display:grid;grid-template-columns:repeat(6,1fr);gap:16px;margin-top:52px}
+.sw .c{height:320px;border-radius:6px;padding:18px;display:flex;flex-direction:column;justify-content:flex-end;font-size:15px;line-height:1.5;box-shadow:0 1px 0 rgba(0,0,0,.08),0 2px 3px rgba(0,0,0,.16)}
+.sw .c b{font-size:21px;font-stretch:110%}
+.pairs{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:44px}
+.pairs div{height:190px;border-radius:6px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 1px 0 rgba(0,0,0,.08),0 2px 3px rgba(0,0,0,.16)}
+.pairs .aa{font-size:62px;font-weight:800;font-stretch:118%;line-height:1;letter-spacing:-.03em}
+.pairs small{font-size:14px;font-weight:600;line-height:1.4}
+.bal{display:flex;height:56px;border-radius:6px;overflow:hidden;margin-top:28px;font-size:15px;font-weight:700}
+.bal div{display:flex;align-items:center;padding:0 16px}
+.type{display:grid;grid-template-columns:1fr 1.25fr;gap:56px;margin-top:40px}
+.spec{background:rgba(255,255,255,.06);border-radius:6px;padding:30px}
+.spec .big{font-size:160px;font-weight:800;font-stretch:125%;line-height:.9;color:var(--orange2);letter-spacing:-.04em}
+.spec p{font-size:16px;color:rgba(255,255,255,.72);margin:16px 0 0;line-height:1.55}
+.scale div{display:grid;grid-template-columns:190px 1fr;align-items:baseline;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+.scale small{font-size:14px;color:rgba(255,255,255,.5);font-weight:600}
+.voice{display:grid;grid-template-columns:1fr 1fr;gap:0;margin-top:44px;border-top:2px solid var(--navy)}
+.voice div{padding:18px 0;border-bottom:1px solid var(--rule);font-size:22px}
+.voice div:nth-child(odd){padding-right:30px;font-weight:700;color:var(--navy)}
+.voice div:nth-child(even){color:var(--graphite);text-decoration:line-through;text-decoration-color:rgba(179,38,30,.6)}
+.voice .h{font-size:14px!important;font-weight:700!important;letter-spacing:.08em;text-transform:uppercase;color:var(--orange)!important;text-decoration:none!important}
+.docket{background:var(--card);border-radius:6px;box-shadow:0 1px 0 rgba(0,0,0,.08),0 2px 3px rgba(0,0,0,.18);padding:26px 30px;font-size:18px;width:560px}
+.docket .ln{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--rule)}
+.docket .tot{display:flex;justify-content:space-between;align-items:baseline;padding-top:14px;border-top:3px solid var(--navy);font-weight:800;margin-top:4px}
+.docket .tot b{color:var(--orange);font-size:40px;font-stretch:115%}
+.bar{position:relative;display:flex;justify-content:space-between;align-items:center;max-width:1600px;margin:0 auto 24px;padding:14px 0;font:700 15px Archivo,Arial,sans-serif}
+.bar a,.bar button{all:unset;cursor:pointer;background:var(--navy);color:#fff;padding:10px 16px;border-radius:6px}
+html.embed{background:transparent;overflow:hidden}html.embed .pg{margin:0}html.embed .bar{display:none}
+</style>
+<script>if (/[?&]embed/.test(location.search)) document.documentElement.classList.add('embed');</script>
+</head>
+<body>
+<div class="bar"><a href="./">← Quotable case study</a><span><a href="quotable-brand-guidelines.pdf" download style="margin-right:8px">Download PDF</a></span></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+  <symbol id="q" viewBox="12 12 82 82"><mask id="qm" maskUnits="userSpaceOnUse" x="0" y="0" width="100" height="100"><rect width="100" height="100" fill="#fff"/><line x1="66" y1="66" x2="94" y2="94" stroke="#000" stroke-width="23" stroke-linecap="round"/></mask><g transform="translate(9 9) scale(.82)"><circle cx="47" cy="47" r="33" fill="none" stroke="var(--ring,#0B2741)" stroke-width="15" mask="url(#qm)"/><line x1="66" y1="66" x2="94" y2="94" stroke="var(--tail,#E26928)" stroke-width="15" stroke-linecap="round"/></g></symbol>
+</defs></svg>
+
+<!-- 1 cover -->
+<section class="pg dark cover">
+  <span class="mk" style="--ring:#fff"><svg width="58" height="58"><use href="#q"/></svg><b style="font-size:40px">Quotable</b></span>
+  <svg class="bigq" viewBox="0 0 100 100" style="--ring:rgba(255,255,255,.1);--tail:#E26928"><use href="#q"/></svg>
+  <h1>Brand<br><em>guidelines.</em></h1>
+  <p class="meta">Version 2.0 · November 2026 · Quotable Ltd · Designed by Harrison Greener</p>
+  <div class="tape"></div>
+</section>
+
+<!-- 2 contents -->
+<section class="pg">
+  <p class="eyebrow">Contents</p>
+  <h2>What's <em>inside.</em></h2>
+  <div class="toc">
+    <div><b>01</b>The brand</div><div><b>06</b>Logo on backgrounds</div>
+    <div><b>02</b>The rebrand</div><div><b>07</b>Colour</div>
+    <div><b>03</b>The tape-measure Q</div><div><b>08</b>Colour pairs</div>
+    <div><b>04</b>Logo system</div><div><b>09</b>Typography</div>
+    <div><b>05</b>Clear space and sizes</div><div><b>10</b>Voice</div>
+  </div>
+  <div class="foot"><span><svg><use href="#q"/></svg>Contents</span><span>2 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 3 brand -->
+<section class="pg dark">
+  <p class="eyebrow">01 The brand</p>
+  <h2>Type the job.<br><em>Get a priced quote.</em></h2>
+  <p class="lead">Quotable gives tradespeople their evenings back. Describe a job in your own words and it lists the materials, prices them live at UK merchants and works out the labour, ready to send before you're back in the van.</p>
+  <div class="vals">
+    <div><b>On the tools</b><span>Built for people with dusty hands and a phone, not a desk and a spreadsheet.</span></div>
+    <div><b>Straight</b><span>Real prices, linked. Anything we couldn't price is marked, never guessed.</span></div>
+    <div><b>Quick</b><span>A quote in about a minute. Everything else gets out of the way.</span></div>
+    <div><b>Trade-made</b><span>The look and the words come from the job: dockets, vans, plasterboard.</span></div>
+  </div>
+  <div class="foot"><span><svg style="--ring:#fff"><use href="#q"/></svg>The brand</span><span>3 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 4 rebrand -->
+<section class="pg">
+  <p class="eyebrow">02 The rebrand</p>
+  <h2>From software<br><em>to the trade.</em></h2>
+  <p class="lead">The first brand looked like any SaaS product. Version 2 is built from the trade itself: van lettering, docket totals and a Q that works like a tape measure.</p>
+  <div class="row" style="grid-template-columns:1fr 70px 1fr;align-items:center;position:absolute;left:96px;right:96px;bottom:110px">
+    <div><div class="box" style="height:260px;background:#FBF8F4"><img src="img/old-logo.png" alt="The old Quotable logo" style="width:72%"></div><p class="lbl">Before<small>Montserrat, an orange Q on a navy word.</small></p></div>
+    <div style="text-align:center;font-size:44px;font-weight:800;color:var(--orange)">→</div>
+    <div><div class="box" style="height:260px;background:var(--card)"><span class="mk"><svg width="96" height="96"><use href="#q"/></svg><b style="font-size:76px;color:var(--navy)">Quotable</b></span></div><p class="lbl">After<small>Archivo set wide, with the tape-measure Q.</small></p></div>
+  </div>
+  <div class="foot"><span><svg><use href="#q"/></svg>The rebrand</span><span>4 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 5 the Q -->
+<section class="pg">
+  <p class="eyebrow">03 The tape-measure Q</p>
+  <h2>A Q that <em>measures up.</em></h2>
+  <svg viewBox="0 0 100 100" style="position:absolute;left:150px;top:290px;width:470px"><use href="#q"/></svg>
+  <ol class="notes" style="position:absolute;right:96px;top:250px;width:560px">
+    <li><b>The case.</b> A heavy navy ring, like the body of a tape measure.</li>
+    <li><b>The tape.</b> The tail is the tape pulled out in docket orange, the only colour that means money or action.</li>
+    <li><b>The cut.</b> A gap is masked out around the tail, not painted, so the mark sits cleanly on paper, cards, the navy sidebar or a photo.</li>
+  </ol>
+  <div class="foot"><span><svg><use href="#q"/></svg>The tape-measure Q</span><span>5 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 6 logo system -->
+<section class="pg">
+  <p class="eyebrow">04 Logo system</p>
+  <h2>One mark, <em>three uses.</em></h2>
+  <div class="row" style="grid-template-columns:1.6fr 1fr 1fr;margin-top:56px">
+    <div><div class="box" style="height:300px;background:var(--card)"><span class="mk"><svg width="84" height="84"><use href="#q"/></svg><b style="font-size:66px;color:var(--navy)">Quotable</b></span></div><p class="lbl">Lockup<small>The main logo. The Q stands in for the word's first letter.</small></p></div>
+    <div><div class="box" style="height:300px;background:var(--card)"><svg width="150" height="150"><use href="#q"/></svg></div><p class="lbl">Q mark<small>App icon, favicon, avatars and the sidebar.</small></p></div>
+    <div><div class="box" style="height:300px;background:var(--navy)"><svg width="150" height="150" style="--ring:#fff"><use href="#q"/></svg></div><p class="lbl">Inverse<small>White ring on navy. The tail stays orange.</small></p></div>
+  </div>
+  <div class="foot"><span><svg><use href="#q"/></svg>Logo system</span><span>6 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 7 clear space -->
+<section class="pg">
+  <p class="eyebrow">05 Clear space and sizes</p>
+  <h2>Room to <em>breathe.</em></h2>
+  <p class="lead">Keep clear space of at least <b>x</b> on every side, where x is the thickness of the Q's ring.</p>
+  <div style="position:absolute;right:96px;top:110px;width:640px">
+    <div class="box" style="height:300px;background:var(--card);outline:2px dashed rgba(197,87,27,.6);outline-offset:-40px"><span class="mk"><svg width="70" height="70"><use href="#q"/></svg><b style="font-size:56px;color:var(--navy)">Quotable</b></span></div>
+  </div>
+  <div class="row" style="grid-template-columns:repeat(2,260px);position:absolute;left:96px;bottom:120px">
+    <div style="background:var(--card);border-radius:6px;padding:22px"><span class="mk" style="gap:6px"><svg width="20" height="20"><use href="#q"/></svg><b style="font-size:17px;color:var(--navy)">Quotable</b></span><p class="lbl">Lockup minimum<small>100 px on screen · 25 mm in print</small></p></div>
+    <div style="background:var(--card);border-radius:6px;padding:22px"><svg width="20" height="20"><use href="#q"/></svg><p class="lbl">Q mark minimum<small>16 px on screen · 5 mm in print</small></p></div>
+  </div>
+  <div class="foot"><span><svg><use href="#q"/></svg>Clear space and sizes</span><span>7 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 8 backgrounds -->
+<section class="pg">
+  <p class="eyebrow">06 Logo on backgrounds</p>
+  <h2>The right logo for <em>every surface.</em></h2>
+  <div class="row" style="grid-template-columns:repeat(4,1fr);margin-top:60px">
+    <div><div class="box" style="height:220px;background:var(--paper)"><span class="mk" style="gap:10px"><svg width="44" height="44"><use href="#q"/></svg><b style="font-size:34px;color:var(--navy)">Quotable</b></span><span class="ok">✓</span></div><p class="lbl">Plasterboard paper</p></div>
+    <div><div class="box" style="height:220px;background:var(--card)"><span class="mk" style="gap:10px"><svg width="44" height="44"><use href="#q"/></svg><b style="font-size:34px;color:var(--navy)">Quotable</b></span><span class="ok">✓</span></div><p class="lbl">Clean sheet</p></div>
+    <div><div class="box" style="height:220px;background:var(--navy)"><span class="mk" style="gap:10px;--ring:#fff"><svg width="44" height="44"><use href="#q"/></svg><b style="font-size:34px;color:#fff">Quotable</b></span><span class="ok">✓</span></div><p class="lbl">Ink navy</p></div>
+    <div><div class="box" style="height:220px;background:var(--orange)"><span class="mk" style="gap:10px;--ring:var(--navy);--tail:#fff"><svg width="44" height="44"><use href="#q"/></svg><b style="font-size:34px;color:var(--navy)">Quotable</b></span><span class="no">✕</span></div><p class="lbl">Never on orange<small>Orange is for money and actions only.</small></p></div>
+  </div>
+  <div class="foot"><span><svg><use href="#q"/></svg>Logo on backgrounds</span><span>8 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 9 colour -->
+<section class="pg">
+  <p class="eyebrow">07 Colour</p>
+  <h2>Named after <em>the job.</em></h2>
+  <div class="sw">
+    <div class="c" style="background:#0B2741;color:#fff"><b>Ink navy</b>#0B2741<br>RGB 11 39 65<br>Logo, headings, sidebar</div>
+    <div class="c" style="background:#C5571B;color:#fff"><b>Docket orange</b>#C5571B<br>RGB 197 87 27<br>Totals and the main action</div>
+    <div class="c" style="background:#F2F2EF"><b>Plasterboard</b>#F2F2EF<br>RGB 242 242 239<br>Page background</div>
+    <div class="c" style="background:#FFFFFF"><b>Clean sheet</b>#FFFFFF<br>RGB 255 255 255<br>Cards and quotes</div>
+    <div class="c" style="background:#5C6570;color:#fff"><b>Graphite</b>#5C6570<br>RGB 92 101 112<br>Secondary text</div>
+    <div class="c" style="background:#D4D6D1"><b>Rule</b>#D4D6D1<br>RGB 212 214 209<br>Lines and borders</div>
+  </div>
+  <div class="foot"><span><svg><use href="#q"/></svg>Colour</span><span>9 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 10 pairs -->
+<section class="pg">
+  <p class="eyebrow">08 Colour pairs</p>
+  <h2>Readable, <em>on site.</em></h2>
+  <p class="lead">Body text meets WCAG AA at 4.5:1. Orange on paper is for large figures only, like the total on a quote.</p>
+  <div class="pairs">
+    <div style="background:#F2F2EF;color:#0F1F2E"><span class="aa">Aa</span><small>Ink on plasterboard · 14.6:1 · AAA</small></div>
+    <div style="background:#0B2741;color:#fff"><span class="aa">Aa</span><small>White on navy · 15.2:1 · AAA</small></div>
+    <div style="background:#C5571B;color:#fff"><span class="aa">Aa</span><small>White on orange · 4.5:1 · AA</small></div>
+    <div style="background:#F2F2EF;color:#C5571B"><span class="aa">£471</span><small style="color:var(--ink)">Orange on plasterboard · 3.9:1 · large figures only</small></div>
+  </div>
+  <div class="bal"><div style="background:#F2F2EF;flex:55;box-shadow:inset 0 0 0 1px var(--rule)">Plasterboard 55%</div><div style="background:#FFFFFF;flex:20">Sheet 20%</div><div style="background:#0B2741;color:#fff;flex:20">Navy 20%</div><div style="background:#C5571B;color:#fff;flex:5"></div></div>
+  <div class="foot"><span><svg><use href="#q"/></svg>Colour pairs</span><span>10 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 11 type -->
+<section class="pg dark">
+  <p class="eyebrow">09 Typography</p>
+  <h2>Signwritten, <em>like a van.</em></h2>
+  <div class="type">
+    <div class="spec"><div class="big">Aa</div><p><b style="color:#fff">Archivo</b> · Google Fonts, free<br>Headings are set wide (118%) and heavy (800), like the lettering on a tradesman's van. Body text stays regular. Money and quantities use tabular figures, so prices line up in columns.</p><p style="font-size:22px;color:#fff;letter-spacing:.02em">ABCDEFGHIJKLMNOPQRSTUVWXYZ<br>abcdefghijklmnopqrstuvwxyz £0123456789</p></div>
+    <div class="scale">
+      <div><small>Display · 800 · wide</small><span style="font-size:66px;font-weight:800;font-stretch:120%;letter-spacing:-.035em;line-height:1">Type the job.</span></div>
+      <div><small>Heading · 800 · wide</small><span style="font-size:36px;font-weight:800;font-stretch:115%">One job, start to finish</span></div>
+      <div><small>Body · 400</small><span style="font-size:20px">Materials priced live at UK merchants, your labour worked out.</span></div>
+      <div><small>Figures · tabular</small><span style="font-size:30px;font-weight:800;color:var(--orange2);font-variant-numeric:tabular-nums">£471.48</span></div>
+    </div>
+  </div>
+  <div class="foot"><span><svg style="--ring:#fff"><use href="#q"/></svg>Typography</span><span>11 / 12</span></div><div class="tape"></div>
+</section>
+
+<!-- 12 voice -->
+<section class="pg">
+  <p class="eyebrow">10 Voice</p>
+  <h2>Talk like <em>the trade.</em></h2>
+  <p class="lead" style="max-width:40ch">Short, plain and practical. Say what it does, in words you'd use on site.</p>
+  <div style="position:absolute;right:96px;top:90px"><div class="docket"><div class="ln"><span>Thistle Multi-Finish 25 kg</span><span>£33.75</span></div><div class="ln"><span>Labour, 1.5 days</span><span>£330.00</span></div><div class="ln"><span>VAT 20%</span><span>£78.58</span></div><div class="tot"><span>Total</span><b>£471.48</b></div></div></div>
+  <div class="voice" style="position:absolute;left:96px;right:96px;bottom:110px">
+    <div class="h">Say this</div><div class="h">Not this</div>
+    <div>“Price the job before you're back in the van.”</div><div>“Streamline your quoting workflow.”</div>
+    <div>“Anything we couldn't price is marked for you to check.”</div><div>“AI-powered intelligent estimation.”</div>
+    <div>“Your first month is free.”</div><div>“Unlock premium features today!”</div>
+  </div>
+  <div class="foot"><span><svg><use href="#q"/></svg>Voice</span><span>12 / 12</span></div><div class="tape"></div>
+</section>
+</body>
+</html>
