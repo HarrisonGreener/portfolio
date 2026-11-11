@@ -708,7 +708,7 @@ const ITEMS = [
     facts: [['Site', 'quotable-it.co.uk'], ['Status', 'Live']], ...art('quotable'), art: 'biz-paper' },
   { id: 'pat', side: 'right', slot: 1, kind: 'biz', label: 'Pat',
     eyebrow: 'Project card', title: 'Pat',
-    body: 'Smart networking. A smart business card company concept, with marketing material and a working simulator website.',
+    body: 'Smart networking. Tap an NFC card on someone\'s phone to connect, bringing networking back in person. A brand concept with a parrot that\'s also a P.',
     facts: [], ...art('pat'), art: 'biz-paper' },
   { id: 'brandomizer', side: 'right', slot: 2, kind: 'biz', label: 'Brandomizer',
     eyebrow: 'Project card', title: 'The Great Brandomizer',
@@ -2543,7 +2543,7 @@ const PD_THEMES = {
 function rememberReturn() {
   try { sessionStorage.setItem('wcv-return', JSON.stringify({ menu: !menu.hidden && menu.classList.contains('open'), top: menu.scrollTop })); } catch (e) {}
 }
-const CASE_STUDIES = { stack: 'projects/stack/', 'big-brother': 'projects/big-brother/', fly: 'projects/fly/', brandomizer: 'projects/brandomizer/', quotable: 'projects/quotable/', rolla: 'projects/rolla/' };   // projects with a full case-study page
+const CASE_STUDIES = { stack: 'projects/stack/', 'big-brother': 'projects/big-brother/', fly: 'projects/fly/', brandomizer: 'projects/brandomizer/', quotable: 'projects/quotable/', rolla: 'projects/rolla/', pat: 'projects/pat/' };   // projects with a full case-study page
 let pdFontsIn = false, pdTheme = {};
 function loadProjectFonts() {
   if (pdFontsIn) return; pdFontsIn = true;
