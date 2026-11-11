@@ -166,15 +166,16 @@ canvas.can-grab{cursor:var(--hand-grab)}
 /* Menu: three uneven green bars that level out and twist into an X; the menu itself is a full green page */
 .menu-btn{position:fixed;z-index:9;top:calc(env(safe-area-inset-top,0px) + 24px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 8px);width:48px;height:48px;
   border:0;background:none;padding:0;cursor:inherit}
-/* two chunky bars to match the weight of the logo, the lower one shorter; on open they turn straight into an X in one move */
-.menu-btn i{position:absolute;right:8px;height:5px;border-radius:1px;background:var(--green);
-  transition:top .32s cubic-bezier(.65,0,.35,1),right .32s cubic-bezier(.65,0,.35,1),width .32s cubic-bezier(.65,0,.35,1),transform .32s cubic-bezier(.65,0,.35,1),background .3s ease}
-.menu-btn i:nth-child(1){top:16px;width:32px}
-.menu-btn i:nth-child(2){top:27px;width:20px}
-.menu-btn:hover i:nth-child(2){width:32px}
-.menu-btn[aria-expanded=true] i{top:21.5px;right:9px;width:30px;background:var(--ink)}
-.menu-btn[aria-expanded=true] i:nth-child(1){transform:rotate(45deg)}
-.menu-btn[aria-expanded=true] i:nth-child(2){transform:rotate(-45deg)}
+/* two chunky bars to match the weight of the logo, the lower one shorter. On open each swings from its left end:
+   the top one down, the bottom one up, so they sweep past each other and cross into an X. */
+.menu-btn i{position:absolute;height:5px;border-radius:1px;background:var(--green);transform-origin:0 50%;
+  transition:top .45s cubic-bezier(.65,0,.35,1),left .45s cubic-bezier(.65,0,.35,1),width .45s cubic-bezier(.65,0,.35,1),transform .45s cubic-bezier(.65,0,.35,1),background .3s ease}
+.menu-btn i:nth-child(1){top:16px;left:8px;width:32px}
+.menu-btn i:nth-child(2){top:27px;left:20px;width:20px}
+.menu-btn:hover i:nth-child(2){left:8px;width:32px}
+.menu-btn[aria-expanded=true] i{left:13.5px;width:30px;background:var(--ink)}
+.menu-btn[aria-expanded=true] i:nth-child(1){top:11px;transform:rotate(45deg)}
+.menu-btn[aria-expanded=true] i:nth-child(2){top:32px;transform:rotate(-45deg)}
 .menu-btn[aria-expanded=true].x-light i{background:var(--paper)}
 /* The orb: a circle that sits behind the X and travels with you down the menu page.
    It paints above each band's background but below the content, so it reads as part of the layout. */
