@@ -97,7 +97,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
 .det.wide{grid-column:1/-1}
 .det.wide .pic{min-height:0}
 .todo{width:100%;max-width:520px;aspect-ratio:4/3;border:2px dashed rgba(58,34,22,.35);border-radius:12px;display:grid;place-items:center;text-align:center;color:var(--cocoa);font-weight:600;background:repeating-linear-gradient(-45deg,transparent 0 14px,rgba(58,34,22,.04) 14px 28px)}
-.ministripe{width:100%;max-width:520px;height:150px;border-radius:12px;background:repeating-linear-gradient(180deg,var(--mustard) 0 22px,var(--orange) 22px 44px,var(--red) 44px 66px,var(--sky) 66px 88px);position:relative;margin-bottom:26px}
+.ministripe-unused{width:100%;max-width:520px;height:150px;border-radius:12px;background:repeating-linear-gradient(180deg,var(--mustard) 0 22px,var(--orange) 22px 44px,var(--red) 44px 66px,var(--sky) 66px 88px);position:relative;margin-bottom:26px}
 .ministripe img{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);height:150px;width:auto}
 .vu{display:flex;gap:7px;align-items:flex-end;height:90px;margin-bottom:26px}
 .vu i{width:16px;background:var(--gold);border-radius:3px;animation:vu 2.4s ease-in-out infinite}
@@ -128,6 +128,10 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
 .lp-screen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;background:transparent}
 .lp-fallback{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 @media (max-width:860px){.live{grid-template-columns:1fr;justify-items:center;text-align:center}.live-txt p{margin-left:auto;margin-right:auto}}
+.osp{display:grid!important;grid-template-columns:1fr 1fr;gap:24px;padding:28px!important}
+.osp figure{margin:0}.osp img{border-radius:16px;box-shadow:0 14px 30px rgba(42,26,18,.18)}
+.fav{border:2px solid var(--orange)}
+@media (max-width:520px){.osp{grid-template-columns:1fr}}
 /* repo */
 .repo{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin:36px 0 0}
 .repo .rh{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;flex-wrap:wrap}
@@ -291,12 +295,16 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
   <div class="sec-head rv"><span class="no">06</span><h2>The <em>small details</em></h2></div>
   <div class="cols"><div class="spacer"></div><div class="prose rv"><p>Most of Stack's charm is in things you'd only notice by using it. These are my favourites.</p></div></div>
   <div class="details">
+    <article class="det wide rv fav"><div class="pic light osp">
+        <figure><img src="img/overscroll-top.webp" alt="Pulling down at the top of a page: the Sunset Stripe stretches out and DJ Selector peeks over the edge, gripping it with his hands" loading="lazy" width="780" height="640"><figcaption>Pull down at the top</figcaption></figure>
+        <figure><img src="img/overscroll-bottom.webp" alt="Pulling up at the bottom of a page: DJ Selector hangs from the edge by his hands" loading="lazy" width="780" height="648"><figcaption>Pull up at the bottom</figcaption></figure>
+      </div>
+      <div class="txt"><p class="kick" style="color:var(--rust);margin:0 0 6px">My favourite detail</p><h3>DJ Selector hides past the end of every page</h3><p>Most people will never see this. Pull past the top of any page, like pulling to refresh on Snapchat, and the page stretches like rubber to reveal the Sunset Stripe, with DJ Selector peeking over the edge, gripping it with both hands. Pull further and his VU-meter face fills up. Let go and everything springs back with a little boing, and he gives a tug and a nod. Do the same at the bottom of a page and he's hanging off the edge by his hands, legs swinging.</p></div>
+    </article>
     <article class="det rv"><div class="pic"><img class="phone" src="img/vinyl-colours.webp" alt="" loading="lazy"></div>
       <div class="txt"><h3>Your record, in your colour</h3><p>Tell Stack your copy is marble, splatter, galaxy, half and half or a picture disc, and the record spinning in the player changes to match the one on your shelf.</p></div></article>
     <article class="det rv"><div class="pic light"><div class="vu" aria-hidden="true"><i style="--a:30px;--b:80px"></i><i style="--a:70px;--b:40px"></i><i style="--a:45px;--b:24px"></i><i style="--a:62px;--b:24px"></i><i style="--a:40px;--b:40px"></i><i style="--a:76px;--b:80px"></i></div></div>
       <div class="txt"><h3>He smiles when the mix is ready</h3><p>DJ Selector's face is a VU meter. While he digs through your crate the bars bounce; when your queue is ready they settle into a U, a smile made of levels.</p></div></article>
-    <article class="det rv"><div class="pic light"><div class="ministripe"><img src="img/sel-sitwave.webp" alt="" loading="lazy"></div></div>
-      <div class="txt"><h3>Pull past the end of a page</h3><p>Scroll past the top or bottom and the page stretches like rubber to reveal the Sunset Stripe underneath, then springs back. Pull far enough at the bottom and DJ Selector is there, hanging off the edge of the page by his hands.</p></div></article>
     <article class="det rv"><div class="pic"><img class="phone" src="img/player.webp" alt="" loading="lazy"></div>
       <div class="txt"><h3>It sounds like a record</h3><p>"My pressing" mode lays surface noise, pops and a slight turntable wobble over the music. A padlock locks the screen against accidental touches, and the screen stays awake while a record plays.</p></div></article>
     <article class="det rv"><div class="pic"><img class="phone" src="img/family-crate.webp" alt="" loading="lazy"></div>
