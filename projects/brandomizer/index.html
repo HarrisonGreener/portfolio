@@ -15,7 +15,7 @@
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Lobster&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap">
 <style>
 :root{--bg:#1F1311;--card:#2B1A17;--card2:#36211C;--ink:#EFE3C6;--dim:#BBA98A;--red:#951C2E;--red2:#C0283C;--gold:#FFB23E;--bulb:#FFE9B0;
   --line:rgba(239,227,198,.14);--w:1180px;--g:clamp(16px,4vw,48px);
@@ -41,14 +41,17 @@ img{max-width:100%;height:auto;display:block}
 /* hero */
 .hero{background:linear-gradient(180deg,var(--red),#5e1019);padding:56px 0 0;overflow:hidden}
 .kick{font:700 13px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
-.hero .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center;padding-bottom:56px}
+.hero .wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:40px;align-items:end}
+.hero .wrap>div:first-child{padding-bottom:56px;align-self:center}
+h1 .logo{width:100%;max-width:620px;height:auto;display:block;overflow:visible}
 h1{font:400 clamp(44px,7.6vw,104px)/.95 Bungee,sans-serif;margin:0;color:var(--bulb);text-shadow:0 0 18px rgba(255,178,62,.45),0 4px 0 #5e1019}
 h1 small{display:block;font:700 italic .32em 'Barlow',sans-serif;color:var(--gold);text-shadow:none;margin-bottom:.15em;letter-spacing:0}
 .lede{font-size:clamp(19px,2vw,23px);line-height:1.45;max-width:34ch;margin:22px 0 0}
 .meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 24px;margin:34px 0 0;padding-top:18px;border-top:2px solid rgba(239,227,198,.25)}
 .meta dt{font:700 12px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
 .meta dd{margin:2px 0 0;font-weight:600;font-size:16px;line-height:1.35}
-.heroimg{border-radius:16px;box-shadow:0 0 0 3px var(--gold),0 24px 60px rgba(0,0,0,.45);overflow:hidden}
+.heroimg{margin:0;align-self:end;justify-self:center;width:min(100%,440px)}
+.heroimg img{width:100%;display:block;filter:drop-shadow(0 20px 40px rgba(0,0,0,.45))}
 /* sections */
 section{padding:clamp(70px,9vw,120px) 0 0}
 .sec-head{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:baseline;border-top:3px solid var(--gold);padding-top:16px;margin-bottom:32px}
@@ -138,10 +141,19 @@ figcaption{font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.04em;colo
 
 <div class="hero">
   <div class="bulbs" aria-hidden="true"></div>
-  <div class="wrap" style="padding-top:44px">
+  <div class="wrap" style="padding-top:30px">
     <div>
       <p class="kick">Portfolio project · Tool · 3D</p>
-      <h1><small>The Great</small>Brandomizer</h1>
+      <h1 aria-label="The Great Brandomizer"><svg class="logo" viewBox="0 0 1100 230" aria-hidden="true">
+        <defs>
+          <linearGradient id="lgB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c9e2ff"/><stop offset=".35" stop-color="#4b86f5"/><stop offset=".7" stop-color="#1638b8"/><stop offset="1" stop-color="#0a1d70"/></linearGradient>
+          <linearGradient id="lgG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2c4"/><stop offset=".5" stop-color="#e6a93a"/><stop offset="1" stop-color="#8a5a12"/></linearGradient>
+          <linearGradient id="lgR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd2b0"/><stop offset=".4" stop-color="#ff4a2a"/><stop offset="1" stop-color="#a8100e"/></linearGradient>
+        </defs>
+        <text x="550" y="205" text-anchor="middle" font-family="Bungee, Impact, sans-serif" font-size="128" fill="url(#lgB)" stroke="#140808" stroke-width="18" stroke-linejoin="round" paint-order="stroke">BRANDOMIZER</text>
+        <text x="550" y="205" text-anchor="middle" font-family="Bungee, Impact, sans-serif" font-size="128" fill="url(#lgB)" stroke="url(#lgG)" stroke-width="7" stroke-linejoin="round" paint-order="stroke">BRANDOMIZER</text>
+        <g transform="translate(40 92) rotate(-5)"><text font-family="Lobster, cursive" font-size="74" fill="url(#lgR)" stroke="#140808" stroke-width="12" stroke-linejoin="round" paint-order="stroke">The Great</text><text font-family="Lobster, cursive" font-size="74" fill="url(#lgR)" stroke="#ffd977" stroke-width="3.5" stroke-linejoin="round" paint-order="stroke">The Great</text></g>
+      </svg></h1>
       <p class="lede">A vintage fruit machine for designers. Pull the handle and the reels land on a colour palette and a font pairing built for a theme. Hold what you like, spin again, and cash out a brand card.</p>
       <dl class="meta">
         <div><dt>What</dt><dd>A 3D design tool in the browser</dd></div>
@@ -150,7 +162,7 @@ figcaption{font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.04em;colo
         <div><dt>Year</dt><dd>2026</dd></div>
       </dl>
     </div>
-    <figure class="heroimg"><img src="img/machine.webp" alt="The Great Brandomizer, a red and gold 3D fruit machine" width="800" height="500"></figure>
+    <figure class="heroimg"><img src="img/machine-hero.webp" alt="The Great Brandomizer, a 3D fruit machine with a red-knobbed handle" width="626" height="866"></figure>
   </div>
 </div>
 
