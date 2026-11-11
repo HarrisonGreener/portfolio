@@ -168,12 +168,12 @@ canvas.can-grab{cursor:var(--hand-grab)}
   border:0;background:none;padding:0;cursor:inherit}
 /* three chunky bars, staggered: short on the left, full in the middle, short on the right. On open they all tip into
    parallel slashes; the bottom one keeps turning past upright to cross the top one into an X, and the middle one hides. */
-.menu-btn i{position:absolute;height:4.5px;border-radius:1px;background:var(--green);transform-origin:50% 50%;
+.menu-btn i{position:absolute;height:5.5px;border-radius:1px;background:var(--green);transform-origin:50% 50%;
   transition:top .55s cubic-bezier(.65,0,.35,1),left .55s cubic-bezier(.65,0,.35,1),width .55s cubic-bezier(.65,0,.35,1),transform .55s cubic-bezier(.65,0,.35,1),opacity .2s ease,background .3s ease}
-.menu-btn i:nth-child(1){top:13.5px;left:9px;width:18px}
-.menu-btn i:nth-child(2){top:21.75px;left:9px;width:30px}
-.menu-btn i:nth-child(3){top:30px;left:21px;width:18px}
-.menu-btn[aria-expanded=true] i{top:21.75px;left:9px;width:30px;background:var(--ink)}
+.menu-btn i:nth-child(1){top:13px;left:9px;width:18px}
+.menu-btn i:nth-child(2){top:21.25px;left:9px;width:30px}
+.menu-btn i:nth-child(3){top:29.5px;left:21px;width:18px}
+.menu-btn[aria-expanded=true] i{top:21.25px;left:9px;width:30px;background:var(--ink)}
 .menu-btn[aria-expanded=true] i:nth-child(1){transform:rotate(-45deg)}
 .menu-btn[aria-expanded=true] i:nth-child(2){transform:rotate(-45deg);opacity:0;transition-delay:0s,0s,0s,0s,.3s,0s}
 .menu-btn[aria-expanded=true] i:nth-child(3){transform:rotate(-135deg)}
