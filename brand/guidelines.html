@@ -9,12 +9,14 @@
 <link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&display=swap">
 <style>
+@font-face{font-family:Archivo;src:url("../cv/fonts/Archivo.ttf") format("truetype");font-weight:100 900;font-stretch:62% 125%}
 :root{--ink:#1F1F1F;--soft:#5C5C59;--paper:#F2F2F0;--table:#E3E3E0;--green:#73956F;--accent:#46663F;--card:#FBFBF9}
 *{box-sizing:border-box}
 html{background:#cfcfcb}
 body{margin:0;font:400 20px/1.45 Archivo,Arial,sans-serif;color:var(--ink)}
 @page{size:1600px 900px;margin:0}
 .pg{width:1600px;height:900px;position:relative;overflow:hidden;background:var(--paper);margin:0 auto 40px;padding:80px 96px 0;page-break-after:always;break-after:page}
+section.pg:last-of-type{break-after:auto;page-break-after:auto}
 @media print{html{background:none}.pg{margin:0}}
 .pg.dark{background:var(--ink);color:var(--paper)}
 .pg.green{background:var(--green)}
@@ -93,7 +95,7 @@ html.embed .bar{display:none}
 <script>if (/[?&]embed/.test(location.search)) document.documentElement.classList.add('embed');</script>
 </head>
 <body>
-<div class="bar"><a href="../making-of/">← The Wallet CV</a><button type="button" onclick="print()">Save as PDF</button></div>
+<div class="bar"><a href="../making-of/">← The Wallet CV</a><a href="greener-brand-guidelines.pdf" download>Download PDF</a></div>
 
 <!-- 1 cover -->
 <section class="pg dark cover">
