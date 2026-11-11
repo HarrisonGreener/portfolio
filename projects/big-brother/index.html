@@ -1,0 +1,326 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Big Brother Inc.: how I made it · Harrison Greener</title>
+<meta name="description" content="Case study: Big Brother Inc., a pixel-art multi-agent AI experiment inspired by Orwell's Nineteen Eighty-Four, by Harrison Greener. Why I made it, the cast, and every nod to the book.">
+<link rel="canonical" href="https://harrisongreener.co.uk/projects/big-brother/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Big Brother Inc. · How I made it">
+<meta property="og:description" content="A company of local AI models run like Orwell's Oceania, and you are Big Brother. Every little nod to Nineteen Eighty-Four.">
+<meta property="og:image" content="https://harrisongreener.co.uk/projects/big-brother/img/building.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Harrison Greener">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&display=swap">
+<style>
+:root{--bg:#101113;--panel:#1A1C1F;--panel2:#22252A;--ink:#E6E2D8;--dim:#9C978C;--red:#C23B30;--teal:#4FBFA8;--amber:#E8B04A;
+  --line:rgba(230,226,216,.14);--w:1180px;--g:clamp(16px,4vw,48px);
+  --hand:image-set(url("../../assets/cursor/hand-point.png") 1x,url("../../assets/cursor/hand-point@2x.png") 2x) 9 1,url("../../assets/cursor/hand-point.png") 9 1,auto}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;overflow-x:clip;background:var(--bg);color:var(--ink);font:400 24px/1.3 VT323,ui-monospace,monospace;cursor:var(--hand);-webkit-font-smoothing:antialiased}
+/* scanlines, like a telescreen */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:50;background:repeating-linear-gradient(0deg,rgba(0,0,0,.18) 0 1px,transparent 1px 3px)}
+a,button{cursor:var(--hand);color:inherit}
+img{max-width:100%;height:auto;display:block}
+.px{image-rendering:pixelated}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 var(--g)}
+.pf{font-family:'Press Start 2P',monospace}
+/* top bar */
+.top{position:sticky;top:0;z-index:5;background:#0b0c0d;border-bottom:2px solid var(--panel2)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.top img{height:20px;width:auto}
+.top nav{display:flex;gap:10px}
+.top a.b{font:400 11px 'Press Start 2P',monospace;text-decoration:none;padding:10px 12px;background:var(--red);color:var(--ink);box-shadow:0 3px 0 #7d241c}
+.top a.g{background:var(--panel2);box-shadow:0 3px 0 #000}
+.rec{display:inline-flex;align-items:center;gap:8px;color:var(--red);font-size:20px}
+.rec i{width:10px;height:10px;border-radius:50%;background:var(--red);animation:blink 1.4s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+/* hero */
+.hero{padding:56px 0 0}
+.eye{display:flex;align-items:center;gap:22px;margin-bottom:26px}
+.eye svg{width:84px;height:auto;flex:none}
+h1{font:400 clamp(22px,5.4vw,64px)/1.25 'Press Start 2P',monospace;margin:0;letter-spacing:0}
+h1 span{color:var(--red)}
+.tag{font-size:clamp(26px,3vw,36px);color:var(--teal);margin:14px 0 0}
+.lede{font-size:clamp(24px,2.4vw,30px);max-width:44ch;margin:26px 0 0;color:var(--ink)}
+.meta{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px;margin:36px 0 0;padding:18px 0;border-top:2px solid var(--panel2);border-bottom:2px solid var(--panel2)}
+.meta dt{font:400 10px 'Press Start 2P',monospace;color:var(--amber)}
+.meta dd{margin:8px 0 0;font-size:22px;line-height:1.15}
+.shot{border:2px solid var(--panel2);box-shadow:0 0 0 6px #0b0c0d,0 30px 60px rgba(0,0,0,.5);margin:40px 0 0}
+.date{font-size:20px;color:var(--dim);margin-top:12px}
+/* sections */
+section{padding:clamp(70px,9vw,120px) 0 0}
+.sec-head{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:baseline;border-top:2px solid var(--red);padding-top:18px;margin-bottom:30px}
+.no{font:400 12px 'Press Start 2P',monospace;color:var(--red)}
+h2{font:400 clamp(18px,2.6vw,30px)/1.4 'Press Start 2P',monospace;margin:0}
+h2 em{font-style:normal;color:var(--teal)}
+.cols{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px}
+.prose{max-width:62ch}.prose p{margin:0 0 .9em}
+.pull{font:400 clamp(16px,2vw,22px)/1.6 'Press Start 2P',monospace;color:var(--amber);max-width:34ch;margin:4px 0 30px}
+figure{margin:0}
+figcaption{font-size:20px;color:var(--dim);margin-top:8px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:34px 0}
+/* pipeline */
+.pipe{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin:34px 0 0}
+.pipe div{flex:1 1 150px;background:var(--panel);border:2px solid var(--panel2);padding:16px;position:relative}
+.pipe div+div{margin-left:26px}
+.pipe div+div::before{content:"▶";position:absolute;left:-24px;top:50%;transform:translateY(-50%);color:var(--red);font-size:18px}
+.pipe b{display:block;font:400 10px 'Press Start 2P',monospace;color:var(--amber);margin-bottom:8px}
+.pipe span{font-size:21px;line-height:1.15;display:block}
+/* live */
+.live{background:var(--panel);border:2px solid var(--panel2);padding:clamp(20px,4vw,40px)}
+.live-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.live-top p{margin:8px 0 0;max-width:52ch}
+.browser{border:2px solid var(--panel2);background:#0b0c0d}
+.bbar{display:flex;align-items:center;gap:8px;padding:8px 12px;border-bottom:2px solid var(--panel2);font-size:18px;color:var(--dim)}
+.bbar i{width:10px;height:10px;border-radius:50%;background:var(--panel2)}
+.bscreen{position:relative;aspect-ratio:16/10;overflow:hidden;background:#0b0c0d}
+.bscreen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0}
+.bscreen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.btn{display:inline-block;font:400 11px 'Press Start 2P',monospace;text-decoration:none;padding:14px 16px;background:var(--red);color:var(--ink);box-shadow:0 4px 0 #7d241c}
+.btn.g{background:var(--panel2);box-shadow:0 4px 0 #000}
+/* tables */
+.orwell{width:100%;border-collapse:collapse;margin:30px 0 0;font-size:22px}
+.orwell th,.orwell td{padding:12px 14px;text-align:left;vertical-align:top;border-bottom:2px solid var(--panel2)}
+.orwell th{font:400 10px 'Press Start 2P',monospace;color:var(--amber);background:var(--panel)}
+.orwell td:first-child{color:var(--teal);width:28%}
+/* cast */
+.cast{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:34px 0 0}
+.who{background:var(--panel);border:2px solid var(--panel2);padding:18px;border-left:8px solid var(--c)}
+.who b{display:block;font:400 13px 'Press Start 2P',monospace;margin-bottom:6px}
+.who span{display:block;color:var(--c);font-size:21px}
+.who p{margin:8px 0 0;font-size:21px;line-height:1.15;color:var(--ink)}
+.who small{display:block;margin-top:8px;color:var(--dim);font-size:18px}
+/* details */
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:34px 0}
+.det{background:var(--panel);border:2px solid var(--panel2);display:flex;flex-direction:column}
+.det .pic{background:#0b0c0d;display:grid;place-items:center;min-height:220px;border-bottom:2px solid var(--panel2);overflow:hidden}
+.det .pic img{width:100%;height:100%;object-fit:cover}
+.det .txt{padding:18px 20px 22px}
+.det h3{font:400 12px/1.6 'Press Start 2P',monospace;margin:0 0 10px;color:var(--amber)}
+.det p{margin:0;font-size:22px;line-height:1.2}
+.det.wide{grid-column:1/-1}
+.big{font:400 clamp(26px,4vw,46px)/1.2 'Press Start 2P',monospace;color:var(--teal);text-align:center;padding:30px}
+.words{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:28px}
+.words span{font-size:24px;padding:4px 12px;border:2px solid var(--panel2)}
+.words span.r{border-color:var(--red);color:#ff8a7e}
+.posters{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:24px;width:100%}
+.posters div{background:#2b1212;border:2px solid var(--red);text-align:center;padding:14px 8px;font:400 9px/1.7 'Press Start 2P',monospace;color:#f3d6cf}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:34px 0 0}
+.tools div{background:var(--panel);border:2px solid var(--panel2);padding:18px}
+.tools b{display:block;font:400 10px 'Press Start 2P',monospace;color:var(--amber)}
+.tools span{display:block;margin-top:8px;font-size:22px;line-height:1.15}
+.repo{background:var(--panel);border:2px solid var(--panel2);padding:18px 20px;margin:20px 0 0}
+.repo .lang{height:10px;display:flex;margin:12px 0 10px}
+.repo .ll{display:flex;gap:16px;flex-wrap:wrap;font-size:20px}
+.repo .ll i{display:inline-block;width:10px;height:10px;margin-right:6px}
+/* end */
+.end{margin-top:clamp(80px,10vw,140px);padding:clamp(60px,9vw,100px) 0 34px;border-top:2px solid var(--red);background:#0b0c0d}
+.end p{color:var(--dim);max-width:50ch}
+.btns{display:flex;gap:16px;flex-wrap:wrap;margin:26px 0 0}
+.small{margin-top:60px;padding-top:18px;border-top:2px solid var(--panel2);font-size:20px;color:var(--dim);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rv{opacity:0;transform:translateY(22px);transition:opacity .8s steps(6),transform .8s steps(6)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}.rec i{animation:none}}
+@media (max-width:860px){
+  .meta{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sec-head,.cols{grid-template-columns:1fr}.cols>.spacer{display:none}
+  .cast,.tools{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .details,.grid2{grid-template-columns:1fr}
+  .pipe div+div{margin-left:0;margin-top:26px}.pipe div+div::before{content:"▼";left:50%;top:-24px;transform:translateX(-50%)}
+  .posters{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:520px){.cast,.tools{grid-template-columns:1fr}.top nav a.g{display:none}.orwell{font-size:19px}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="../../" aria-label="Harrison Greener, home"><img src="../../brand/greener-solid-white.svg" alt="Greener" width="110" height="28"></a>
+  <span class="rec" aria-hidden="true"><i></i>REC</span>
+  <nav><a class="b g" href="../../">◀ Wallet</a><a class="b" href="https://harrisongreener.github.io/big-brother-inc/" target="_blank" rel="noopener">Enter ▶</a></nav>
+</div></header>
+
+<div class="hero"><div class="wrap">
+  <div class="eye">
+    <svg viewBox="0 0 64 36" aria-hidden="true"><path d="M2 18 Q32 -8 62 18 Q32 44 2 18Z" fill="#E6E2D8"/><circle cx="32" cy="18" r="11" fill="#C23B30"/><circle cx="32" cy="18" r="5" fill="#101113"/><circle cx="35" cy="15" r="2" fill="#E6E2D8"/></svg>
+    <div><p class="pf" style="font-size:11px;color:var(--amber);margin:0">Portfolio project · AI experiment</p></div>
+  </div>
+  <h1>BIG BROTHER <span>INC.</span></h1>
+  <p class="tag">You are Big Brother. Nothing escapes your eye.</p>
+  <p class="lede">A company of AI staff, each a language model running on my own computer, organised like the bureaucracy in Orwell's <i>Nineteen Eighty-Four</i>. You give the orders and watch the building carry them out. This is why I made it, and every little nod to the book hidden inside.</p>
+  <dl class="meta">
+    <div><dt>What</dt><dd>Multi-agent AI system and pixel-art game</dd></div>
+    <div><dt>My role</dt><dd>Idea, pixel art, code, the whole building</dd></div>
+    <div><dt>Made with</dt><dd>Python, JavaScript, Ollama, local models</dd></div>
+    <div><dt>Cost</dt><dd>£0. Free models on my own PC</dd></div>
+  </dl>
+  <figure class="shot rv"><img src="img/building.webp" alt="The Big Brother Inc. building from above: ministries, Room 101, the Records Department and the Assembly Room" width="1400" height="875"></figure>
+  <p class="date rv">Look at the date in the corner. It's today, but the year is always 1984.</p>
+</div></div>
+
+<main>
+<section id="why"><div class="wrap">
+  <div class="sec-head rv"><span class="no">01</span><h2>Why I <em>made it</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p class="pull">“First AI comes up with our ideas. Then it does our thinking.”</p>
+    <p>I kept noticing a trend: people relying on AI to come up with their ideas for them. Follow that far enough and AI starts doing our thinking, and whoever owns the AI gets to decide how we think. That's a very Orwellian place to end up.</p>
+    <p>So I made the joke the other way round. Big Brother Inc. is an AI system built as Oceania itself: a bureaucracy of language models where every task is relayed, inspected and judged, and you sit at the top as Big Brother. Building a cheerful pixel-art game about AI control, out of AI, felt like the right kind of contradiction.</p>
+    <p>It's a passion project, made for fun. It runs entirely on free models on my own computer, and it's honest about being an experiment rather than a dependable product.</p>
+  </div></div>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <div class="sec-head rv"><span class="no">02</span><h2>How the <em>Party</em> works</h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>Most AI assistants are one voice in a chat box. This is an organisation of them. One model routes the work, others specialise, and a separate group does nothing but criticise. Nothing reaches you until it has passed the Thought Police.</p>
+  </div></div>
+  <div class="pipe rv">
+    <div><b>You</b><span>Big Brother gives an order</span></div>
+    <div><b>Winston</b><span>Routes it, and decides if it needs review</span></div>
+    <div><b>Ministries</b><span>Specialists do the work, live on screen</span></div>
+    <div><b>Thought Police</b><span>Three blind judges score it out of 10</span></div>
+    <div><b>Room 101</b><span>Guilty work is fixed, then judged again</span></div>
+  </div>
+</div></section>
+
+<section id="try"><div class="wrap">
+  <div class="live rv">
+    <div class="live-top">
+      <div><p class="pf" style="font-size:10px;color:var(--amber);margin:0">Live preview</p><h2 style="margin-top:12px">Try it <em>right here</em></h2><p>This is the live demo, running in the frame. The online version uses scripted replies, with the option to load a small AI that runs in your browser.</p></div>
+      <a class="btn" href="https://harrisongreener.github.io/big-brother-inc/" target="_blank" rel="noopener">Open full size ▶</a>
+    </div>
+    <div class="browser"><div class="bbar"><i></i><i></i><i></i><span>harrisongreener.github.io/big-brother-inc</span></div>
+      <div class="bscreen" id="bbScreen"><img src="img/live-preview.webp" alt="" width="1400" height="875"><iframe id="bbFrame" title="Live demo of Big Brother Inc." src="https://harrisongreener.github.io/big-brother-inc/" width="1600" height="1000" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
+    </div>
+  </div>
+</div></section>
+
+<section id="orwell"><div class="wrap">
+  <div class="sec-head rv"><span class="no">03</span><h2>Orwell, <em>everywhere</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv"><p>The 1984 setting isn't decoration. Almost every idea from the book maps onto a real part of the system.</p></div></div>
+  <table class="orwell rv">
+    <tr><th>In the book</th><th>In Big Brother Inc.</th></tr>
+    <tr><td>Big Brother, the face no one meets</td><td>You. You have no face, just a mainframe with one watching eye and a telescreen on wheels that rolls out to speak to people.</td></tr>
+    <tr><td>Winston Smith</td><td>Your Chief of Staff, the only one who reports to you. He routes every request.</td></tr>
+    <tr><td>The Ministries</td><td>Peace (code), Truth (study and research), Plenty (business) and Fiction (writing and pictures), each with its own specialist.</td></tr>
+    <tr><td>The Thought Police</td><td>Three reviewers who only ever judge, each on a different model family so they catch different mistakes.</td></tr>
+    <tr><td>Room 101</td><td>Where failed work, and its author, go to be rewritten using the judges' notes.</td></tr>
+    <tr><td>The memory hole</td><td>Rejected drafts drop down a slot in the wall, though they're kept in the Records archive.</td></tr>
+    <tr><td>The Records Department</td><td>Approved work is filed here: a canister shoots along the pneumatic tube and the counter ticks up.</td></tr>
+    <tr><td>Telescreens</td><td>Screens in every room show each agent writing live, with CCTV and a scrolling announcement ticker.</td></tr>
+    <tr><td>Unpersons</td><td>Remove a staff member and they never existed, though the building keeps a ledger of who was erased.</td></tr>
+    <tr><td>The Two Minutes Hate</td><td>Call a meeting and the whole staff files into the Assembly Room for a rally.</td></tr>
+  </table>
+  <div class="grid2 rv">
+    <figure><img src="img/thought-police.webp" alt="The Thought Police holding up scorecards" loading="lazy" width="1400" height="875"><figcaption>The Thought Police hold up their scorecards</figcaption></figure>
+    <figure><img src="img/ministry-of-love.webp" alt="The Ministry of Love machine room" loading="lazy" width="1112" height="640"><figcaption>The Ministry of Love's machines wake up whenever work is judged</figcaption></figure>
+  </div>
+</div></section>
+
+<section id="cast"><div class="wrap">
+  <div class="sec-head rv"><span class="no">04</span><h2>The <em>cast</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv"><p>Every member of staff is a character from the book, with their own personality, job and model. The names are chosen to fit: in Orwell's novel Tillotson works in the Records Department, Parsons is the eager neighbour, Ampleforth is the poet with the hairy ears, and Mr Charrington is the kindly shopkeeper who turns out to be Thought Police.</p></div></div>
+  <div class="cast rv">
+    <div class="who" style="--c:#e8b04a"><b>Winston</b><span>Chief of Staff</span><p>Quiet, diligent, a little nervous. Never does the work; knows who should.</p><small>Routes everything</small></div>
+    <div class="who" style="--c:#4ab0e8"><b>Tillotson</b><span>Ministry of Peace</span><p>Practical lead engineer who prefers working code to talk.</p><small>Runs on a coding model</small></div>
+    <div class="who" style="--c:#9a7be0"><b>William</b><span>Ministry of Truth</span><p>A precise professor who breaks university briefs into steps and criteria.</p><small>Keeps a Newspeak dictionary</small></div>
+    <div class="who" style="--c:#3fc8b8"><b>Harry</b><span>Ministry of Truth</span><p>The hard-working Scholar who follows the Professor's plan. Yes, that's me.</p><small>Does the actual work</small></div>
+    <div class="who" style="--c:#5ccf7a"><b>Parsons</b><span>Ministry of Plenty</span><p>Enthusiastic, eager-to-please strategist who always asks who'd pay.</p><small>Business ideas</small></div>
+    <div class="who" style="--c:#d98f4e"><b>Ampleforth</b><span>Ministry of Fiction</span><p>A dreamy poet with big ears. Writes, rhymes and draws pictures as SVG.</p><small>Writing and images</small></div>
+    <div class="who" style="--c:#e8584a"><b>O'Brien</b><span>Thought Police</span><p>Calm, courteous and terrifyingly thorough. Never lets a flaw through.</p><small>Hunts for errors</small></div>
+    <div class="who" style="--c:#d9d2c5"><b>Charrington</b><span>Thought Police</span><p>A mild-mannered old agent who misses nothing, line by line.</p><small>Checks it does the job</small></div>
+    <div class="who" style="--c:#e07bb8"><b>Martin</b><span>Thought Police</span><p>Silent and exacting. Cannot abide waffle, jargon or muddle.</p><small>Checks it's clear</small></div>
+  </div>
+</div></section>
+
+<section id="details"><div class="wrap">
+  <div class="sec-head rv"><span class="no">05</span><h2>The small <em>details</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv"><p>The building is full of little nods to the book that most people will walk straight past.</p></div></div>
+  <div class="details">
+    <article class="det rv"><div class="pic"><img class="px" src="img/d-clock.png" alt="The clock on the corridor wall" loading="lazy"></div>
+      <div class="txt"><h3>The clocks strike thirteen</h3><p>The book opens on "a bright cold day in April, and the clocks were striking thirteen." The clock in the corridor follows real time, and at 1pm it strikes thirteen times.</p></div></article>
+    <article class="det rv"><div class="pic"><div class="big">TUE 13 OCT<br>1984</div></div>
+      <div class="txt"><h3>It's always 1984</h3><p>The date in the corner is today's date and the real time, but the year never changes. The day and night outside the building follow the real clock too.</p></div></article>
+    <article class="det rv"><div class="pic"><img class="px" src="img/d-room101.png" alt="Room 101, with the chair and the cage" loading="lazy"></div>
+      <div class="txt"><h3>The rats in Room 101</h3><p>Room 101 has the chair, the heavy door and a cage on the table. When someone is sat in the chair, the rats get restless.</p></div></article>
+    <article class="det rv"><div class="pic"><img class="px" src="img/d-office.png" alt="Big Brother's office with the mainframe eye and the drinks cabinet" loading="lazy"></div>
+      <div class="txt"><h3>A faceless Big Brother, and Victory Gin</h3><p>Big Brother has no face: your office holds a mainframe with a single watching eye, and you travel as a telescreen on wheels. The drinks cabinet is stocked with Victory Gin.</p></div></article>
+    <article class="det rv"><div class="pic"><img class="px" src="img/d-records.png" alt="The Records Department's cubicles" loading="lazy"></div>
+      <div class="txt"><h3>Memory holes and pneumatic tubes</h3><p>Every cubicle in the Records Department has its own memory hole, and approved work shoots along the pneumatic tube in a canister when Winston files it.</p></div></article>
+    <article class="det rv"><div class="pic"><div class="big" style="font-size:clamp(20px,3vw,32px)">NEWSPEAK<br>DICTIONARY<br><small style="font-size:.5em;color:var(--dim)">11th edition</small></div></div>
+      <div class="txt"><h3>A dictionary that gets thinner</h3><p>In the book, Syme boasts that the Newspeak dictionary gets thinner with every edition, because they're destroying words. William, the Professor, has a Newspeak dictionary on his desk, and it grows thinner while he works.</p></div></article>
+    <article class="det wide rv"><div class="pic"><div class="posters" aria-label="Some of the original slogans on the walls">
+        <div>THE EYE<br>SEES ALL</div><div>DOUBT IS<br>DISLOYAL</div><div>ERRORS ARE<br>CRIMES</div><div>EAT. WORK.<br>OBEY.</div>
+        <div>WORDS ARE<br>WEAPONS</div><div>THE PAST IS<br>WHAT WE SAY</div><div>FILE IT.<br>FORGET IT.</div><div>OUTPUT IS<br>FREEDOM</div>
+      </div></div>
+      <div class="txt"><h3>Original slogans on every wall</h3><p>Instead of copying the book's "War is Peace", every room has its own posters written for this company, in the Party's voice: "Output is freedom" in the ministries, "File it. Forget it." in Records, "Doubt is disloyal" by Interrogation, and a ticker that announces how many cases of doubt were reported and resolved this week.</p></div></article>
+    <article class="det rv"><div class="pic"><img class="px" src="img/d-interrogation.png" alt="Interrogation, where the Thought Police sit" loading="lazy"></div>
+      <div class="txt"><h3>Nobody is ever off duty</h3><p>Staff keep office hours, take canteen breaks and get surprise spot checks from the Thought Police. Background clerks fill the ministries, and the telescreens hum.</p></div></article>
+    <article class="det rv"><div class="pic"><div class="big" style="font-size:clamp(22px,3.4vw,38px)">6079<br>SMITH W</div></div>
+      <div class="txt"><h3>Clerk 6079</h3><p>In the minigame you become clerk 6079, which is Winston Smith's number in the book, barked at him by the instructor during the morning Physical Jerks.</p></div></article>
+  </div>
+</div></section>
+
+<section id="game"><div class="wrap">
+  <div class="sec-head rv"><span class="no">06</span><h2>The <em>minigame</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>Press PLAY and you swap sides. Now you're the clerk, and Winston brings you a brief: a breakfast cereal for the Junior Spies, a seaside camp on Airstrip One, a board game for Hate Week, a subscription box of Victory Gin. Along with it comes a list of hidden words you have to sneak into your pitch without the Thought Police noticing.</p>
+    <p>Most are silly, but the dangerous ones are pulled from the book: Goldstein, Julia, the Brotherhood, and quieter ones only a reader would spot, like the paperweight, oranges (as in "Oranges and lemons") and the Chestnut Tree. Cram them in, shout them or wander off brief and you're dragged to Room 101. Three warnings and you become an unperson. When a real model is judging, a member of the Brotherhood even awards bonus points for quietly mocking the Party.</p>
+  </div></div>
+  <div class="words rv" aria-label="Some of the hidden words"><span>kazoo</span><span>wombat</span><span>trampoline</span><span class="r">Goldstein</span><span class="r">Julia</span><span class="r">Brotherhood</span><span class="r">paperweight</span><span class="r">oranges</span><span class="r">chestnut</span></div>
+  <figure class="rv"><img src="img/minigame.webp" alt="The minigame: writing a pitch for the Thought Police" loading="lazy" width="1400" height="875"><figcaption>Sneak It Past the Thought Police</figcaption></figure>
+</div></section>
+
+<section id="built"><div class="wrap">
+  <div class="sec-head rv"><span class="no">07</span><h2>How it's <em>built</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>I wanted it to cost nothing. Every agent is a free, open-source model running locally through Ollama on my own PC, developed on a 12 GB graphics card. The judges deliberately run on different model families, so they make different mistakes and catch different errors.</p>
+    <p>The backend is one Python file with no dependencies. It runs the agents, streams their writing live to the browser and handles files and records. The whole building, every sprite, the pathfinding, the day and night and the sound effects are drawn and generated in one HTML file. The version online runs without a server, using scripted replies or a small model inside your browser.</p>
+  </div></div>
+  <div class="tools rv">
+    <div><b>Agents</b><span>Local models through Ollama</span></div>
+    <div><b>Backend</b><span>One dependency-free Python file</span></div>
+    <div><b>Building</b><span>Hand-made pixel art on a canvas</span></div>
+    <div><b>Sound</b><span>Generated in the browser</span></div>
+  </div>
+  <div class="repo rv">
+    <a href="https://github.com/HarrisonGreener/big-brother-inc" target="_blank" rel="noopener" class="pf" style="font-size:12px">HarrisonGreener/big-brother-inc ▶</a>
+    <div class="lang"><i style="width:69.9%;background:#e34c26"></i><i style="width:20.2%;background:#3572A5"></i><i style="width:9.9%;background:#f1e05a"></i></div>
+    <div class="ll"><span><i style="background:#e34c26"></i>HTML 69.9%</span><span><i style="background:#3572A5"></i>Python 20.2%</span><span><i style="background:#f1e05a"></i>JavaScript 9.6%</span></div>
+  </div>
+  <figure class="rv" style="margin-top:34px"><img src="img/assembly-room.webp" alt="The Assembly Room during a rally" loading="lazy" width="1112" height="640"><figcaption>Call a meeting and everyone files into the Assembly Room</figcaption></figure>
+</div></section>
+</main>
+
+<footer class="end"><div class="wrap">
+  <h2>Big Brother is <em>waiting.</em></h2>
+  <p>The demo runs in your browser. The full version runs on your own computer with Ollama.</p>
+  <div class="btns"><a class="btn" href="https://harrisongreener.github.io/big-brother-inc/" target="_blank" rel="noopener">Enter the building ▶</a><a class="btn g" href="https://github.com/HarrisonGreener/big-brother-inc" target="_blank" rel="noopener">View the code ▶</a></div>
+  <div class="small"><span><a href="../../">◀ Back to the wallet</a></span><span>Inspired by George Orwell's Nineteen Eighty-Four (1949). An independent fan project; all slogans, dialogue and artwork are original.</span></div>
+</div></footer>
+
+<script>
+(() => {
+  const els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  els.forEach((e) => io.observe(e));
+})();
+(() => {   // fit the 1600-wide demo into the browser frame
+  const box = document.getElementById('bbScreen'), f = document.getElementById('bbFrame');
+  const fit = () => { f.style.transform = `scale(${box.clientWidth / 1600})`; };
+  addEventListener('resize', fit); fit(); new ResizeObserver(fit).observe(box);
+})();
+(() => {   // the date line: today, in 1984
+  const d = new Date(), el = document.querySelector('.det .big');
+  if (el) el.innerHTML = d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' }).toUpperCase().replace(',', '') + '<br>1984';
+})();
+</script>
+</body>
+</html>
