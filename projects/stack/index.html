@@ -39,8 +39,10 @@ img{max-width:100%;height:auto;display:block}
 .hero{background:var(--night);color:var(--cream);overflow:hidden;position:relative}
 .hero .wrap{display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:end;padding-top:64px}
 .kick{font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--gold);margin:0 0 18px}
-h1{font-weight:800;font-size:clamp(56px,9vw,128px);line-height:.9;letter-spacing:-.045em;margin:0}
-h1 em{font:400 1em Shrikhand,serif;letter-spacing:0;background:linear-gradient(180deg,var(--gold),var(--red));-webkit-background-clip:text;background-clip:text;color:transparent;padding-right:.08em}
+h1{margin:0;font-weight:800;letter-spacing:-.04em}
+h1 .lockup{width:min(420px,70%);height:auto;margin:0 0 34px}
+h1 span{display:block;font-size:clamp(48px,7.4vw,104px);line-height:.95}
+h1 em{display:block;font-style:normal;background:linear-gradient(180deg,var(--gold),var(--red));-webkit-background-clip:text;background-clip:text;color:transparent;padding-bottom:.06em}
 .lede{font-size:clamp(19px,2vw,24px);line-height:1.4;max-width:32ch;margin:26px 0 0;color:rgba(240,227,206,.85)}
 .meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 24px;margin:40px 0 56px;padding-top:20px;border-top:2px solid rgba(240,227,206,.25)}
 .meta dt{font-size:12px;font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--gold)}
@@ -55,7 +57,7 @@ section{padding:clamp(70px,9vw,120px) 0 0}
 .sec-head{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:baseline;border-top:3px solid var(--esp);padding-top:18px;margin-bottom:34px}
 .no{font-weight:800;font-size:15px;letter-spacing:.06em;color:var(--orange)}
 h2{font-weight:800;font-size:clamp(34px,5vw,62px);line-height:.98;letter-spacing:-.035em;margin:0}
-h2 em{font:400 1em Shrikhand,serif;letter-spacing:0;color:var(--orange)}
+h2 em{font-style:normal;color:var(--orange)}
 .cols{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px}
 .prose{max-width:66ch}.prose p{margin:0 0 1.1em}
 .pull{font:400 clamp(26px,3.2vw,40px)/1.2 Shrikhand,serif;color:var(--rust);max-width:24ch;margin:6px 0 34px}
@@ -157,7 +159,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
   <div class="wrap">
     <div>
       <p class="kick">Portfolio project · App, brand and pitch</p>
-      <h1>Stack. <em>Own it.</em></h1>
+      <h1><img class="lockup" src="img/stack-lockup-cream.svg" alt="Stack" width="560" height="119"><span>Own it.<em>Play it everywhere.</em></span></h1>
       <p class="lede">A prototype app for people who collect vinyl and CDs, where owning the record is what unlocks it everywhere. This is how I designed it, built it and pitched it, down to the smallest details.</p>
       <dl class="meta">
         <div><dt>What</dt><dd>Phone app prototype, brand, 3D film, pitch</dd></div>
