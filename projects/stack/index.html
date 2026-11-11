@@ -94,6 +94,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
 .det p{margin:0;font-size:16px;line-height:1.55}
 .det.wide{grid-column:1/-1}
 .det.wide .pic{min-height:0}
+.todo{width:100%;max-width:520px;aspect-ratio:4/3;border:2px dashed rgba(58,34,22,.35);border-radius:12px;display:grid;place-items:center;text-align:center;color:var(--cocoa);font-weight:600;background:repeating-linear-gradient(-45deg,transparent 0 14px,rgba(58,34,22,.04) 14px 28px)}
 .ministripe{width:100%;max-width:520px;height:150px;border-radius:12px;background:repeating-linear-gradient(180deg,var(--mustard) 0 22px,var(--orange) 22px 44px,var(--red) 44px 66px,var(--sky) 66px 88px);position:relative;margin-bottom:26px}
 .ministripe img{position:absolute;left:50%;bottom:-6px;transform:translateX(-50%);height:150px;width:auto}
 .vu{display:flex;gap:7px;align-items:flex-end;height:90px;margin-bottom:26px}
@@ -171,6 +172,7 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
   <div class="sec-head rv"><span class="no">01</span><h2>Why I <em>made it</em></h2></div>
   <div class="cols"><div class="spacer"></div><div class="prose rv">
     <p class="pull">“What if owning the record was the thing that unlocked it everywhere?”</p>
+    <p>It started with a friend. They had shelves of vinyl and kept buying more, but still paid for Spotify every month to listen to music, including records they already owned. I don't collect records myself, but that struck me as a bit weird, and like a problem I could design a way around.</p>
     <p>Streaming made music easy to reach but hard to own. Albums can vanish from a subscription overnight, and a playlist is rented space, not a collection. Meanwhile people keep buying vinyl and CDs, because they want something they actually own.</p>
     <p>The trouble is that records and phones don't talk to each other. If you own <i>Rumours</i> on vinyl, you can't play it on the bus. You pay again to stream music you already bought.</p>
     <p>Stack is my answer. Every feature is there to make owning music feel better than renting it: your shelf becomes your library, your family shares one collection, lending works like lending a real record, and when you sell a record the digital copy goes with it.</p>
@@ -198,11 +200,12 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
 <section id="look"><div class="wrap">
   <div class="sec-head rv"><span class="no">03</span><h2>Finding <em>the look</em></h2></div>
   <div class="cols"><div class="spacer"></div><div class="prose rv">
-    <p>The first version was black, like every music app. It worked, but it felt like a streaming service, which is exactly what Stack is arguing against. So the black went: the dark parts became a warm espresso brown, like an old record sleeve.</p>
+    <p>The first version was black and orange, like a lot of music apps. Then I put it in front of people for product testing, and the feedback was blunt: in black and orange, it looked like an adult entertainment site. Not the vibe for a record collection.</p>
+    <p>So I gave it a 70s feel instead. The black became a warm espresso brown, like an old record sleeve, and the orange stopped being the only colour.</p>
     <p>The brand became the <b>Sunset Stripe</b>: the warm colours of a 70s record shop, sleeve paper and wood. Mustard, orange, red and sky, always in that order, over cream and espresso. The rule is even written into the code as a comment: no black UI, rust for actions. Type is Geist for everything, with Shrikhand saved for the odd flourish, like the quote above.</p>
   </div></div>
   <div class="ba rv">
-    <figure><img class="phone" src="img/before-dark.webp" alt="An early, dark version of Stack" loading="lazy" width="414" height="868"><figcaption>Before: black, like everyone else</figcaption></figure>
+    <figure><img class="phone" src="img/before-dark.webp" alt="An early, dark version of Stack" loading="lazy" width="414" height="868"><figcaption>Before: black and orange, as tested</figcaption></figure>
     <span class="arr" aria-hidden="true">→</span>
     <figure><img class="phone" src="img/my-stack.webp" alt="Stack in its final Sunset Stripe colours" loading="lazy" width="420" height="910"><figcaption>After: espresso browns and the Sunset Stripe</figcaption></figure>
   </div>
@@ -272,7 +275,9 @@ figcaption{font-size:14px;line-height:1.45;color:var(--cocoa);margin-top:10px}
     <article class="det rv"><div class="pic"><img class="phone" src="img/friends-activity.webp" alt="" loading="lazy"></div>
       <div class="txt"><h3>Record Club</h3><p>Every month has a theme, like the perfect Halloween record in October. Answer with any album, owned or not, and your picks build up on your profile.</p></div></article>
     <article class="det wide rv"><div class="pic light" style="padding:28px"><img src="img/puck-render.webp" alt="The Puck" loading="lazy" style="width:min(300px,60%)"></div>
-      <div class="txt"><h3>The Puck</h3><p>A small device that sits between your turntable and speakers. It records your own copy of each record in hi-res, crackle and all, and logs what you play, so a real spin counts towards your stats. It's simulated in the prototype, but it's how Stack could prove you own a record. Its 3D render in the app comes from a small renderer I wrote by hand: a bevelled cylinder with the logo inlaid, an LED and its ports.</p></div></article>
+      <div class="txt"><h3>The Puck</h3><p>A small device that sits between your turntable and speakers. It records your own copy of each record in hi-res, crackle and all, and logs what you play, so a real spin counts towards your stats. It's simulated in the app, but it's how Stack could prove you own a record. Its 3D render in the app comes from a small renderer I wrote by hand: a bevelled cylinder with the logo inlaid, an LED and its ports. And it isn't only on screen: I 3D printed a real one.</p></div></article>
+    <article class="det wide rv"><div class="pic light" style="padding:28px"><div class="todo">Photo to come:<br>the 3D printed Puck</div></div>
+      <div class="txt"><h3>A Puck you can hold</h3><p>To make the idea real, I 3D printed the Puck, so the device from the film and the app is an object you can pick up and put next to a turntable.</p></div></article>
   </div>
 </div></section>
 
