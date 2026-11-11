@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Great Brandomizer: how I made it · Harrison Greener</title>
+<meta name="description" content="Case study: The Great Brandomizer by Harrison Greener, a 3D vintage fruit machine that spins up theme-based colour palettes and font pairings. Why I made it and every small detail.">
+<link rel="canonical" href="https://harrisongreener.co.uk/projects/brandomizer/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="The Great Brandomizer · How I made it">
+<meta property="og:description" content="A fruit machine for designers: pull the handle for a theme-based palette and font pairing, hold what you like, and cash out a brand card.">
+<meta property="og:image" content="https://harrisongreener.co.uk/projects/brandomizer/img/machine.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="author" content="Harrison Greener">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap">
+<style>
+:root{--bg:#1F1311;--card:#2B1A17;--card2:#36211C;--ink:#EFE3C6;--dim:#BBA98A;--red:#951C2E;--red2:#C0283C;--gold:#FFB23E;--bulb:#FFE9B0;
+  --line:rgba(239,227,198,.14);--w:1180px;--g:clamp(16px,4vw,48px);
+  --hand:image-set(url("../../assets/cursor/hand-point.png") 1x,url("../../assets/cursor/hand-point@2x.png") 2x) 9 1,url("../../assets/cursor/hand-point.png") 9 1,auto}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 Barlow,system-ui,sans-serif;cursor:var(--hand);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a,button{cursor:var(--hand);color:inherit}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 var(--g)}
+.cond{font-family:'Barlow Condensed',Barlow,sans-serif;letter-spacing:.06em;text-transform:uppercase}
+/* marquee bulbs */
+.bulbs{height:14px;background:radial-gradient(circle at 7px 7px,var(--bulb) 0 3.5px,transparent 4.5px) 0 0/22px 14px;animation:chase 1.2s steps(2) infinite;opacity:.9}
+@keyframes chase{50%{background-position:11px 0}}
+@media (prefers-reduced-motion:reduce){.bulbs{animation:none}}
+.top{position:sticky;top:0;z-index:5;background:#160d0b;border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:60px;gap:12px}
+.top img{height:20px;width:auto}
+.top nav{display:flex;gap:10px}
+.top a.b{font:700 14px 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;padding:9px 14px;border-radius:8px;background:var(--card2)}
+.top a.r{background:var(--gold);color:#22100D}
+/* hero */
+.hero{background:linear-gradient(180deg,var(--red),#5e1019);padding:56px 0 0;overflow:hidden}
+.kick{font:700 13px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin:0 0 14px}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:40px;align-items:end}
+h1{font:400 clamp(44px,7.6vw,104px)/.95 Bungee,sans-serif;margin:0;color:var(--bulb);text-shadow:0 0 18px rgba(255,178,62,.45),0 4px 0 #5e1019}
+h1 small{display:block;font:700 italic .32em 'Barlow',sans-serif;color:var(--gold);text-shadow:none;margin-bottom:.15em;letter-spacing:0}
+.lede{font-size:clamp(19px,2vw,23px);line-height:1.45;max-width:34ch;margin:22px 0 0}
+.meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px 24px;margin:34px 0 52px;padding-top:18px;border-top:2px solid rgba(239,227,198,.25)}
+.meta dt{font:700 12px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.meta dd{margin:2px 0 0;font-weight:600;font-size:16px;line-height:1.35}
+.heroimg{border-radius:16px 16px 0 0;box-shadow:0 -10px 60px rgba(0,0,0,.35);overflow:hidden}
+/* sections */
+section{padding:clamp(70px,9vw,120px) 0 0}
+.sec-head{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:baseline;border-top:3px solid var(--gold);padding-top:16px;margin-bottom:32px}
+.no{font:400 16px Bungee,sans-serif;color:var(--gold)}
+h2{font:400 clamp(28px,4.4vw,52px)/1.05 Bungee,sans-serif;margin:0}
+h2 em{font-style:normal;color:var(--gold)}
+.cols{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px}
+.prose{max-width:64ch}.prose p{margin:0 0 1.1em}
+.pull{font:700 clamp(24px,3vw,36px)/1.2 Barlow,sans-serif;color:var(--bulb);max-width:24ch;margin:4px 0 30px}
+.pull em{font-style:normal;color:var(--gold)}
+figure{margin:0}
+figcaption{font:600 15px 'Barlow Condensed',sans-serif;letter-spacing:.04em;color:var(--dim);margin-top:10px}
+.shot img{border-radius:12px;border:1px solid var(--line)}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:22px;margin:34px 0}
+/* steps */
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:34px 0 0}
+.step{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 18px 22px}
+.step .n{font:400 30px Bungee,sans-serif;color:var(--gold)}
+.step b{display:block;font:700 22px 'Barlow Condensed',sans-serif;letter-spacing:.04em;text-transform:uppercase;margin:6px 0 6px}
+.step p{margin:0;font-size:15.5px;line-height:1.5;color:var(--ink)}
+.themes{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 0}
+.themes span{font:700 14px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:6px 12px;border-radius:999px;background:var(--card2);color:var(--bulb)}
+/* evolution */
+.evo{display:grid;grid-template-columns:1fr auto 1fr;gap:26px;align-items:center;margin:34px 0 0}
+.evo .arr{font:400 40px Bungee,sans-serif;color:var(--gold)}
+/* live */
+.live{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(20px,4vw,40px)}
+.live-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.live p{margin:10px 0 0;max-width:52ch;color:var(--dim)}
+.btn{display:inline-block;font:700 15px 'Barlow Condensed',sans-serif;letter-spacing:.08em;text-transform:uppercase;text-decoration:none;padding:13px 20px;border-radius:10px;background:var(--gold);color:#22100D;box-shadow:0 4px 0 #a86a12}
+.btn.g{background:var(--card2);color:var(--ink);box-shadow:0 4px 0 #120a08}
+.bscreen{position:relative;aspect-ratio:16/10;overflow:hidden;border-radius:12px;background:#000}
+.bscreen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0}
+.bscreen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* details */
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:20px;margin:34px 0}
+.det{background:var(--card);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.det .pic{background:#140b09;min-height:210px;display:grid;place-items:center;overflow:hidden}
+.det .pic img{width:100%;height:100%;object-fit:cover}
+.det .pic img.fit{object-fit:contain;padding:18px}
+.det .txt{padding:20px 22px 24px}
+.det h3{font:700 23px/1.15 'Barlow Condensed',sans-serif;letter-spacing:.03em;text-transform:uppercase;margin:0 0 8px;color:var(--bulb)}
+.det p{margin:0;font-size:16px;line-height:1.55}
+.det.wide{grid-column:1/-1}
+.det.fav{border:2px solid var(--gold)}
+.big{font:400 clamp(30px,4.6vw,56px)/1.05 Bungee,sans-serif;text-align:center;padding:30px;color:var(--gold)}
+.big small{display:block;font:700 .34em 'Barlow Condensed',sans-serif;letter-spacing:.1em;color:var(--dim);margin-top:10px}
+.sticker{background:#f7f2e6;color:#1a1a1a;border-radius:8px;padding:16px 20px;transform:rotate(-2deg);box-shadow:0 10px 26px rgba(0,0,0,.4);font-size:16px;line-height:1.5;max-width:330px}
+.sticker b{display:block;font:700 19px 'Barlow Condensed',sans-serif;letter-spacing:.04em}
+.stamp{display:inline-grid;place-items:center;width:84px;height:84px;border-radius:50%;background:#2f9a4a;color:#fff;font:700 13px/1.2 'Barlow Condensed',sans-serif;text-align:center;letter-spacing:.04em;box-shadow:0 0 0 4px #140b09,0 0 0 6px #2f9a4a}
+.coin{display:grid;place-items:center;text-align:center;font:700 26px/1.1 'Barlow Condensed',sans-serif;color:#ffcf5a;background:#1b1412;border-radius:14px;padding:18px 24px}
+.coin small{display:block;color:#ff6a3a;font-size:.7em}
+.keys{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:24px}
+.keys kbd{font:700 15px 'Barlow Condensed',sans-serif;letter-spacing:.06em;text-transform:uppercase;padding:10px 14px;border-radius:8px;background:var(--card2);box-shadow:0 4px 0 #120a08;color:var(--bulb)}
+.keys kbd i{font-style:normal;color:var(--dim);margin-left:6px}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:30px 0 0}
+.tools div{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+.tools b{display:block;font:700 12px 'Barlow Condensed',sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--gold)}
+.tools span{display:block;margin-top:6px;font-weight:600;line-height:1.35}
+.repo{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:14px 0 0}
+.repo .lang{height:10px;display:flex;border-radius:999px;overflow:hidden;margin:12px 0 10px}
+.repo .ll{font-size:15px}
+.repo .ll i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+/* end */
+.end{background:linear-gradient(180deg,var(--red),#5e1019);margin-top:clamp(80px,10vw,140px);padding:clamp(56px,8vw,100px) 0 34px}
+.end p{max-width:50ch}
+.btns{display:flex;gap:14px;flex-wrap:wrap;margin:26px 0 0}
+.small{margin-top:60px;padding-top:18px;border-top:1px solid rgba(239,227,198,.25);font-size:14px;color:rgba(239,227,198,.7);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .9s ease,transform 1s cubic-bezier(.16,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:1fr}
+  .sec-head,.cols{grid-template-columns:1fr}.cols>.spacer{display:none}
+  .steps,.tools{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .details,.grid2{grid-template-columns:1fr}
+  .evo{grid-template-columns:1fr}.evo .arr{transform:rotate(90deg);justify-self:center}
+}
+@media (max-width:520px){.steps,.tools{grid-template-columns:1fr}.top nav a:not(.r){display:none}}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="../../" aria-label="Harrison Greener, home"><img src="../../brand/greener-solid-white.svg" alt="Greener" width="110" height="28"></a>
+  <nav><a class="b" href="../../">← The wallet</a><a class="b r" href="https://harrisongreener.github.io/TheGreatBrandomizer/" target="_blank" rel="noopener">Pull the handle ↗</a></nav>
+</div></header>
+
+<div class="hero">
+  <div class="bulbs" aria-hidden="true"></div>
+  <div class="wrap" style="padding-top:44px">
+    <div>
+      <p class="kick">Portfolio project · Tool · 3D</p>
+      <h1><small>The Great</small>Brandomizer</h1>
+      <p class="lede">A vintage fruit machine for designers. Pull the handle and the reels land on a colour palette and a font pairing built for a theme. Hold what you like, spin again, and cash out a brand card.</p>
+      <dl class="meta">
+        <div><dt>What</dt><dd>A 3D design tool in the browser</dd></div>
+        <div><dt>My role</dt><dd>Idea, design, 3D build, sound</dd></div>
+        <div><dt>Made with</dt><dd>three.js, JavaScript, Google Fonts</dd></div>
+        <div><dt>Year</dt><dd>2026</dd></div>
+      </dl>
+    </div>
+    <figure class="heroimg"><img src="img/machine.webp" alt="The Great Brandomizer, a red and gold 3D fruit machine" width="800" height="500"></figure>
+  </div>
+</div>
+
+<main>
+<section id="why"><div class="wrap">
+  <div class="sec-head rv"><span class="no">01</span><h2>Why I <em>made it</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p class="pull">Colour palette generators are <em>pure luck</em>. You keep pressing until something looks right.</p>
+    <p>I sometimes use a website that generates colour palettes. It's useful, but it's just luck: it throws out random colours and you keep going until you see something you like. There's no idea behind it.</p>
+    <p>So I thought it'd be cool if a tool could generate palettes from a theme instead, so "Seventies" gives you something that actually feels seventies. Then I took it a step further and had it pick the fonts that go with the theme too, a headline and a body pairing, so you get the start of a whole brand.</p>
+    <p>And if it's luck either way, it may as well look like it. For the container I wanted something funky, so it became an old-style fruit machine. It started as a fun idea, and it's ended up one of my favourite things I've made.</p>
+  </div></div>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <div class="sec-head rv"><span class="no">02</span><h2>How to <em>play</em></h2></div>
+  <div class="steps rv">
+    <div class="step"><span class="n">1</span><b>Pick a theme</b><p>Tap a row on the pay table, or press THEME. Each theme sets its own colour rules and font list.</p></div>
+    <div class="step"><span class="n">2</span><b>Pull the handle</b><p>The reels spin as real drums and land one by one. Your brand name is spelled out in the headline font.</p></div>
+    <div class="step"><span class="n">3</span><b>Hold and re-spin</b><p>Hold the colours or fonts you love, and they stay put while the rest spin again.</p></div>
+    <div class="step"><span class="n">4</span><b>Cash out</b><p>A brand card prints into the tray, with every value, the fonts and a contrast check.</p></div>
+  </div>
+  <div class="themes rv" aria-label="The 16 themes"><span>Sixties</span><span>Seventies</span><span>Eighties</span><span>Nineties</span><span>Y2K</span><span>Modern</span><span>Bold</span><span>Brutalist</span><span>Luxury</span><span>Organic</span><span>Tech</span><span>Editorial</span><span>Art Deco</span><span>Nordic</span><span>Tropical</span><span>Grunge</span></div>
+  <div class="grid2 rv">
+    <figure class="shot"><img src="img/eighties.webp" alt="The Eighties theme after a spin" loading="lazy" width="800" height="500"><figcaption>An Eighties spin</figcaption></figure>
+    <figure class="shot"><img src="img/reels-held.webp" alt="Two colour reels held in red" loading="lazy" width="800" height="500"><figcaption>Two colours held, the rest re-spun</figcaption></figure>
+  </div>
+</div></section>
+
+<section id="try"><div class="wrap">
+  <div class="live rv">
+    <div class="live-top">
+      <div><p class="kick" style="margin:0">Live preview</p><h2>Have a <em>spin</em></h2><p>The real machine, running live. Press Space or click the handle to spin, drag to look around.</p></div>
+      <a class="btn" href="https://harrisongreener.github.io/TheGreatBrandomizer/" target="_blank" rel="noopener">Open full size ↗</a>
+    </div>
+    <div class="bscreen" id="brScreen"><img src="img/machine.webp" alt="" width="800" height="500"><iframe id="brFrame" title="The Great Brandomizer, live" src="https://harrisongreener.github.io/TheGreatBrandomizer/" width="1440" height="900" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
+  </div>
+</div></section>
+
+<section id="evolution"><div class="wrap">
+  <div class="sec-head rv"><span class="no">03</span><h2>From flat to <em>fruit machine</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p>The first version was a flat 2D page: a machine-shaped panel with colour swatches, letter reels and a lever on the side. It proved the idea worked, but it didn't feel like pulling a real handle. So I rebuilt it as a full 3D machine in three.js, with drums that physically spin, chrome, bulbs and a tray that prints a card.</p>
+  </div></div>
+  <div class="evo rv">
+    <figure class="shot"><img src="img/prototype.webp" alt="The first 2D prototype of the Brandomizer" loading="lazy" width="1280" height="800"><figcaption>Prototype 1: flat, in the browser</figcaption></figure>
+    <span class="arr" aria-hidden="true">→</span>
+    <figure class="shot"><img src="img/machine.webp" alt="The finished 3D machine" loading="lazy" width="800" height="500"><figcaption>The finished machine, in 3D</figcaption></figure>
+  </div>
+</div></section>
+
+<section id="details"><div class="wrap">
+  <div class="sec-head rv"><span class="no">04</span><h2>The small <em>details</em></h2></div>
+  <div class="details">
+    <article class="det wide rv fav"><div class="pic" style="padding:28px;gap:28px;display:flex;flex-wrap:wrap;justify-content:center;align-items:center">
+        <div class="stamp">INSPECTED<br>H.G.</div>
+        <div class="big" style="padding:0;font-size:clamp(22px,3vw,34px)">EST. 2001<small>MODEL BR-01 · SERIAL 0002001</small></div>
+      </div>
+      <div class="txt"><p class="kick" style="margin:0 0 6px">Little nods to me</p><h3>Inspected by H.G., established 2001</h3><p>Like a real machine, it carries a maker's plate and an inspection sticker. The green "Inspected" stamp is signed H.G., my initials. The plate says "Est. 2001", the year I was born, and the serial number, 0002001, hides it again.</p></div></article>
+    <article class="det rv"><div class="pic"><div class="sticker"><b>DESIGN RESPONSIBLY.</b>Results may require kerning.<br>Not to be played under deadline.<br>Clients under 18 months: no.</div></div>
+      <div class="txt"><h3>The warning sticker</h3><p>Fruit machines tell you to gamble responsibly. This one tells you to design responsibly, with a few warnings every designer will recognise.</p></div></article>
+    <article class="det rv"><div class="pic"><div class="coin">INSERT<br>IDEA<small>ANY SIZE</small></div></div>
+      <div class="txt"><h3>Insert idea, any size</h3><p>The coin slot doesn't take money. It says "Insert idea, any size", and dropping an idea in starts a spin. Underneath it still says 10p, 20p, 50p.</p></div></article>
+    <article class="det rv"><div class="pic"><img src="img/d-paytable.webp" alt="The theme chart on the top of the machine" loading="lazy" width="600" height="210"></div>
+      <div class="txt"><h3>A pay table of themes</h3><p>Where a fruit machine lists its prizes, this one lists the 16 themes, each with a palette preview and a named "house pick", like Avocado Suite for the seventies or Dial-Up Dreams for Y2K.</p></div></article>
+    <article class="det rv"><div class="pic"><div class="big">1 IN 40<small>JACKPOT</small></div></div>
+      <div class="txt"><h3>A real jackpot</h3><p>About one spin in forty hits the jackpot: it lands on the theme's hand-picked house pick, with flashing bulbs and a bell.</p></div></article>
+    <article class="det rv"><div class="pic"><img src="img/cash-out.webp" alt="A brand card printed into the tray" loading="lazy" width="800" height="600"></div>
+      <div class="txt"><h3>Every brand card is a payout</h3><p>Cashing out prints a numbered card into the tray, "Payout No." and all. Click it for the hex, RGB and HSL values, the font links, CSS variables to copy and a PNG or JPEG to save.</p></div></article>
+    <article class="det rv"><div class="pic"><div class="big">AAA 3<small>CONTRAST, ALWAYS CHECKED</small></div></div>
+      <div class="txt"><h3>Always usable</h3><p>Every palette has at least one dark and one light colour, so there's always a readable text pair, and the machine shows a live accessibility contrast count for every spin.</p></div></article>
+    <article class="det rv"><div class="pic"><div class="keys"><kbd>Space<i>spin</i></kbd><kbd>1–7<i>hold</i></kbd><kbd>T<i>theme</i></kbd><kbd>C<i>cash out</i></kbd><kbd>V<i>view</i></kbd></div></div>
+      <div class="txt"><h3>Sounds made from scratch</h3><p>The reels, bell and coin are all synthesised in the browser rather than recorded. And for anyone who'd rather not use a mouse, the whole machine works from the keyboard.</p></div></article>
+  </div>
+  <figure class="shot rv"><img src="img/payout.webp" alt="The payout screen with colour values, fonts and contrast checks" loading="lazy" width="800" height="500"><figcaption>The full payout</figcaption></figure>
+</div></section>
+
+<section id="built"><div class="wrap">
+  <div class="sec-head rv"><span class="no">05</span><h2>How it's <em>built</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv"><p>It's one HTML page with no build step. The machine is modelled in code with three.js, its artwork is drawn on canvases, and bloom makes the bulbs glow. The camera opens at an angle and settles on the machine, and set views jump between the machine, the reels and the tray.</p></div></div>
+  <div class="tools rv">
+    <div><b>3D</b><span>three.js, modelled in code</span></div>
+    <div><b>Type</b><span>Google Fonts, loaded per theme</span></div>
+    <div><b>Sound</b><span>Synthesised in the browser</span></div>
+    <div><b>Build</b><span>One HTML file, no build step</span></div>
+  </div>
+  <div class="repo rv">
+    <a href="https://github.com/HarrisonGreener/TheGreatBrandomizer" target="_blank" rel="noopener" style="font-weight:700">HarrisonGreener/TheGreatBrandomizer ↗</a>
+    <div class="lang"><i style="width:100%;background:#e34c26"></i></div>
+    <div class="ll"><i style="background:#e34c26"></i>HTML 100% · one file, with the JavaScript and CSS inside it</div>
+  </div>
+</div></section>
+</main>
+
+<footer class="end">
+  <div class="wrap">
+    <h2 style="color:var(--bulb)">Feeling <em>lucky?</em></h2>
+    <p>Pick a theme, pull the handle and see what brand you walk away with.</p>
+    <div class="btns"><a class="btn" href="https://harrisongreener.github.io/TheGreatBrandomizer/" target="_blank" rel="noopener">Pull the handle ↗</a><a class="btn g" href="https://github.com/HarrisonGreener/TheGreatBrandomizer" target="_blank" rel="noopener">View the code ↗</a></div>
+    <div class="small"><span><a href="../../" style="color:inherit">← Back to the wallet</a></span><span>Designed and built by Harrison Greener</span></div>
+  </div>
+</footer>
+<div class="bulbs" aria-hidden="true"></div>
+
+<script>
+(() => {
+  const els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  els.forEach((e) => io.observe(e));
+})();
+(() => {
+  const box = document.getElementById('brScreen'), f = document.getElementById('brFrame');
+  const fit = () => { f.style.transform = `scale(${box.clientWidth / 1440})`; };
+  addEventListener('resize', fit); fit(); new ResizeObserver(fit).observe(box);
+})();
+</script>
+</body>
+</html>
