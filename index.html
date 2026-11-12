@@ -2932,14 +2932,16 @@ document.getElementById('mpPhone')?.addEventListener('click', () => { setMenu(fa
 /* ---------- Loop ---------- */
 const clock = new THREE.Clock();
 /* If the scene can't hold a smooth frame rate, drop the resolution a step at a time (never below 1x), then soften the shadows */
-const perf = { t0: 0, last: 0, n: 0, shadowsCut: false };
+const perf = { t0: 0, last: 0, n: 0, slow: 0, shadowsCut: false };
 function governFrameRate() {
   const now = performance.now();
   if (!perf.t0 || now - perf.last > 250) { perf.t0 = now; perf.n = 0; }   // first frame, or back from a hidden tab: start a fresh window
   perf.last = now; perf.n++;
   if (now - perf.t0 < 2000) return;
   const fps = perf.n * 1000 / (now - perf.t0); perf.t0 = now; perf.n = 0;
-  if (fps >= 42) return;
+  if (fps >= 42 || !menu.hidden || document.hidden) { perf.slow = 0; return; }   // only judge the wallet scene itself
+  if (++perf.slow < 2) return;                                                      // needs two slow windows in a row, so one hiccup doesn't cost quality
+  perf.slow = 0;
   if (pixelRatio > 1) {
     pixelRatio = Math.max(1, pixelRatio - 0.25);
     renderer.setPixelRatio(pixelRatio); renderer.setSize(innerWidth, innerHeight);
