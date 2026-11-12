@@ -312,9 +312,10 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .gd-lines{position:absolute;inset:0;background:linear-gradient(90deg,transparent 14%,#E3A6A0 14% calc(14% + 2px),transparent calc(14% + 2px)),repeating-linear-gradient(transparent 0 calc(9cqw - 1px),#B9CBD9 calc(9cqw - 1px) 9cqw)}
 .gd-hibble{position:absolute;left:20%;top:22%;font-family:Hibble,cursive;font-size:22cqw;line-height:1;color:#2A2A2A}
 .gd-sub{position:absolute;left:21%;top:62%;font-family:Hibble,cursive;font-size:6.5cqw;color:#46663F}
-.gd-sheets{position:absolute;inset:14% 8%;display:flex;justify-content:center;align-items:center;gap:3%}
-.gd-sheets i{flex:none;width:13%;aspect-ratio:1/1.414;background:linear-gradient(var(--a) 0 0) 18% 62%/64% 9% no-repeat,linear-gradient(var(--a) 0 0) 18% 76%/40% 4% no-repeat,var(--b);box-shadow:0 10px 18px -10px rgba(0,0,0,.45)}
-.gd-sheets i:nth-child(odd){transform:translateY(-6%) rotate(-2deg)}.gd-sheets i:nth-child(even){transform:translateY(5%) rotate(2deg)}
+.gd-fan{position:absolute;inset:0}
+.gd-fan img{position:absolute;top:50%;left:50%;width:24cqw;aspect-ratio:1587/2245;object-fit:cover;border-radius:.4cqw;box-shadow:0 2cqw 4cqw -1cqw rgba(0,0,0,.6);background:#333;transform:translate(-50%,-54%) translateX(var(--x)) rotate(var(--r)) scale(var(--s,1))}
+.gd-fan img:nth-child(1){--x:-36cqw;--r:-11deg;--s:.86}.gd-fan img:nth-child(2){--x:-19cqw;--r:-6deg;--s:.94}.gd-fan img:nth-child(3){--x:36cqw;--r:11deg;--s:.86}.gd-fan img:nth-child(4){--x:19cqw;--r:6deg;--s:.94}.gd-fan img:nth-child(5){--x:0cqw;--r:0deg;--s:1.08;z-index:2}
+.gd-tag{position:absolute;left:0;right:0;bottom:4.5cqw;text-align:center;font:700 2.6cqw/1 Archivo,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#F2F2F0;opacity:.85}
 .mw-art>img.fly-i{inset:auto;right:7%;bottom:0;width:62%;height:auto;object-fit:contain}
 .mw-meta{display:grid;grid-template-columns:auto 1fr;column-gap:12px;align-items:baseline;opacity:0;transform:translateY(16px);transition:opacity .9s ease calc(var(--d,0s) + .35s),transform 1.2s cubic-bezier(.16,.8,.2,1) calc(var(--d,0s) + .35s)}
 .mw-no{font-size:13px;font-weight:700;opacity:.45;grid-row:span 2}
@@ -2169,10 +2170,9 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   b.dataset.id = 'wallet'; grid.appendChild(b); workCards.push(b);
 }
 { // graphic design: the poster series and the free textures, each on its own page
-  const SHEETS = [['#d8d8d8','#ff1f00'],['#1a1033','#3fe0f0'],['#fafafa','#0047ff'],['#2a1638','#ffd21f'],['#f5e9cf','#c8501e'],['#120a2a','#ff2fb2']];
   const LINKS = [
-    { href: 'projects/posters/', title: 'Twelve Posters', cats: ['Graphic design'], bg: '#EDEBE6', label: 'Twelve Posters: twelve styles, every palette spun on the Brandomizer',
-      art: `<div class="gd-sheets">${SHEETS.map(([b, a]) => `<i style="--b:${b};--a:${a}"></i>`).join('')}</div>` },
+    { href: 'projects/posters/', title: 'Twelve Posters', cats: ['Graphic design'], bg: '#1F1F1F', label: 'Twelve Posters: twelve styles, every palette spun on the Brandomizer',
+      art: `<div class="gd-fan">${['03', '02', '04', '01', '05'].map((n) => `<img src="projects/posters/img/${n}-thumb.webp" alt="" loading="lazy" decoding="async">`).join('')}</div><span class="gd-tag">12 posters · 12 styles · 30 min each</span>` },
     { href: 'projects/hibble/', title: 'Hibble', cats: ['Graphic design', 'Type'], bg: '#FDFDF8', label: 'Hibble: my handwriting as a font. Type anything in it',
       art: '<div class="gd-lines"></div><span class="gd-hibble">Hibble</span><span class="gd-sub">Harry\'s scribble</span>' },
   ];
