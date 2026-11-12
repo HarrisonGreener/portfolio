@@ -1,17 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://harrisongreener.co.uk/</loc><lastmod>2026-11-11</lastmod><priority>1.0</priority></url>
-  <url><loc>https://harrisongreener.co.uk/making-of/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/stack/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/big-brother/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/fly/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/brandomizer/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/quotable/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/rolla/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/folio/</loc><lastmod>2026-11-11</lastmod><priority>0.8</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/pat/</loc><lastmod>2026-11-11</lastmod><priority>0.7</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/hibble/</loc><lastmod>2026-11-11</lastmod><priority>0.7</priority></url>
-  <url><loc>https://harrisongreener.co.uk/projects/posters/</loc><lastmod>2026-11-11</lastmod><priority>0.7</priority></url>
-  <url><loc>https://harrisongreener.co.uk/brand/guidelines.html</loc><lastmod>2026-11-11</lastmod><priority>0.5</priority></url>
-  <url><loc>https://harrisongreener.co.uk/cv/Harrison-Greener-CV.pdf</loc><lastmod>2026-11-11</lastmod><priority>0.6</priority></url>
+  <url><loc>https://harrisongreener.co.uk/</loc><lastmod>2026-11-12</lastmod><priority>1.0</priority></url>
+  <url><loc>https://harrisongreener.co.uk/making-of/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/quotable/</loc><lastmod>2026-11-12</lastmod><priority>0.9</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/stack/</loc><lastmod>2026-11-12</lastmod><priority>0.9</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/rolla/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/folio/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/brandomizer/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/hibble/</loc><lastmod>2026-11-12</lastmod><priority>0.8</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/posters/</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/big-brother/</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/fly/</loc><lastmod>2026-11-12</lastmod><priority>0.7</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/pat/</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
+  <url><loc>https://harrisongreener.co.uk/brand/guidelines.html</loc><lastmod>2026-11-12</lastmod><priority>0.5</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/quotable/brand.html</loc><lastmod>2026-11-12</lastmod><priority>0.4</priority></url>
+  <url><loc>https://harrisongreener.co.uk/projects/pat/brand.html</loc><lastmod>2026-11-12</lastmod><priority>0.4</priority></url>
+  <url><loc>https://harrisongreener.co.uk/cv/print.html</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
+  <url><loc>https://harrisongreener.co.uk/cv/Harrison-Greener-CV.pdf</loc><lastmod>2026-11-12</lastmod><priority>0.6</priority></url>
+  <url><loc>https://harrisongreener.co.uk/receipt/</loc><lastmod>2026-11-12</lastmod><priority>0.4</priority></url>
+  <url><loc>https://harrisongreener.co.uk/scratch/</loc><lastmod>2026-11-12</lastmod><priority>0.4</priority></url>
 </urlset>
