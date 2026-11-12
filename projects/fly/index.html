@@ -9,8 +9,6 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="Can a fly play Tetris? · How I made it">
 <meta property="og:description" content="318 real neurons from a mapped fly brain, a real fly body and an old box computer. Nothing is trained. It plays badly.">
-<meta property="og:image" content="https://harrisongreener.co.uk/projects/fly/img/hero.webp">
-<meta name="twitter:card" content="summary_large_image">
 <meta name="author" content="Harrison Greener">
 <link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -130,6 +128,19 @@ figcaption{font:400 13px/1.5 var(--mono);color:var(--soft);margin-top:10px}
 }
 @media (max-width:520px){.pipe{grid-template-columns:1fr}.pipe div+div{border-left:0;border-top:2px solid var(--ink)}.top nav a:not(.r){display:none}}
 </style>
+<meta property="og:url" content="https://harrisongreener.co.uk/projects/fly/">
+<meta property="og:site_name" content="Harrison Greener">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://harrisongreener.co.uk/projects/fly/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="A 3D fruit fly at a keyboard">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Can a fly play Tetris? · How I made it">
+<meta name="twitter:description" content="318 real neurons from a mapped fly brain, a real fly body and an old box computer. Nothing is trained. It plays badly.">
+<meta name="twitter:image" content="https://harrisongreener.co.uk/projects/fly/img/og.jpg">
+<meta name="twitter:image:alt" content="A 3D fruit fly at a keyboard">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "CreativeWork", "@id": "https://harrisongreener.co.uk/projects/fly/#work", "name": "Can a fly play Tetris?", "headline": "Can a fly play Tetris? · How I made it", "description": "Case study: Can a fly play Tetris?, by Harrison Greener. A real fruit-fly brain wiring and a real fly body, wired to a keyboard and rendered live in 3D. Why I made it and how it works.", "url": "https://harrisongreener.co.uk/projects/fly/", "image": "https://harrisongreener.co.uk/projects/fly/img/og.jpg", "inLanguage": "en-GB", "author": {"@type": "Person", "@id": "https://harrisongreener.co.uk/#me", "name": "Harrison Greener", "url": "https://harrisongreener.co.uk/"}, "creator": {"@id": "https://harrisongreener.co.uk/#me"}, "isPartOf": {"@type": "WebSite", "@id": "https://harrisongreener.co.uk/#site", "name": "Harrison Greener", "url": "https://harrisongreener.co.uk/"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Harrison Greener", "item": "https://harrisongreener.co.uk/"}, {"@type": "ListItem", "position": 2, "name": "Can a fly play Tetris?", "item": "https://harrisongreener.co.uk/projects/fly/"}]}]}</script>
 </head>
 <body>
 <header class="top"><div class="wrap">
@@ -188,7 +199,7 @@ figcaption{font:400 13px/1.5 var(--mono);color:var(--soft);margin-top:10px}
       <div><p class="kick" style="margin:0">Live preview</p><h2>Watch it <em>play</em></h2><p>The real thing, running live in your browser. Drag to move the camera, and hover the brain map in the corner to see each neuron.</p></div>
       <a class="btn" href="https://harrisongreener.github.io/can-a-fly-play-tetris-/" target="_blank" rel="noopener">Open full size ↗</a>
     </div>
-    <div class="bscreen" id="flScreen"><img src="img/ui.webp" alt="" width="1440" height="900"><iframe id="flFrame" title="Can a fly play Tetris? live" src="https://harrisongreener.github.io/can-a-fly-play-tetris-/" width="1440" height="900" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
+    <div class="bscreen" id="flScreen"><img src="img/ui.webp" alt="The fly at its desk, with the live brain activity panel" width="1440" height="900"><iframe id="flFrame" title="Can a fly play Tetris? live" src="https://harrisongreener.github.io/can-a-fly-play-tetris-/" width="1440" height="900" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
   </div>
 </div></section>
 
@@ -215,11 +226,11 @@ figcaption{font:400 13px/1.5 var(--mono);color:var(--soft);margin-top:10px}
       <div class="txt"><h3>Every key press is explained</h3><p>A log shows why each key was pressed: which neuron group fired, and how far above its usual activity it was. The meters show which key's neurons are most excited at that moment.</p></div></article>
     <article class="det rv"><div class="pic"><div class="big">rub<br>rub</div></div>
       <div class="txt"><h3>It behaves like a fly</h3><p>When it's idle it rubs its front legs together, the way flies do. Its antennae twitch, its abdomen breathes, and its wings flick when it slams the drop key.</p></div></article>
-    <article class="det rv"><div class="pic"><img src="img/keys.webp" alt="" loading="lazy"></div>
+    <article class="det rv"><div class="pic"><img src="img/keys.webp" alt="Close-up of the fly's legs on the keys" loading="lazy"></div>
       <div class="txt"><h3>A real fly body</h3><p>The body is NeuroMechFly, rebuilt from microscope scans of a real fly: 39 parts on their measured skeleton. I added shaders for the facets of the compound eyes, the veins in the see-through wings and the cuticle texture, plus fine bristles scattered over the body.</p></div></article>
-    <article class="det rv"><div class="pic"><img src="img/topdown.webp" alt="" loading="lazy"></div>
+    <article class="det rv"><div class="pic"><img src="img/topdown.webp" alt="Top-down view of the fly's feet placed on the keyboard" loading="lazy"></div>
       <div class="txt"><h3>Feet that stay on the keys</h3><p>An inverse kinematics solver, kept within the real joint limits of a fly's leg, places the front feet on the keys while the middle and back feet stay planted on the desk.</p></div></article>
-    <article class="det rv"><div class="pic"><img src="img/screen.webp" alt="" loading="lazy"></div>
+    <article class="det rv"><div class="pic"><img src="img/screen.webp" alt="The CRT screen, showing what each of the fly's eyes is watching" loading="lazy"></div>
       <div class="txt"><h3>What the fly sees</h3><p>Faint blue columns on the CRT show what each eye is watching. And the screen itself glows like an old monitor, with scanlines and phosphor bloom.</p></div></article>
     <article class="det rv"><div class="pic"><div class="big">0.1 ms</div></div>
       <div class="txt"><h3>A real brain, in real time</h3><p>The spiking simulation of 318 neurons and 13,620 synapses runs live on your computer's processor, stepped every tenth of a millisecond, using the same neuron model as a 2024 study in <i>Nature</i>.</p></div></article>
