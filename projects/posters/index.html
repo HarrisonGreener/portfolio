@@ -132,7 +132,7 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
    placeholder automatically; clicking it opens the poster beside its card. */
 const POSTERS = ['Brutalism', 'Y2K', 'Bauhaus', 'Swiss', 'Constructivism', 'Art Nouveau',
   'Psychedelia', 'Memphis', 'Punk zine', 'Vaporwave', 'Op Art', 'Acid rave'];
-const NOTES = { 5: 'The cat is mine, from a photo I took of him.' };   // optional line under a poster in the viewer
+const NOTES = { 5: 'A photo of my cat.' };   // optional line under a poster in the viewer
 const SHADES = [['#DADAD6', '#1F1F1F'], ['#1F1F1F', '#F2F2F0']];
 const grid = document.getElementById('grid'), lb = document.getElementById('lb'), lbCard = document.getElementById('lbCard');
 POSTERS.forEach((name, i) => {
