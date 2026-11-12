@@ -681,6 +681,14 @@ canvas.can-grab{cursor:var(--hand-grab)}
 </div>
 <div class="veil" id="veil"><p id="veilText"></p></div>
 
+<script>
+/* Visitor stats (GoatCounter, no cookies). Only counts on the live domain; add #toggle-goatcounter to a URL to stop counting your own visits */
+(function(){var on=location.hostname==='harrisongreener.co.uk';
+window.gc=function(p,t){try{if(on&&window.goatcounter&&goatcounter.count)goatcounter.count({path:p,title:t||p,event:true})}catch(e){}};
+if(!on)return;var s=document.createElement('script');s.async=true;s.src='https://gc.zgo.at/count.js';s.setAttribute('data-goatcounter','https://harrygreener.goatcounter.com/count');document.head.appendChild(s);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var u;try{u=new URL(a.href,location.href)}catch(x){return}
+if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol==='mailto:')gc('contact/email');else if(/^https?:$/.test(u.protocol)&&u.hostname!==location.hostname)gc('out/'+u.hostname+u.pathname.replace(/\/$/,''))},true)})();
+</script>
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.min.js",
@@ -1786,7 +1794,7 @@ function phonePose() {
     .addScaledVector(new THREE.Vector3(0, 0, -1).applyQuaternion(q.clone().multiply(_pq)), 0);
   return { pos, quat: q.clone().multiply(_pq), scale: s };
 }
-function openPhone() {
+function openPhone() { gc('wallet/phone', 'Wallet: phone');
   if (phoneTarget === 1 || active) return;
   if (phoneP === 0) phoneHome = { pos: phoneProp.holder.position.clone(), quat: phoneProp.holder.quaternion.clone() };
   phoneProp.wobble = 0; phoneTarget = 1; controls.enabled = false; setHover(null);
@@ -1950,7 +1958,7 @@ function finishReturn() {
 
 /* ---------- No on-screen controls: the wallet itself is the navigation ---------- */
 const cardHint = document.getElementById('cardHint');
-function showSheet(item) { cardHint.textContent = item.kind === 'biz' ? 'Click to see the project · drag to turn it' : item.kind === 'licence' ? 'Click to flip · drag to turn it' : item.kind === 'scratch' ? 'Drag over the silver to scratch · click to flip' : ''; cardHint.classList.toggle('on', !!cardHint.textContent); }
+function showSheet(item) { gc('wallet/' + item.id, 'Wallet: ' + item.label); cardHint.textContent = item.kind === 'biz' ? 'Click to see the project · drag to turn it' : item.kind === 'licence' ? 'Click to flip · drag to turn it' : item.kind === 'scratch' ? 'Drag over the silver to scratch · click to flip' : ''; cardHint.classList.toggle('on', !!cardHint.textContent); }
 function hideSheet() { cardHint.classList.remove('on'); }
 function openProject(cfg) {                               // a card in your hand opens its page in the menu
   hideSheet(); setMenu(true); openDetail(cfg);
@@ -2109,6 +2117,7 @@ document.getElementById('puForm').addEventListener('submit', (e) => {
   const bubble = document.createElement('p'); bubble.className = 'pu-msg me'; bubble.textContent = msg;
   const thread = document.getElementById('puThread'); thread.appendChild(bubble); thread.scrollTop = thread.scrollHeight;
   const body = `${msg}\n\n${name}\n${from}`;
+  gc('contact/form', 'Sent the contact form');
   location.href = `mailto:harrygreener@hotmail.co.uk?subject=${encodeURIComponent('Hello from ' + name)}&body=${encodeURIComponent(body)}`;
   document.getElementById('puNote').textContent = 'Your email app should be open with this ready. Just press send.';
   e.target.elements.message.value = '';
@@ -2610,6 +2619,7 @@ let pdCur = null;
 document.getElementById('pdBack').addEventListener('click', () => closeDetail());
 document.getElementById('pdNext').addEventListener('click', () => { const n = BIZ[(BIZ.indexOf(pdCur) + 1) % BIZ.length]; detail.scrollTo({ top: 0 }); openDetail(n); });
 function openDetail(cfg) {
+  gc('project/' + cfg.id, 'Project: ' + cfg.id);
   if (CASE_STUDIES[cfg.id]) { rememberReturn(); location.href = CASE_STUDIES[cfg.id]; return; }   // projects with a full case study open it instead
   pdCur = cfg; loadProjectFonts();
   const nx = BIZ[(BIZ.indexOf(cfg) + 1) % BIZ.length];
@@ -2671,6 +2681,7 @@ function resetReveal(root) {
 }
 const menuUnder = document.getElementById('menuUnder');
 function setMenu(open) {
+  if (open) gc('wallet/menu', 'Opened the menu');
   menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
   if (open) {
     menu.hidden = false; menu.scrollTop = 0; closeDetail(true); resetReveal(menu); menu.style.setProperty('--sbw', (menu.offsetWidth - menu.clientWidth) + 'px');
