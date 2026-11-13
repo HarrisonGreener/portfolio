@@ -130,9 +130,9 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
 /* The twelve. Drop each finished poster into img/ as 01.jpg … 12.jpg (portrait, A-series ratio)
    and the brand card it was made from as 01-card.png … 12-card.png. The poster replaces the
    placeholder automatically; clicking it opens the poster beside its card. */
-const POSTERS = ['Brutalism', 'Y2K', 'Bauhaus', 'Swiss', 'Constructivism', 'Art Nouveau',
-  'Psychedelia', 'Memphis', 'Punk zine', 'Vaporwave', 'Op Art', 'Acid rave'];
-const NOTES = { 5: 'A photo of my cat.' };   // optional line under a poster in the viewer
+const POSTERS = ['Psychedelia', 'Bauhaus', 'Brutalism', 'Constructivism', 'Y2K', 'Art Nouveau',
+  'Swiss', 'Memphis', 'Punk zine', 'Vaporwave', 'Op Art', 'Acid rave'];   // ordered for the grid, not by the day they were made
+const NOTES = { 4: 'A photo of my cat.' };   // optional line under a poster in the viewer
 const SHADES = [['#DADAD6', '#1F1F1F'], ['#1F1F1F', '#F2F2F0']];
 const grid = document.getElementById('grid'), lb = document.getElementById('lb'), lbCard = document.getElementById('lbCard');
 POSTERS.forEach((name, i) => {
@@ -140,7 +140,7 @@ POSTERS.forEach((name, i) => {
   const b = document.createElement('button'); b.type = 'button'; b.className = 'p';
   b.innerHTML = `<div class="sheet"><div class="brief"><span class="no">Poster ${no}</span><span class="wip">In progress</span>
       <span class="t"></span><div class="sw">Brand card to come</div></div></div>
-    <div class="cap"><b>${no} · ${name}</b><span>Day ${i + 1}</span></div>`;
+    <div class="cap"><b>${no} · ${name}</b><span></span></div>`;
   const s = b.querySelector('.sheet'); s.style.cssText = `--bg:${bg};--fg:${fg};--ac:${fg}`;
   const t = b.querySelector('.t'); t.textContent = name; t.style.setProperty('--len', Math.max(...name.split(' ').map((w) => w.length)) * 1.05);
   b.disabled = true; b.setAttribute('aria-label', `Poster ${no}, ${name}: in progress`);
@@ -148,7 +148,6 @@ POSTERS.forEach((name, i) => {
   const card = new Image(); let hasCard = false; card.onload = () => { hasCard = true; }; card.src = `img/${no}-card.png`;
   img.onload = () => {   // the real poster replaces the placeholder
     s.innerHTML = ''; s.appendChild(img); b.disabled = false; b.setAttribute('aria-label', `Poster ${no}, ${name}: view with its brand card`);
-    b.querySelector('.cap span').textContent = `Day ${i + 1}`;
   };
   img.src = `img/${no}.jpg`;
   b.addEventListener('click', () => {
