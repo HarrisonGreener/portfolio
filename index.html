@@ -313,12 +313,13 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .gd-hibble{position:absolute;left:20%;top:22%;font-family:Hibble,cursive;font-size:22cqw;line-height:1;color:#2A2A2A}
 @font-face{font-family:'Greener Sans';src:url("projects/greener-sans/fonts/GreenerSans-Black.woff") format("woff");font-display:swap}
 .gd-gs{position:absolute;inset:0;font-family:'Greener Sans',sans-serif;color:#1F1F1F}
-.gd-gs .big{position:absolute;right:-6cqw;bottom:-10cqw;font-size:50cqw;line-height:.8;letter-spacing:-.01em}
-.gd-gs .set{position:absolute;left:6cqw;top:6cqw;width:46cqw;font-size:3.7cqw;line-height:1.22;letter-spacing:.06em;color:#1F1F1F}
+.gd-gs .big{position:absolute;right:1cqw;bottom:-10cqw;font-size:50cqw;line-height:.8;letter-spacing:-.01em}
+.gd-gs .set{position:absolute;left:13cqw;top:6cqw;width:46cqw;font-size:3.7cqw;line-height:1.22;letter-spacing:.06em;color:#1F1F1F}
 .gd-gs .set i{font-style:normal;color:#73956F}
 .gd-gs .nm{position:absolute;left:6cqw;top:24cqw;font:700 2.6cqw/1 Archivo,sans-serif;letter-spacing:.14em;text-transform:uppercase}
-.mw-art .wal{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 52%;transform:scale(1.2) translateX(-6%)}
-.mw-art .wal-me{position:absolute;right:-1%;bottom:0;height:68%;width:auto;filter:drop-shadow(0 1.5cqw 2cqw rgba(0,0,0,.35))}
+.mw-art .wal{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:30% 55%}
+.mw-art .wal-t{position:absolute;left:13cqw;bottom:6cqw;font-family:'Greener Sans',sans-serif;font-size:6.2cqw;line-height:.92;color:#1F1F1F}
+.mw-art .wal-me{position:absolute;inset:auto;right:5cqw;bottom:0;height:62%;width:auto;object-fit:contain;filter:drop-shadow(0 1.5cqw 2cqw rgba(0,0,0,.35))}
 .gd-sub{position:absolute;left:21%;top:62%;font-family:Hibble,cursive;font-size:6.5cqw;color:#46663F}
 .gd-fan{position:absolute;inset:0}
 .gd-fan img{position:absolute;top:50%;left:50%;width:24cqw;aspect-ratio:1587/2245;object-fit:cover;border-radius:.4cqw;box-shadow:0 2cqw 4cqw -1cqw rgba(0,0,0,.6);background:#333;transform:translate(-50%,-54%) translateX(var(--x)) rotate(var(--r)) scale(var(--s,1))}
@@ -2171,9 +2172,9 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
 });
 { // this site, as a project: its own case study page
   const b = document.createElement('a'); b.className = 'mw-card'; b.href = 'making-of/'; const n = workCards.length, cats = ['Web', 'Brand'];
-  b.innerHTML = `<div class="mw-cover"><div class="mw-par"><div class="mw-art"><img class="wal" src="making-of/img/s-open.jpg" alt="" loading="lazy" decoding="async"><img class="wal-me" src="making-of/img/me-win.webp" alt="" loading="lazy" decoding="async"></div></div></div>
+  b.innerHTML = `<div class="mw-cover"><div class="mw-par"><div class="mw-art"><img class="wal" src="making-of/img/s-open.jpg" alt="" loading="lazy" decoding="async"><img class="wal-me" src="making-of/img/me-win.webp" alt="" loading="lazy" decoding="async"><span class="wal-t">THE<br>WALLET CV</span></div></div></div>
     <div class="mw-meta"><span class="mw-no">${String(n + 1).padStart(2, '0')}</span><b>The Wallet CV</b><span class="mw-tags">This site · ${cats.join(' · ')}</span></div>`;
-  b.style.setProperty('--bg', '#73956F'); b.style.setProperty('--w', '52%');
+  b.style.setProperty('--bg', '#E4E4E1'); b.style.setProperty('--w', '52%');
   b.dataset.cats = cats.join('|'); b.setAttribute('aria-label', 'The Wallet CV: how I made this site and the real wallet behind it'); b.addEventListener('click', () => rememberReturn());
   b.dataset.id = 'wallet'; grid.appendChild(b); workCards.push(b);
 }
@@ -2184,7 +2185,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
     { href: 'projects/hibble/', title: 'Hibble', cats: ['Graphic design', 'Type'], bg: '#FDFDF8', label: 'Hibble: my handwriting as a font. Type anything in it',
       art: '<div class="gd-lines"></div><span class="gd-hibble">Hibble</span><span class="gd-sub">Harry\'s scribble</span>' },
     { href: 'projects/greener-sans/', title: 'Greener Sans', cats: ['Graphic design', 'Type'], bg: '#E6E6E2', label: 'Greener Sans: a typeface built from my logo. Type anything in it',
-      art: '<div class="gd-gs"><span class="set">ABCDEFGHIJKLM<br>NOPQRSTUVWXYZ<br><i>0123456789</i> &amp;@?!</span><span class="big">GS</span><span class="nm">Greener Sans · Free typeface</span></div>' },
+      art: '<div class="gd-gs"><span class="set">ABCDEFGHIJKLM<br>NOPQRSTUVWXYZ<br><i>0123456789</i> &amp;@?!</span><span class="big">GS</span></div>' },
   ];
   LINKS.forEach((l) => {
     const b = document.createElement('a'); b.className = 'mw-card'; b.href = l.href; const n = workCards.length;
