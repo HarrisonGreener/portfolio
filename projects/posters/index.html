@@ -130,9 +130,9 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
 /* The twelve. Drop each finished poster into img/ as 01.jpg … 12.jpg (portrait, A-series ratio)
    and the brand card it was made from as 01-card.png … 12-card.png. The poster replaces the
    placeholder automatically; clicking it opens the poster beside its card. */
-const POSTERS = ['Psychedelia', 'Bauhaus', 'Brutalism', 'Constructivism', 'Y2K', 'Art Nouveau',
-  'Swiss', 'Memphis', 'Punk zine', 'Vaporwave', 'Op Art', 'Acid rave'];   // ordered for the grid, not by the day they were made
-const NOTES = { 4: 'A photo of my cat.' };   // optional line under a poster in the viewer
+const POSTERS = ['Bauhaus', 'Psychedelia', 'Brutalism', 'Y2K', 'Constructivism', 'Memphis',
+  'Art Nouveau', 'Swiss', 'Punk zine', 'Vaporwave', 'Op Art', 'Acid rave'];   // ordered for the grid, not by the day they were made
+const NOTES = { 5: 'A photo of my cat.' };   // optional line under a poster in the viewer
 const SHADES = [['#DADAD6', '#1F1F1F'], ['#1F1F1F', '#F2F2F0']];
 const grid = document.getElementById('grid'), lb = document.getElementById('lb'), lbCard = document.getElementById('lbCard');
 POSTERS.forEach((name, i) => {
