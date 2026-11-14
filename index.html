@@ -311,6 +311,9 @@ canvas.can-grab{cursor:var(--hand-grab)}
 @font-face{font-family:Hibble;src:url("projects/hibble/fonts/Hibble-Regular.woff") format("woff");font-display:swap}
 .gd-lines{position:absolute;inset:0;background:linear-gradient(90deg,transparent 14%,#E3A6A0 14% calc(14% + 2px),transparent calc(14% + 2px)),repeating-linear-gradient(transparent 0 calc(9cqw - 1px),#B9CBD9 calc(9cqw - 1px) 9cqw)}
 .gd-hibble{position:absolute;left:20%;top:22%;font-family:Hibble,cursive;font-size:22cqw;line-height:1;color:#2A2A2A}
+@font-face{font-family:'Greener Sans';src:url("projects/greener-sans/fonts/GreenerSans-Black.woff") format("woff");font-display:swap}
+.gd-gs{position:absolute;left:9%;top:50%;transform:translateY(-50%);font-family:'Greener Sans',sans-serif;font-size:15cqw;line-height:.92;color:#F2F2F0}
+.gd-gs small{display:block;font:700 2.6cqw/1 Archivo,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:#1F1F1F;margin-top:3cqw}
 .gd-sub{position:absolute;left:21%;top:62%;font-family:Hibble,cursive;font-size:6.5cqw;color:#46663F}
 .gd-fan{position:absolute;inset:0}
 .gd-fan img{position:absolute;top:50%;left:50%;width:24cqw;aspect-ratio:1587/2245;object-fit:cover;border-radius:.4cqw;box-shadow:0 2cqw 4cqw -1cqw rgba(0,0,0,.6);background:#333;transform:translate(-50%,-54%) translateX(var(--x)) rotate(var(--r)) scale(var(--s,1))}
@@ -518,7 +521,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
   var c = document.createElement('canvas'), gl = null;
   try { gl = c.getContext('webgl2') || c.getContext('webgl'); } catch (e) {}
   if (gl) return;
-  var P = [['stack','Stack'],['quotable','Quotable'],['rolla','Rolla'],['folio','Folio'],['brandomizer','The Great Brandomizer'],['hibble','Hibble'],['posters','Posters'],['big-brother','Big Brother Inc.'],['fly','Can a fly play Tetris?'],['pat','Pat']];
+  var P = [['stack','Stack'],['quotable','Quotable'],['rolla','Rolla'],['folio','Folio'],['brandomizer','The Great Brandomizer'],['hibble','Hibble'],['greener-sans','Greener Sans'],['posters','Posters'],['big-brother','Big Brother Inc.'],['fly','Can a fly play Tetris?'],['pat','Pat']];
   addEventListener('DOMContentLoaded', function () {
     var d = document.createElement('main'); d.className = 'nogl';
     d.innerHTML = '<h2>Harrison Greener, designer</h2><p>This portfolio is a 3D wallet, but your browser can\'t show 3D right now. Here\'s everything inside it.</p>' +
@@ -2175,6 +2178,8 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
       art: `<div class="gd-fan">${['04', '03', '01', '02', '05'].map((n) => `<img src="projects/posters/img/${n}-thumb.webp" alt="" loading="lazy" decoding="async">`).join('')}</div><span class="gd-tag">12 posters · 12 styles · 30 min each</span>` },
     { href: 'projects/hibble/', title: 'Hibble', cats: ['Graphic design', 'Type'], bg: '#FDFDF8', label: 'Hibble: my handwriting as a font. Type anything in it',
       art: '<div class="gd-lines"></div><span class="gd-hibble">Hibble</span><span class="gd-sub">Harry\'s scribble</span>' },
+    { href: 'projects/greener-sans/', title: 'Greener Sans', cats: ['Graphic design', 'Type'], bg: '#73956F', label: 'Greener Sans: a typeface built from my logo. Type anything in it',
+      art: '<span class="gd-gs">GREENER<br>SANS<small>Free typeface</small></span>' },
   ];
   LINKS.forEach((l) => {
     const b = document.createElement('a'); b.className = 'mw-card'; b.href = l.href; const n = workCards.length;
@@ -2185,7 +2190,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   });
 }
 { // strongest work first: what an employer should see before they stop scrolling
-  const ORDER = ['quotable', 'stack', 'wallet', 'rolla', 'folio', 'brandomizer', 'hibble', 'posters', 'big-brother', 'fly', 'pat'];
+  const ORDER = ['quotable', 'stack', 'wallet', 'rolla', 'folio', 'brandomizer', 'hibble', 'greener-sans', 'posters', 'big-brother', 'fly', 'pat'];
   const rank = (c) => { const i = ORDER.indexOf(c.dataset.id); return i < 0 ? ORDER.length : i; };
   workCards.sort((a, b) => rank(a) - rank(b));
   workCards.forEach((c, i) => { grid.appendChild(c); c.querySelector('.mw-no').textContent = String(i + 1).padStart(2, '0'); });
