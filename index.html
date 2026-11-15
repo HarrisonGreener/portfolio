@@ -420,6 +420,10 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .mp-footer{background:var(--ink);color:var(--paper)}
 .mf-in{max-width:1180px;margin:0 auto;padding:72px clamp(16px,4vw,48px) 28px}
 .mf-sub{margin:0;font-size:clamp(15px,1.3vw,18px);font-weight:500;opacity:.7}
+.mf-hire{margin:24px 0 0}
+.mf-hire a{display:inline-block;background:var(--green);color:var(--ink);font-weight:800;font-size:16px;text-decoration:none;padding:13px 20px;border-radius:999px;transition:transform .2s ease}
+.mf-hire a:hover{transform:translateY(-2px)}
+.mp-nav a.mp-hire{color:var(--green)}
 .mf-big{margin:0 0 14px;font-size:clamp(28px,4.4vw,56px);font-weight:700;line-height:1.02;max-width:16ch}
 .mf-mail{color:var(--green);font-weight:700;font-size:clamp(18px,2.2vw,26px);text-decoration:none;border-bottom:2px solid currentColor;word-break:break-all}
 .mf-cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:64px 0 56px}
@@ -535,7 +539,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
   addEventListener('DOMContentLoaded', function () {
     var d = document.createElement('main'); d.className = 'nogl';
     d.innerHTML = '<h2>Harrison Greener, designer</h2><p>This portfolio is a 3D wallet, but your browser can\'t show 3D right now. Here\'s everything inside it.</p>' +
-      '<p><a href="cv/Harrison-Greener-CV.pdf">Download my CV (PDF)</a> · <a href="making-of/">How I made the wallet</a> · <a href="mailto:harrygreener@hotmail.co.uk">Email me</a></p><ul>' +
+      '<p><a href="cv/Harrison-Greener-CV.pdf">Download my CV (PDF)</a> · <a href="work-with-me/">Hire me as a freelancer</a> · <a href="making-of/">How I made the wallet</a> · <a href="mailto:harrygreener@hotmail.co.uk">Email me</a></p><ul>' +
       P.map(function (x) { return '<li><a href="projects/' + x[0] + '/">' + x[1] + '</a></li>'; }).join('') + '</ul>';
     document.body.appendChild(d);
   });
@@ -564,6 +568,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
       <a data-rv="rise" href="#mp-projects"><span>01</span>Portfolio Projects</a>
       <a data-rv="rise" href="#mp-cv"><span>02</span>CV</a>
       <a data-rv="rise" href="#mp-contact"><span>03</span>Contact</a>
+      <a data-rv="rise" class="mp-hire" href="work-with-me/"><span>04</span>Work with me</a>
     </nav>
   </div>
 
@@ -611,6 +616,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
       <div class="mf-top">
         <p data-rv="rise" class="mf-big">Got a role, a project or just a question?</p>
         <p data-rv="up" class="mf-sub">Pick a way to say hello.</p>
+        <p data-rv="up" class="mf-hire"><a class="mp-btn" href="work-with-me/">Need a designer? See what I offer →</a></p>
       </div>
       <div class="mf-pit" id="mfPit" role="group" aria-label="Ways to get in touch">
         <a class="mf-orb" href="mailto:harrygreener@hotmail.co.uk" aria-label="Email me" title="Email"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="m3 6.5 9 7 9-7"/></svg></a>
