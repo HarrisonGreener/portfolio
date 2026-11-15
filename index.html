@@ -191,12 +191,10 @@ canvas.can-grab{cursor:var(--hand-grab)}
 /* Quick links on the desk, so nobody has to find the menu to see the work or hire me */
 .quick{position:fixed;z-index:9;top:calc(env(safe-area-inset-top,0px) + 24px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 66px);height:48px;display:flex;align-items:center;gap:4px;transition:opacity .4s ease}
 .quick button,.quick a{all:unset;cursor:var(--hand,pointer);font:700 15px/1 Archivo,Arial,sans-serif;color:#1F1F1F;padding:11px 14px;border-radius:999px;transition:background .2s ease,color .2s ease,transform .2s ease}
-.quick button:hover{background:rgba(31,31,31,.08)}
-.quick .q-hire{background:#73956F;color:#F2F2F0;padding:12px 18px;margin-left:4px;box-shadow:0 6px 16px -6px rgba(46,63,43,.6)}
-.quick .q-hire:hover{transform:translateY(-2px)}
+.quick button:hover,.quick .q-hire:hover{background:rgba(31,31,31,.08)}
 .quick button:focus-visible,.quick a:focus-visible{outline:2px solid #1F1F1F;outline-offset:2px}
 body.menu-on .quick{opacity:0;pointer-events:none}
-@media (max-width:720px){.quick button{display:none}.quick .q-hire{font-size:14px;padding:11px 15px}}
+@media (max-width:720px){.quick button{display:none}.quick .q-hire{font-size:14px;padding:11px 15px;background:#73956F;color:#F2F2F0;box-shadow:0 6px 16px -6px rgba(46,63,43,.6)}}
 /* Menu: three uneven green bars that level out and twist into an X; the menu itself is a full green page */
 .menu-btn{position:fixed;z-index:9;top:calc(env(safe-area-inset-top,0px) + 24px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 8px);width:48px;height:48px;
   border:0;background:none;padding:0;cursor:inherit}
