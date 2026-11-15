@@ -188,6 +188,15 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .pu-back:focus-visible,.pu-send:focus-visible{outline:2px solid #F2F2F0;outline-offset:2px}
 .pu-note{margin:0;font-size:.62em;text-align:center;opacity:.45}
 @media (prefers-reduced-motion:reduce){.phone-ui,.pu-screen,.pu-dots i,.pu-keys b{transition:none}.pu-arrow,.pu-homebar,.pu-notif{animation:none}}
+/* Quick links on the desk, so nobody has to find the menu to see the work or hire me */
+.quick{position:fixed;z-index:9;top:calc(env(safe-area-inset-top,0px) + 24px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 66px);height:48px;display:flex;align-items:center;gap:4px;transition:opacity .4s ease}
+.quick button,.quick a{all:unset;cursor:var(--hand,pointer);font:700 15px/1 Archivo,Arial,sans-serif;color:#1F1F1F;padding:11px 14px;border-radius:999px;transition:background .2s ease,color .2s ease,transform .2s ease}
+.quick button:hover{background:rgba(31,31,31,.08)}
+.quick .q-hire{background:#73956F;color:#F2F2F0;padding:12px 18px;margin-left:4px;box-shadow:0 6px 16px -6px rgba(46,63,43,.6)}
+.quick .q-hire:hover{transform:translateY(-2px)}
+.quick button:focus-visible,.quick a:focus-visible{outline:2px solid #1F1F1F;outline-offset:2px}
+body.menu-on .quick{opacity:0;pointer-events:none}
+@media (max-width:720px){.quick button{display:none}.quick .q-hire{font-size:14px;padding:11px 15px}}
 /* Menu: three uneven green bars that level out and twist into an X; the menu itself is a full green page */
 .menu-btn{position:fixed;z-index:9;top:calc(env(safe-area-inset-top,0px) + 24px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 8px);width:48px;height:48px;
   border:0;background:none;padding:0;cursor:inherit}
@@ -556,6 +565,12 @@ canvas.can-grab{cursor:var(--hand-grab)}
 
 <p class="card-hint" id="cardHint" aria-live="polite"></p>
 <div class="tag" id="tag" aria-hidden="true"><span class="tag-text" id="tagText"></span><i class="tag-line" id="tagLine"></i><i class="tag-dot"></i></div>
+<nav class="quick" id="quick" aria-label="Quick links">
+  <button type="button" data-q="#mp-projects">Projects</button>
+  <button type="button" data-q="#mp-cv">CV</button>
+  <button type="button" data-q="#mp-contact">Contact</button>
+  <a class="q-hire" href="work-with-me/">Work with me</a>
+</nav>
 <button type="button" class="menu-btn" id="menuBtn" aria-label="Menu" aria-expanded="false" aria-controls="menu"><i></i><i></i><i></i></button>
 <div class="menu-under" id="menuUnder" aria-hidden="true"></div>
 <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Portfolio" hidden>
@@ -2707,6 +2722,7 @@ const menuUnder = document.getElementById('menuUnder');
 function setMenu(open) {
   if (open) gc('wallet/menu', 'Opened the menu');
   menuBtn.setAttribute('aria-expanded', String(open)); menuBtn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
+  document.body.classList.toggle('menu-on', open);
   if (open) {
     menu.hidden = false; menu.scrollTop = 0; closeDetail(true); resetReveal(menu); menu.style.setProperty('--sbw', (menu.offsetWidth - menu.clientWidth) + 'px');
     menu.classList.remove('closing'); menuUnder.classList.remove('closing');
@@ -2719,7 +2735,12 @@ function setMenu(open) {
   }
 }
 menuBtn.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
-menu.querySelectorAll('.mp-nav a, [data-jump]').forEach((a) => a.addEventListener('click', (e) => {
+document.querySelectorAll('#quick [data-q]').forEach((b) => b.addEventListener('click', () => {
+  gc('quick/' + b.dataset.q.slice(4), 'Quick link: ' + b.textContent);
+  setMenu(true);
+  setTimeout(() => { const t = document.querySelector(b.dataset.q); if (t) menu.scrollTo({ top: t.getBoundingClientRect().top + menu.scrollTop - 12, behavior: reduceMotion ? 'auto' : 'smooth' }); }, reduceMotion ? 50 : 900);
+}));
+menu.querySelectorAll('.mp-nav a[href^="#"], [data-jump]').forEach((a) => a.addEventListener('click', (e) => {
   e.preventDefault(); const t = document.querySelector(a.getAttribute('href')); menu.scrollTo({ top: t.getBoundingClientRect().top + menu.scrollTop - 12, behavior: reduceMotion ? 'auto' : 'smooth' });
 }));
 document.getElementById('mpBack').addEventListener('click', () => setMenu(false));
