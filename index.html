@@ -2,6 +2,10 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="icon" type="image/svg+xml" href="assets/favicon.svg">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="manifest" href="/site.webmanifest">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <title>Harrison Greener · Designer, Manchester · The Wallet CV</title>
 <meta name="description" content="Harrison Greener is a designer in Manchester who designs brands, websites and apps, then builds them. Open his interactive 3D wallet CV to see his portfolio, CV and contact details.">
@@ -793,7 +797,10 @@ const stage = $('#stage');
 const renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, powerPreference: 'high-performance' });
 // Older or low-memory devices start at a lower resolution and cheaper shadows; a frame-rate check in frame() steps down further if needed
 const LOW_END = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
-let pixelRatio = Math.min(devicePixelRatio, LOW_END ? 1.5 : 2);
+// Cap the number of pixels drawn: on big or high-DPI screens (a 4K monitor, Windows scaling) full resolution is
+// several times more work for no visible gain, so stay around 2560x1440's worth of pixels.
+const prCap = () => Math.max(1, Math.min(devicePixelRatio, LOW_END ? 1.5 : 2, Math.sqrt(3.7e6 / (innerWidth * innerHeight))));
+let pixelRatio = prCap();
 renderer.setPixelRatio(pixelRatio);
 renderer.setSize(innerWidth, innerHeight);
 renderer.shadowMap.enabled = true;
@@ -1784,7 +1791,7 @@ function makePhone() {
   scrG.rotateX(-Math.PI / 2);
   const sc = phoneScreenCanvas(), st = tex(sc);
   let shown = '';                                        // keep the lock screen on the real time and date
-  setInterval(() => { const k = new Date().toDateString() + new Date().getMinutes(); if (k !== shown) { shown = k; phoneScreenCanvas(sc); st.needsUpdate = true; } }, 5000);
+  setInterval(() => { const k = new Date().toDateString() + new Date().getMinutes(); if (k !== shown) { shown = k; phoneScreenCanvas(sc); st.needsUpdate = true; window.__poke?.(); } }, 5000);
   const screen = new THREE.Mesh(scrG, new THREE.MeshStandardMaterial({ map: st, emissive: 0xffffff, emissiveMap: st, emissiveIntensity: 0.85, roughness: 0.12 }));
   screen.position.y = T + 0.003; g.add(screen);
   for (const [x, z, len] of [[-PW / 2 - 0.02, -PL / 2 + 3.2, 0.5], [-PW / 2 - 0.02, -PL / 2 + 4.3, 0.9], [-PW / 2 - 0.02, -PL / 2 + 5.5, 0.9], [PW / 2 + 0.02, -PL / 2 + 4.6, 1.5]]) {
@@ -2961,9 +2968,27 @@ function governFrameRate() {
     sun.shadow.mapSize.set(1024, 1024); if (sun.shadow.map) { sun.shadow.map.dispose(); sun.shadow.map = null; }
   }
 }
+/* Draw only when something can have changed. The desk sits still most of the time, so redrawing it (shadows and all)
+   sixty times a second for nothing is what made the site feel heavy, and it fought the menu for the GPU too. */
+let lastPoke = performance.now();
+const poke = () => { lastPoke = performance.now(); };
+['pointermove', 'pointerdown', 'pointerup', 'wheel', 'keydown', 'touchstart', 'touchmove', 'resize', 'focus'].forEach((e) => addEventListener(e, poke, { passive: true }));
+controls.addEventListener?.('change', poke);
+THREE.DefaultLoadingManager.onLoad = poke; THREE.DefaultLoadingManager.onProgress = poke;
+window.__poke = poke;
+let menuShownAt = 0;
+function needsDraw(now) {
+  if (document.hidden) return false;
+  if (!menu.hidden) { if (!menuShownAt) menuShownAt = now; return now - menuShownAt < 700; }   // menu covers the desk once it has faded in
+  if (menuShownAt) { menuShownAt = 0; poke(); }
+  return now < 9000 || now - lastPoke < 6000 || openVal !== openTarget || !!active || walletWobble > 0 || phoneP !== phoneTarget || phoneP > 0;
+}
 function frame() {
+  requestAnimationFrame(frame);
+  const now = performance.now();
+  if (!needsDraw(now)) { clock.getDelta(); return; }
   const dt = Math.min(clock.getDelta(), 0.05);
-  if (performance.now() > 4000) governFrameRate();          // let the first textures and shaders settle before judging
+  if (now > 4000) governFrameRate();                        // let the first textures and shaders settle before judging
   if (openVal !== openTarget) {
     const step = dt / (1.5 * SPEED);                        // wallet opens over 1.5 s
     openVal = openTarget > openVal ? Math.min(openTarget, openVal + step) : Math.max(openTarget, openVal - step);
@@ -3001,11 +3026,11 @@ function frame() {
     wallet.rotation.z = a; wallet.rotation.x = a * 0.6; wallet.position.y = Math.abs(a) * 3; }
   if (controls.enabled) controls.update();
   renderer.render(scene, camera);
-  requestAnimationFrame(frame);
 }
 
 addEventListener('resize', () => {
   camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix();
+  pixelRatio = Math.min(pixelRatio, prCap()); renderer.setPixelRatio(pixelRatio);
   renderer.setSize(innerWidth, innerHeight);
 });
 
