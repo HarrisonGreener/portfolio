@@ -38,9 +38,10 @@ img{max-width:100%;height:auto;display:block}
 .top a.b{font:600 14px 'Pixelify Sans',monospace;text-decoration:none;padding:8px 14px;border-radius:4px;background:#2E2A31}
 .top a.r{background:var(--pink);color:var(--ink)}
 .ticker{background:var(--pink);color:var(--ink);font:400 clamp(18px,2.2vw,26px)/1 Anton,sans-serif;letter-spacing:.02em;white-space:nowrap;overflow:hidden;padding:10px 0}
-.ticker span{display:inline-block;animation:tick 40s linear infinite;padding-right:100%}
-@keyframes tick{from{transform:translateX(-100%)}to{transform:translateX(0)}}
-@media (prefers-reduced-motion:reduce){.ticker span{animation:none;padding-right:0}}
+.ticker .track{display:flex;width:max-content;animation:tick 70s linear infinite}
+.ticker .track span{padding-right:.4em}
+@keyframes tick{from{transform:translateX(-50%)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){.ticker .track{animation:none}}
 /* hero */
 .hero{padding:56px 0 0}
 .kick{font:600 14px 'Pixelify Sans',monospace;letter-spacing:.04em;color:var(--pinkd);margin:0 0 12px}
@@ -158,6 +159,13 @@ figcaption{font:400 15px 'Pixelify Sans',monospace;color:var(--dim);margin-top:1
 .phones figcaption b{display:block;color:var(--ink);font-size:16px;margin-bottom:2px}
 .phone-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:34px;align-items:end}
 @media (max-width:900px){.brandrow,.feat,.feat.flip,.phone-intro{grid-template-columns:1fr}.feat.flip .win{order:0}.phones{grid-template-columns:repeat(2,minmax(0,1fr))}.sw-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.lives{display:grid;grid-template-columns:minmax(0,1fr) 250px;gap:28px;align-items:center}
+.lives figcaption{color:#D9D4DC;text-align:center}
+.pframe{background:#111;border-radius:34px;padding:12px;box-shadow:0 0 0 2px #333,0 20px 40px rgba(0,0,0,.4);width:250px;margin:0 auto}
+.pscreen{position:relative;aspect-ratio:390/844;overflow:hidden;border-radius:24px;background:#000}
+.pscreen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0}
+.pscreen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+@media (max-width:900px){.lives{grid-template-columns:1fr}}
 </style>
 <meta property="og:url" content="https://harrisongreener.co.uk/projects/myface/">
 <meta property="og:site_name" content="Harrison Greener">
@@ -186,7 +194,7 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
   <a href="../../" aria-label="Harrison Greener, home"><img src="../../brand/greener-solid-white.svg" alt="Greener" width="110" height="28"></a>
   <nav><a data-back class="b" href="../../">← The wallet</a><a class="b r" href="https://harrisongreener.github.io/myface/" target="_blank" rel="noopener">Switch it on ↗</a></nav>
 </div></header>
-<div class="ticker" aria-hidden="true"><span>HAIR • NAILS • LASHES • BROWS • PIERCING • LIP FILLER • CUSTOMISE YOUR AVATAR • HAIR • NAILS • LASHES • BROWS • PIERCING • LIP FILLER • CUSTOMISE YOUR AVATAR •</span></div>
+<div class="ticker"><p class="sr">Myface. A Client Website For A Manchester Beauty Studio. Logo, Brand And Design Direction By Harrison Greener. Brutalism × Cyberpunk. 3D Computer Built In Three.Js. A Whole Second Interface For Phones. 39 Pages Built For Google. Made For Alternative Women. </p><div class="track" aria-hidden="true"><span>MYFACE • A CLIENT WEBSITE FOR A MANCHESTER BEAUTY STUDIO • LOGO, BRAND AND DESIGN DIRECTION BY HARRISON GREENER • BRUTALISM × CYBERPUNK • 3D COMPUTER BUILT IN THREE.JS • A WHOLE SECOND INTERFACE FOR PHONES • 39 PAGES BUILT FOR GOOGLE • MADE FOR ALTERNATIVE WOMEN • </span><span>MYFACE • A CLIENT WEBSITE FOR A MANCHESTER BEAUTY STUDIO • LOGO, BRAND AND DESIGN DIRECTION BY HARRISON GREENER • BRUTALISM × CYBERPUNK • 3D COMPUTER BUILT IN THREE.JS • A WHOLE SECOND INTERFACE FOR PHONES • 39 PAGES BUILT FOR GOOGLE • MADE FOR ALTERNATIVE WOMEN • </span></div></div>
 
 <div class="hero"><div class="wrap">
   <p class="kick">Client project · Logo · Brand · Interactive website · 3D</p>
@@ -245,7 +253,7 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
     <div class="step"><span class="n">1</span><b>I'm not a robot</b><p>Every fresh visit starts with a captcha. The warped letters are the logo, and ticking the box lets you in.</p></div>
     <div class="step"><span class="n">2</span><b>The desk</b><p>A pink 3D computer, with photo windows popping up around it like an old desktop full of open files.</p></div>
     <div class="step"><span class="n">3</span><b>Switch it on</b><p>Click the computer and the camera dives into the screen, boots up and drops you on a working desktop.</p></div>
-    <div class="step"><span class="n">4</span><b>Customise</b><p>Restyle the avatar in Paint, play her.exe, or open treatments, prices and booking in their own windows.</p></div>
+    <div class="step"><span class="n">4</span><b>Customise</b><p>Restyle the avatar in Paint, or open treatments, prices and booking in their own windows.</p></div>
   </div>
   <div class="grid2 rv">
     <figure class="win"><div class="bar"><span>captcha</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/captcha.webp" alt="The MyFace captcha: the logo in warped captcha letters above an I'm not a robot checkbox" loading="lazy" width="600" height="310"></figure>
@@ -302,7 +310,7 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
     <figure><img src="img/ph-paint.webp" alt="The avatar in Paint on a phone, with tappable hotspots and hair colour swatches" loading="lazy" width="600" height="1298"><figcaption><b>Paint, for touch</b>The avatar and her hotspots, rebuilt for tapping.</figcaption></figure>
   </div>
   <div class="details rv">
-    <article class="det"><div class="txt"><h3>The keypad is the menu</h3><p>The flip phone's keys are real links: Hair, Nails, Beauty, Piercing, Filler, Prices, Book, her.exe, Info, Contact, Profile and Home, laid out like a phone keypad.</p></div></article>
+    <article class="det"><div class="txt"><h3>The keypad is the menu</h3><p>The flip phone's keys are real links: Hair, Nails, Beauty, Piercing, Filler, Prices, Book, Info, Contact, Profile and Home, laid out like a phone keypad.</p></div></article>
     <article class="det"><div class="txt"><h3>Lighter for phones</h3><p>Phones get lighter textures, and the 3D only loads after the captcha, so the first screen appears straight away on mobile data.</p></div></article>
   </div>
 </div></section>
@@ -310,10 +318,13 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
 <section id="try"><div class="wrap">
   <div class="live rv">
     <div class="live-top">
-      <div><p class="kick" style="margin:0">Live preview</p><h2>Switch it <em>on</em></h2><p>The real site, running live. Tick the box, then click the computer to get in. Open it on your phone too.</p></div>
+      <div><p class="kick" style="margin:0">Live preview</p><h2>Switch it <em>on</em></h2><p>The real site, running live in both of its versions. Tick the box, then click the computer, or tap the phone.</p></div>
       <a class="btn" href="https://harrisongreener.github.io/myface/" target="_blank" rel="noopener">Open full size ↗</a>
     </div>
-    <div class="bscreen" id="mfScreen"><img src="img/home.webp" alt="The MyFace homepage" width="1440" height="900"><iframe id="mfFrame" title="MyFace, live" src="https://harrisongreener.github.io/myface/" width="1440" height="900" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
+    <div class="lives">
+      <figure><div class="bscreen" id="mfScreen"><img src="img/home.webp" alt="The MyFace homepage" width="1440" height="900"><iframe id="mfFrame" title="MyFace on a computer, live" src="https://harrisongreener.github.io/myface/" width="1440" height="900" loading="lazy" referrerpolicy="no-referrer"></iframe></div><figcaption>On a computer</figcaption></figure>
+      <figure><div class="pframe"><div class="pscreen" id="mfPhone"><img src="img/ph-home.webp" alt="The MyFace phone version" width="600" height="1298"><iframe id="mfPhoneFrame" title="MyFace on a phone, live" src="https://harrisongreener.github.io/myface/" width="390" height="844" loading="lazy" referrerpolicy="no-referrer"></iframe></div></div><figcaption>On a phone</figcaption></figure>
+    </div>
   </div>
 </div></section>
 
@@ -341,9 +352,8 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
 <section id="details"><div class="wrap">
   <div class="sec-head rv"><span class="no">08</span><h2>More small <em>details</em></h2></div>
   <div class="details">
-    <article class="det rv"><div class="pic"><img src="img/her.webp" alt="her.exe: the MyFace mascot, a pixel-art girl with pink and black hair, over a collage of beauty magazine scans" loading="lazy" width="560" height="750"></div>
-      <div class="txt"><h3>her.exe</h3><p>The mascot gets her own program. She says hiya, and you can drag to spin her round in a window full of beauty-magazine collage.</p></div></article>
-    <article class="det rv"><div class="txt">
+    
+    <article class="det wide rv"><div class="txt">
       <h3>Little touches</h3>
       <ul style="margin:0;padding-left:20px;display:grid;gap:8px;font-size:16px;line-height:1.5">
         <li>Custom cursors, including a pointing hand and grab hands for dragging.</li>
@@ -393,6 +403,9 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
   const box = document.getElementById('mfScreen'), f = document.getElementById('mfFrame');
   const fit = () => { f.style.transform = `scale(${box.clientWidth / 1440})`; };
   addEventListener('resize', fit); fit(); new ResizeObserver(fit).observe(box);
+  const pb = document.getElementById('mfPhone'), pf = document.getElementById('mfPhoneFrame');
+  const pfit = () => { pf.style.transform = `scale(${pb.clientWidth / 390})`; };
+  pfit(); new ResizeObserver(pfit).observe(pb);
 })();
 </script>
 <script>
