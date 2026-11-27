@@ -38,9 +38,9 @@ img{max-width:100%;height:auto;display:block}
 .top a.b{font:600 14px 'Pixelify Sans',monospace;text-decoration:none;padding:8px 14px;border-radius:4px;background:#2E2A31}
 .top a.r{background:var(--pink);color:var(--ink)}
 .ticker{background:var(--pink);color:var(--ink);font:400 clamp(18px,2.2vw,26px)/1 Anton,sans-serif;letter-spacing:.02em;white-space:nowrap;overflow:hidden;padding:10px 0}
-.ticker span{display:inline-block;animation:tick 40s linear infinite;padding-left:100%}
-@keyframes tick{to{transform:translateX(-100%)}}
-@media (prefers-reduced-motion:reduce){.ticker span{animation:none;padding-left:0}}
+.ticker span{display:inline-block;animation:tick 40s linear infinite;padding-right:100%}
+@keyframes tick{from{transform:translateX(-100%)}to{transform:translateX(0)}}
+@media (prefers-reduced-motion:reduce){.ticker span{animation:none;padding-right:0}}
 /* hero */
 .hero{padding:56px 0 0}
 .kick{font:600 14px 'Pixelify Sans',monospace;letter-spacing:.04em;color:var(--pinkd);margin:0 0 12px}
@@ -129,6 +129,35 @@ figcaption{font:400 15px 'Pixelify Sans',monospace;color:var(--dim);margin-top:1
   .urls{columns:1}
 }
 @media (max-width:520px){.steps,.tools{grid-template-columns:1fr}.top nav a:not(.r){display:none}}
+.logo-hero{width:min(720px,92%);margin:6px 0 0}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.brandrow{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:28px;margin:34px 0 0;align-items:stretch}
+.logobox{background:var(--card);border:2px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 var(--ink);display:grid;place-items:center;padding:40px 30px;min-height:300px;background-image:radial-gradient(circle,rgba(28,26,30,.14) 1.4px,transparent 2px);background-size:14px 14px}
+.logobox img{width:100%;max-width:560px}
+.kit{display:grid;gap:14px}
+.sw-row{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.sw{border:2px solid var(--ink);border-radius:6px;overflow:hidden;background:var(--card)}
+.sw i{display:block;height:70px}
+.sw span{display:block;padding:8px 10px;font:600 13px/1.3 'Pixelify Sans',monospace}
+.type{background:var(--card);border:2px solid var(--ink);border-radius:6px;padding:16px 18px;display:grid;gap:6px}
+.type div{display:flex;justify-content:space-between;align-items:baseline;gap:12px;border-bottom:1px dashed var(--line);padding-bottom:6px}
+.type div:last-child{border:0;padding:0}
+.type small{font:600 12px 'Pixelify Sans',monospace;color:var(--dim)}
+.tags{display:flex;flex-wrap:wrap;gap:8px;margin:18px 0 0;padding:0;list-style:none}
+.tags li{font:600 14px 'Pixelify Sans',monospace;border:2px solid var(--ink);border-radius:999px;padding:5px 12px;background:var(--card)}
+.feat{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px;align-items:center;margin:34px 0 0}
+.feat.flip{grid-template-columns:minmax(0,1fr) minmax(0,1.4fr)}
+.feat.flip .win{order:2}
+.feat h3{font:400 clamp(26px,3vw,36px)/1.05 Anton,sans-serif;text-transform:uppercase;margin:0 0 12px}
+.feat p{margin:0 0 .9em;font-size:17px}
+.feat ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.feat li{position:relative;padding-left:22px;font-size:16px;line-height:1.45}
+.feat li::before{content:"";position:absolute;left:0;top:.45em;width:10px;height:10px;border-radius:50%;background:var(--pink);border:2px solid var(--ink)}
+.phones{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:22px;margin:34px 0 0}
+.phones figure img{border:2px solid var(--ink);border-radius:24px;box-shadow:6px 6px 0 var(--ink);background:#000}
+.phones figcaption b{display:block;color:var(--ink);font-size:16px;margin-bottom:2px}
+.phone-intro{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:34px;align-items:end}
+@media (max-width:900px){.brandrow,.feat,.feat.flip,.phone-intro{grid-template-columns:1fr}.feat.flip .win{order:0}.phones{grid-template-columns:repeat(2,minmax(0,1fr))}.sw-row{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 <meta property="og:url" content="https://harrisongreener.co.uk/projects/myface/">
 <meta property="og:site_name" content="Harrison Greener">
@@ -160,14 +189,14 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
 <div class="ticker" aria-hidden="true"><span>HAIR • NAILS • LASHES • BROWS • PIERCING • LIP FILLER • CUSTOMISE YOUR AVATAR • HAIR • NAILS • LASHES • BROWS • PIERCING • LIP FILLER • CUSTOMISE YOUR AVATAR •</span></div>
 
 <div class="hero"><div class="wrap">
-  <p class="kick">Client project · Interactive website · 3D · Brand</p>
-  <h1>My<em>Face</em></h1>
-  <p class="lede">A website for Ella Moore's home beauty studio in Manchester, built as a vintage computer you switch on. Prove you're not a robot, boot up the desktop and customise your avatar. Every treatment opens in its own window.</p>
+  <p class="kick">Client project · Logo · Brand · Interactive website · 3D</p>
+  <h1><span class="sr">MyFace</span><img class="logo-hero" src="img/logo.png" alt="The MyFace logo: the word myface in mismatched, warped captcha letters in black and pink" width="1100" height="437"></h1>
+  <p class="lede">A website for Ella Moore's home beauty studio in Manchester, built as a vintage computer you switch on. Prove you're not a robot, boot up the desktop and customise your avatar. I designed the logo, the brand and the whole design direction, then built it.</p>
   <dl class="meta">
     <div><dt>Client</dt><dd>MyFace, home beauty studio, Manchester</dd></div>
-    <div><dt>My role</dt><dd>Brand, web design, 3D, build, SEO</dd></div>
+    <div><dt>For</dt><dd>Alternative women in Manchester</dd></div>
+    <div><dt>My role</dt><dd>Logo, brand, design direction, 3D, build, SEO</dd></div>
     <div><dt>Made with</dt><dd>three.js, HTML, CSS, JavaScript, Python</dd></div>
-    <div><dt>Year</dt><dd>2026</dd></div>
     <div><dt>Status</dt><dd>Launching soon</dd></div>
   </dl>
   <figure class="heroimg win"><div class="bar"><span>myface.exe</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/home.webp" alt="The MyFace homepage: a pink retro computer surrounded by pop-up windows of nails, lashes, hair and lip filler photos" width="1440" height="900"></figure>
@@ -178,29 +207,110 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
   <div class="sec-head rv"><span class="no">01</span><h2>The <em>brief</em></h2></div>
   <div class="cols"><div class="spacer"></div><div class="prose rv">
     <p class="pull">Ella didn't want another salon template. She wanted her website to <em>feel like a video game</em>.</p>
-    <p>MyFace is Ella's appointment-only beauty studio, run from home. She does nails, hair, lashes, brows, piercing and lip filler, and she did all her own piercings herself. The name is a spin on MySpace, and she wanted the site to feel like the MySpace-era internet: a bit emo, a bit retro and very pink.</p>
-    <p>Most beauty websites look the same: a photo, a price list and a booking button. Ella was after clients like her, people who'd see the site and get it straight away. So rather than a page about a game, I made the website <em>be</em> the game.</p>
+    <p>MyFace is Ella's appointment-only beauty studio, run from home. She does nails, hair, lashes, brows, piercing and lip filler, and she did all her own piercings herself. Her clients are alternative women: people who'd never book from a pastel salon page with a stock photo of a candle.</p>
+    <p>The name is a spin on MySpace, so the site had to feel like that era of the internet, then push it somewhere new. Rather than make a page about a game, I made the website <em>be</em> the game, with every treatment something you add to your avatar.</p>
   </div></div>
 </div></section>
 
+<section id="brand"><div class="wrap">
+  <div class="sec-head rv"><span class="no">02</span><h2>Logo and <em>design direction</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p class="pull">Brutalism and cyberpunk, <em>made girly</em>.</p>
+    <p>The logo is a captcha: every letter in a different font, warped, tilted and crossed with scribbled lines. It's readable to a person and nonsense to a machine, which is the point. It's the first thing you see, because every fresh visit asks you to prove you're not a robot.</p>
+    <p>The rest of the direction comes from two places. From <b>brutalism</b>: giant type bands, hard black borders, raw boxes and nothing softened. From <b>cyberpunk</b>: hot pink against black, neon green, glossy chrome bubbles and an old computer that feels a bit haunted. Together they make something alternative women would actually want to click.</p>
+  </div></div>
+  <div class="brandrow rv">
+    <div class="logobox"><img src="img/logo.png" alt="The MyFace captcha logo" width="1100" height="437" loading="lazy"></div>
+    <div class="kit">
+      <div class="sw-row">
+        <div class="sw"><i style="background:#FF4FA3"></i><span>Hot pink<br>#FF4FA3</span></div>
+        <div class="sw"><i style="background:#1C1A1E"></i><span>Ink<br>#1C1A1E</span></div>
+        <div class="sw"><i style="background:#39FF14"></i><span>Neon<br>#39FF14</span></div>
+        <div class="sw"><i style="background:#EEE8E2"></i><span>Paper<br>#EEE8E2</span></div>
+        <div class="sw"><i style="background:#FFD1EA"></i><span>Soft pink<br>#FFD1EA</span></div>
+      </div>
+      <div class="type">
+        <div><span style="font:400 30px Anton,sans-serif">HAIR • NAILS • LASHES</span><small>Anton, the type bands</small></div>
+        <div><span style="font:600 20px 'Pixelify Sans',monospace">avatar.exe</span><small>Pixel type, the system UI</small></div>
+        <div><span style="font:600 17px Inter,sans-serif">Treatments, prices and FAQs</span><small>Clean text for reading</small></div>
+      </div>
+      <ul class="tags"><li>Captcha logo</li><li>Brutalist type bands</li><li>Chrome bubbles</li><li>Win95 windows</li><li>Sticker collage</li></ul>
+    </div>
+  </div>
+</div></section>
+
 <section id="how"><div class="wrap">
-  <div class="sec-head rv"><span class="no">02</span><h2>How it <em>plays</em></h2></div>
+  <div class="sec-head rv"><span class="no">03</span><h2>How it <em>plays</em></h2></div>
   <div class="steps rv">
     <div class="step"><span class="n">1</span><b>I'm not a robot</b><p>Every fresh visit starts with a captcha. The warped letters are the logo, and ticking the box lets you in.</p></div>
     <div class="step"><span class="n">2</span><b>The desk</b><p>A pink 3D computer, with photo windows popping up around it like an old desktop full of open files.</p></div>
     <div class="step"><span class="n">3</span><b>Switch it on</b><p>Click the computer and the camera dives into the screen, boots up and drops you on a working desktop.</p></div>
-    <div class="step"><span class="n">4</span><b>Customise</b><p>Open Paint to restyle the avatar, play her.exe, or browse treatments, prices and booking in their own windows.</p></div>
+    <div class="step"><span class="n">4</span><b>Customise</b><p>Restyle the avatar in Paint, play her.exe, or open treatments, prices and booking in their own windows.</p></div>
   </div>
   <div class="grid2 rv">
     <figure class="win"><div class="bar"><span>captcha</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/captcha.webp" alt="The MyFace captcha: the logo in warped captcha letters above an I'm not a robot checkbox" loading="lazy" width="600" height="310"></figure>
-    <figure class="win"><div class="bar"><span>avatar.bmp - Paint</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/avatar.webp" alt="The avatar open in a Paint-style window, with hair colour swatches and background colours to choose from" loading="lazy" width="1440" height="900"></figure>
+    <figure class="win"><div class="bar"><span>avatar.exe</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><div style="padding:26px 24px;font:600 18px/1.45 Inter,sans-serif">⚠ Your avatar needs customising!<br><span style="font-weight:400;font-size:16px">The pop-ups borrow the look of old system alerts. "Your avatar needs customising" is the call to action, and "Slots are open!" is the booking button, so even the error messages sell.</span></div></figure>
+  </div>
+</div></section>
+
+<section id="avatar"><div class="wrap">
+  <div class="sec-head rv"><span class="no">04</span><h2>Customise your <em>avatar</em></h2></div>
+  <div class="feat rv">
+    <figure class="win"><div class="bar"><span>avatar.bmp - Paint</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/avatar.webp" alt="The avatar in a Paint-style window, with treatment thumbnails, hair colour swatches and background colours" loading="lazy" width="1440" height="900"></figure>
+    <div>
+      <h3>The treatment menu is a person</h3>
+      <p>Instead of a price list, you get Ella's avatar open in Paint. Every part of her is a hotspot, and each one opens the treatments for it.</p>
+      <ul><li><b>Hair</b>: cuts, colour and extensions</li><li><b>Lashes and brows</b></li><li><b>Piercing</b>: ear, nose and navel</li><li><b>Lips and face</b>: filler, make-up and waxing</li><li><b>Nails</b>: gel, BIAB, acrylics and nail art</li></ul>
+    </div>
+  </div>
+  <div class="feat flip rv">
+    <div>
+      <h3>Try a new look</h3>
+      <p>The Paint palette is real. Pick black and pink, neon green, ice blue, red or blonde and her hair changes colour. The background swatches recolour the star behind her.</p>
+      <p>The arrows turn her round in six angles, and the thumbnails down the side zoom straight to her hair, eyes, face, lips or nails.</p>
+    </div>
+    <figure class="win"><div class="bar"><span>avatar.bmp - Paint</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/avatar-green.webp" alt="The avatar with neon green hair, with pink hotspots glowing on her hair, face, navel and hands" loading="lazy" width="1440" height="900"></figure>
+  </div>
+</div></section>
+
+<section id="menus"><div class="wrap">
+  <div class="sec-head rv"><span class="no">05</span><h2>Menus and <em>hovers</em></h2></div>
+  <div class="feat rv">
+    <figure class="win"><div class="bar"><span>menu</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/menu.webp" alt="The Sims-style menu: glossy black bubbles with pink knobs fanned out around the MyFace orb" loading="lazy" width="1440" height="960"></figure>
+    <div>
+      <h3>A Sims-style menu</h3>
+      <p>The main menu is a pie of glossy black bubbles with pink knobs, fanned out around a MyFace orb, like picking an action in The Sims. The background blurs while it's open, and bubbles with a "..." open a second ring of treatments.</p>
+      <p>The same bubbles come back when you click a part of the avatar, with each treatment's price and a pink "Book this".</p>
+    </div>
+  </div>
+  <div class="details rv">
+    <article class="det"><div class="txt"><h3>Every hover does something</h3><p>Bubbles glow pink with a neon ring. Hotspots on the avatar pulse, then light up and show a label. Desktop icons highlight like a real desktop, and the Start menu highlights in navy like Windows 95.</p></div></article>
+    <article class="det"><div class="txt"><h3>A working desktop</h3><p>Windows open, minimise, maximise and drag. There's a Start menu, a taskbar with a live clock, desktop icons for every treatment and a Log off button that takes you back out of the screen.</p></div></article>
+  </div>
+</div></section>
+
+<section id="phone"><div class="wrap">
+  <div class="sec-head rv"><span class="no">06</span><h2>A whole <em>second interface</em></h2></div>
+  <div class="phone-intro rv">
+    <p class="pull" style="margin:0">On a phone, it isn't a squashed computer. <em>It's a phone.</em></p>
+    <p style="margin:0">A desktop computer doesn't fit a phone screen, so phones get their own design rather than a shrunk-down version. The 3D computer becomes a flip phone, the pop-ups arrive as notifications and texts, and "switching it on" opens a phone home screen with its own apps.</p>
+  </div>
+  <div class="phones rv">
+    <figure><img src="img/ph-home.webp" alt="MyFace on a phone: notifications for booking, the avatar and picture messages above a pink flip phone" loading="lazy" width="600" height="1298"><figcaption><b>Notifications</b>book_now.exe and avatar.exe slide in as alerts, and the photos arrive as picture messages.</figcaption></figure>
+    <figure><img src="img/ph-menu.webp" alt="The Sims-style bubble menu on a phone, over the blurred flip phone" loading="lazy" width="600" height="1298"><figcaption><b>The bubble menu</b>The Sims-style menu, resized for thumbs.</figcaption></figure>
+    <figure><img src="img/ph-os.webp" alt="The phone home screen with glossy app icons for Customise, Hair, Nails, Beauty, Piercing, Filler, Prices and Book" loading="lazy" width="600" height="1298"><figcaption><b>The phone's own OS</b>Glossy app icons, a status bar with the time and battery, and a Log off button.</figcaption></figure>
+    <figure><img src="img/ph-paint.webp" alt="The avatar in Paint on a phone, with tappable hotspots and hair colour swatches" loading="lazy" width="600" height="1298"><figcaption><b>Paint, for touch</b>The avatar and her hotspots, rebuilt for tapping.</figcaption></figure>
+  </div>
+  <div class="details rv">
+    <article class="det"><div class="txt"><h3>The keypad is the menu</h3><p>The flip phone's keys are real links: Hair, Nails, Beauty, Piercing, Filler, Prices, Book, her.exe, Info, Contact, Profile and Home, laid out like a phone keypad.</p></div></article>
+    <article class="det"><div class="txt"><h3>Lighter for phones</h3><p>Phones get lighter textures, and the 3D only loads after the captcha, so the first screen appears straight away on mobile data.</p></div></article>
   </div>
 </div></section>
 
 <section id="try"><div class="wrap">
   <div class="live rv">
     <div class="live-top">
-      <div><p class="kick" style="margin:0">Live preview</p><h2>Switch it <em>on</em></h2><p>The real site, running live. Tick the box, then click the computer to get in.</p></div>
+      <div><p class="kick" style="margin:0">Live preview</p><h2>Switch it <em>on</em></h2><p>The real site, running live. Tick the box, then click the computer to get in. Open it on your phone too.</p></div>
       <a class="btn" href="https://harrisongreener.github.io/myface/" target="_blank" rel="noopener">Open full size ↗</a>
     </div>
     <div class="bscreen" id="mfScreen"><img src="img/home.webp" alt="The MyFace homepage" width="1440" height="900"><iframe id="mfFrame" title="MyFace, live" src="https://harrisongreener.github.io/myface/" width="1440" height="900" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
@@ -208,7 +318,7 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
 </div></section>
 
 <section id="seo"><div class="wrap">
-  <div class="sec-head rv"><span class="no">03</span><h2>A game that <em>Google can read</em></h2></div>
+  <div class="sec-head rv"><span class="no">07</span><h2>A game that <em>Google can read</em></h2></div>
   <div class="cols"><div class="spacer"></div><div class="prose rv">
     <p class="pull">The fun only works if people <em>find it</em>.</p>
     <p>3D sites often vanish from search because there's nothing for Google to read. So everything you can open on the computer is also a real page underneath, with proper links, headings and text. Each treatment has its own page aimed at what people actually search for, like "Lip Filler in Manchester", and each nearby area has one too.</p>
@@ -229,20 +339,26 @@ if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol
 </div></section>
 
 <section id="details"><div class="wrap">
-  <div class="sec-head rv"><span class="no">04</span><h2>The small <em>details</em></h2></div>
+  <div class="sec-head rv"><span class="no">08</span><h2>More small <em>details</em></h2></div>
   <div class="details">
     <article class="det rv"><div class="pic"><img src="img/her.webp" alt="her.exe: the MyFace mascot, a pixel-art girl with pink and black hair, over a collage of beauty magazine scans" loading="lazy" width="560" height="750"></div>
       <div class="txt"><h3>her.exe</h3><p>The mascot gets her own program. She says hiya, and you can drag to spin her round in a window full of beauty-magazine collage.</p></div></article>
-    <article class="det rv"><div class="pic" style="padding:40px 20px"><div class="win" style="max-width:420px;width:100%"><div class="bar"><span>avatar.exe</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><div style="padding:18px 20px;font:600 16px/1.45 Inter,sans-serif">⚠ Your avatar needs customising!<br><span style="font-weight:400;font-size:15px">Click the computer to customise your avatar and find your treatment x</span></div></div></div>
-      <div class="txt"><h3>Error messages that sell</h3><p>The pop-ups borrow the look of old system alerts. "Your avatar needs customising" is the call to action, and "Slots are open!" is the booking button.</p></div></article>
-    <article class="det wide rv"><div class="txt"><div class="phone"><img src="img/phone.webp" alt="MyFace on a phone: notifications for booking, the avatar and picture messages above a pink flip phone" loading="lazy" width="780" height="1688">
-      <div><h3>On a phone, it's a flip phone</h3><p>A desktop computer doesn't fit a phone screen, so phones get their own version: notifications slide in like texts, the photos arrive as picture messages, and the menu lives on a flip phone's keypad.</p><p style="margin-top:1em">"Customise your avatar" runs through everything, from the captcha to the strapline. A treatment is just a change to your avatar.</p></div></div></div></article>
+    <article class="det rv"><div class="txt">
+      <h3>Little touches</h3>
+      <ul style="margin:0;padding-left:20px;display:grid;gap:8px;font-size:16px;line-height:1.5">
+        <li>Custom cursors, including a pointing hand and grab hands for dragging.</li>
+        <li>Type bands that run across the page like tape, with Ella's name and area in the small print.</li>
+        <li>Photo windows named like files: lip_filler.jpg, nail_art.jpg, hair_extensions.jpg.</li>
+        <li>A myface.com window styled like an old social profile page.</li>
+        <li>Sticker collage: lips, a barbell, a butterfly and a black cat.</li>
+        <li>"Customise your avatar" runs through everything, from the captcha to the strapline.</li>
+      </ul></div></article>
   </div>
 </div></section>
 
 <section id="built"><div class="wrap">
-  <div class="sec-head rv"><span class="no">05</span><h2>How it's <em>built</em></h2></div>
-  <div class="cols"><div class="spacer"></div><div class="prose rv"><p>The computer is a 3D model in three.js. The desktop, windows and pop-ups are ordinary HTML, so they're quick, accessible and readable by search engines. The 3D only loads once you're through the captcha, and phones get lighter textures, so the first screen appears fast.</p></div></div>
+  <div class="sec-head rv"><span class="no">09</span><h2>How it's <em>built</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv"><p>The computer is a 3D model in three.js. The desktop, windows, menus and pop-ups are ordinary HTML, so they're quick, accessible and readable by search engines. The 3D only loads once you're through the captcha, and phones get lighter textures, so the first screen appears fast.</p></div></div>
   <div class="tools rv">
     <div><b>3D</b><span>three.js</span></div>
     <div><b>Interface</b><span>HTML, CSS and JavaScript</span></div>
