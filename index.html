@@ -28,7 +28,7 @@
 <meta name="twitter:image" content="https://harrisongreener.co.uk/assets/og-image.jpg">
 <meta name="twitter:image:alt" content="Harrison Greener, designer in Manchester: a 3D wallet holding his CV and portfolio">
 <meta name="theme-color" content="#73956F">
-<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://harrisongreener.co.uk/#me","name":"Harrison Greener","alternateName":"Harry Greener","url":"https://harrisongreener.co.uk/","image":"https://harrisongreener.co.uk/assets/me/me-toon.webp","jobTitle":"Freelance web designer, developer and graphic designer","description":"Freelance designer in Manchester and Brighton who designs brands, websites and apps, then builds them.","homeLocation":[{"@type":"Place","name":"Manchester"},{"@type":"Place","name":"Brighton"}],"workLocation":{"@id":"https://harrisongreener.co.uk/work-with-me/#service"},"address":{"@type":"PostalAddress","addressLocality":"Manchester","addressCountry":"GB"},"alumniOf":{"@type":"CollegeOrUniversity","name":"Manchester Metropolitan University"},"knowsAbout":["Web design","Web development","Graphic design","Brand identity","Logo design","UX/UI design","App design","Front-end development","three.js"],"sameAs":["https://www.linkedin.com/in/harrison-greener-521341231/","https://github.com/HarrisonGreener"]},{"@type":"WebSite","@id":"https://harrisongreener.co.uk/#site","url":"https://harrisongreener.co.uk/","name":"Harrison Greener \u00b7 Wallet CV","author":{"@id":"https://harrisongreener.co.uk/#me"}}]}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@graph":[{"@type":"Person","@id":"https://harrisongreener.co.uk/#me","name":"Harrison Greener","alternateName":"Harry Greener","url":"https://harrisongreener.co.uk/","image":"https://harrisongreener.co.uk/assets/me/me-toon.webp","jobTitle":"Freelance web designer, developer and graphic designer","description":"Freelance designer in Manchester and Brighton who designs brands, websites and apps, then builds them.","homeLocation":[{"@type":"Place","name":"Manchester"},{"@type":"Place","name":"Brighton"}],"workLocation":{"@id":"https://harrisongreener.co.uk/work-with-me/#service"},"address":{"@type":"PostalAddress","addressLocality":"Manchester","addressCountry":"GB"},"alumniOf":{"@type":"CollegeOrUniversity","name":"Manchester Metropolitan University"},"knowsAbout":["Web design","Web development","Graphic design","Brand identity","Logo design","UX/UI design","App design","Front-end development","three.js","Interactive website design","3D website design"],"sameAs":["https://www.linkedin.com/in/harrison-greener-521341231/","https://github.com/HarrisonGreener"]},{"@type":"WebSite","@id":"https://harrisongreener.co.uk/#site","url":"https://harrisongreener.co.uk/","name":"Harrison Greener \u00b7 Wallet CV","author":{"@id":"https://harrisongreener.co.uk/#me"}}]}</script>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -543,11 +543,11 @@ body.menu-on .quick{opacity:0;pointer-events:none}
   var c = document.createElement('canvas'), gl = null;
   try { gl = c.getContext('webgl2') || c.getContext('webgl'); } catch (e) {}
   if (gl) return;
-  var P = [['stack','Stack'],['quotable','Quotable'],['rolla','Rolla'],['folio','Folio'],['brandomizer','The Great Brandomizer'],['hibble','Hibble'],['greener-sans','Greener Sans'],['posters','Posters'],['big-brother','Big Brother Inc.'],['fly','Can a fly play Tetris?'],['pat','Pat']];
+  var P = [['stack','Stack'],['quotable','Quotable'],['myface','MyFace'],['rolla','Rolla'],['folio','Folio'],['brandomizer','The Great Brandomizer'],['hibble','Hibble'],['greener-sans','Greener Sans'],['posters','Posters'],['big-brother','Big Brother Inc.'],['fly','Can a fly play Tetris?'],['pat','Pat']];
   addEventListener('DOMContentLoaded', function () {
     var d = document.createElement('main'); d.className = 'nogl';
     d.innerHTML = '<h2>Harrison Greener, designer</h2><p>This portfolio is a 3D wallet, but your browser can\'t show 3D right now. Here\'s everything inside it.</p>' +
-      '<p><a href="cv/Harrison-Greener-CV.pdf">Download my CV (PDF)</a> · <a href="work-with-me/">Hire me as a freelancer</a> · <a href="freelance-web-designer-manchester/">Web designer in Manchester</a> · <a href="freelance-web-designer-brighton/">Web designer in Brighton</a> · <a href="making-of/">How I made the wallet</a> · <a href="mailto:harrygreener@hotmail.co.uk">Email me</a></p><ul>' +
+      '<p><a href="cv/Harrison-Greener-CV.pdf">Download my CV (PDF)</a> · <a href="work-with-me/">Hire me as a freelancer</a> · <a href="interactive-websites/">Interactive and 3D websites</a> · <a href="freelance-web-designer-manchester/">Web designer in Manchester</a> · <a href="freelance-web-designer-brighton/">Web designer in Brighton</a> · <a href="making-of/">How I made the wallet</a> · <a href="mailto:harrygreener@hotmail.co.uk">Email me</a></p><ul>' +
       P.map(function (x) { return '<li><a href="projects/' + x[0] + '/">' + x[1] + '</a></li>'; }).join('') + '</ul>';
     document.body.appendChild(d);
   });
@@ -2220,6 +2220,8 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
 }
 { // graphic design: the poster series and the free textures, each on its own page
   const LINKS = [
+    { href: 'projects/myface/', title: 'MyFace', cats: ['Web', 'Brand'], bg: '#EEE8E2', label: 'MyFace: a beauty studio website built as a vintage computer you switch on',
+      art: '<img src="projects/myface/img/cover.webp" alt="" loading="lazy" decoding="async">' },
     { href: 'projects/posters/', title: 'Twelve Posters', cats: ['Graphic design'], bg: '#1F1F1F', label: 'Twelve Posters: twelve styles, every palette spun on the Brandomizer',
       art: `<div class="gd-fan">${['04', '03', '01', '02', '05'].map((n) => `<img src="projects/posters/img/${n}-thumb.webp" alt="" loading="lazy" decoding="async">`).join('')}</div><span class="gd-tag">12 posters · 12 styles · 30 min each</span>` },
     { href: 'projects/hibble/', title: 'Hibble', cats: ['Graphic design', 'Type'], bg: '#FDFDF8', label: 'Hibble: my handwriting as a font. Type anything in it',
@@ -2236,7 +2238,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   });
 }
 { // strongest work first: what an employer should see before they stop scrolling
-  const ORDER = ['quotable', 'stack', 'wallet', 'rolla', 'folio', 'brandomizer', 'hibble', 'greener-sans', 'posters', 'big-brother', 'fly', 'pat'];
+  const ORDER = ['quotable', 'myface', 'stack', 'wallet', 'rolla', 'folio', 'brandomizer', 'hibble', 'greener-sans', 'posters', 'big-brother', 'fly', 'pat'];
   const rank = (c) => { const i = ORDER.indexOf(c.dataset.id); return i < 0 ? ORDER.length : i; };
   workCards.sort((a, b) => rank(a) - rank(b));
   workCards.forEach((c, i) => { grid.appendChild(c); c.querySelector('.mw-no').textContent = String(i + 1).padStart(2, '0'); });

@@ -1,0 +1,293 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MyFace: an interactive 3D website · Harrison Greener</title>
+<meta name="description" content="MyFace case study: an interactive 3D website for a Manchester beauty studio, built as a vintage computer you switch on. Brand, 3D, web build and local SEO.">
+<link rel="canonical" href="https://harrisongreener.co.uk/projects/myface/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MyFace · An interactive 3D website">
+<meta property="og:description" content="Prove you're not a robot, switch on the computer and customise your avatar. A website for a Manchester beauty studio that plays like a game.">
+<meta name="author" content="Harrison Greener">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="manifest" href="/site.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Pixelify+Sans:wght@400;600&family=Inter:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#EEE8E2;--card:#FFFFFF;--ink:#1C1A1E;--dim:#5A5560;--pink:#FF4FA3;--pinkd:#B01E63;--pinkl:#FFD1EA;--green:#39FF14;
+  --line:rgba(28,26,30,.14);--w:1180px;--g:clamp(16px,4vw,48px);
+  --hand:image-set(url("../../assets/cursor/hand-point.png") 1x,url("../../assets/cursor/hand-point@2x.png") 2x) 9 1,url("../../assets/cursor/hand-point.png") 9 1,auto}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 18px/1.6 Inter,system-ui,sans-serif;cursor:var(--hand);-webkit-font-smoothing:antialiased;overflow-x:clip}
+a,button{cursor:var(--hand);color:inherit}
+img{max-width:100%;height:auto;display:block}
+.wrap{max-width:var(--w);margin:0 auto;padding:0 var(--g)}
+.px{font-family:'Pixelify Sans',monospace}
+/* top bar: a window title bar */
+.top{position:sticky;top:0;z-index:5;background:var(--ink);color:#fff}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:56px;gap:12px}
+.top img{height:20px;width:auto}
+.top nav{display:flex;gap:10px}
+.top a.b{font:600 14px 'Pixelify Sans',monospace;text-decoration:none;padding:8px 14px;border-radius:4px;background:#2E2A31}
+.top a.r{background:var(--pink);color:var(--ink)}
+.ticker{background:var(--pink);color:var(--ink);font:400 clamp(18px,2.2vw,26px)/1 Anton,sans-serif;letter-spacing:.02em;white-space:nowrap;overflow:hidden;padding:10px 0}
+.ticker span{display:inline-block;animation:tick 40s linear infinite;padding-left:100%}
+@keyframes tick{to{transform:translateX(-100%)}}
+@media (prefers-reduced-motion:reduce){.ticker span{animation:none;padding-left:0}}
+/* hero */
+.hero{padding:56px 0 0}
+.kick{font:600 14px 'Pixelify Sans',monospace;letter-spacing:.04em;color:var(--pinkd);margin:0 0 12px}
+h1{font:400 clamp(64px,11vw,150px)/.88 Anton,sans-serif;margin:0;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--pink);-webkit-text-stroke:2px var(--ink)}
+.lede{font-size:clamp(19px,2vw,23px);line-height:1.45;max-width:40ch;margin:22px 0 0}
+.meta{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:16px 24px;margin:34px 0 0;padding-top:18px;border-top:2px solid var(--ink)}
+.meta dt{font:600 13px 'Pixelify Sans',monospace;color:var(--pinkd)}
+.meta dd{margin:2px 0 0;font-weight:600;font-size:16px;line-height:1.35}
+.win{background:var(--card);border:2px solid var(--ink);border-radius:6px;box-shadow:8px 8px 0 var(--ink);overflow:hidden}
+.win .bar{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--pink);border-bottom:2px solid var(--ink);padding:6px 10px;font:600 14px 'Pixelify Sans',monospace}
+.win .bar i{display:flex;gap:5px}.win .bar i b{width:14px;height:14px;border:2px solid var(--ink);background:#fff;border-radius:2px}
+.heroimg{margin:44px 0 0}
+/* sections */
+section{padding:clamp(70px,9vw,120px) 0 0}
+.sec-head{display:grid;grid-template-columns:120px 1fr;gap:20px;align-items:baseline;border-top:3px solid var(--ink);padding-top:16px;margin-bottom:32px}
+.no{font:600 18px 'Pixelify Sans',monospace;color:var(--pinkd)}
+h2{font:400 clamp(34px,5vw,64px)/1 Anton,sans-serif;margin:0;text-transform:uppercase}
+h2 em{font-style:normal;color:var(--pinkd)}
+.cols{display:grid;grid-template-columns:120px minmax(0,1fr);gap:20px}
+.prose{max-width:64ch}.prose p{margin:0 0 1.1em}
+.pull{font:700 clamp(24px,3vw,34px)/1.2 Inter,sans-serif;max-width:26ch;margin:4px 0 30px}
+.pull em{font-style:normal;color:var(--pinkd)}
+figure{margin:0}
+figcaption{font:400 15px 'Pixelify Sans',monospace;color:var(--dim);margin-top:12px}
+.grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin:34px 0;align-items:start}
+.steps{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:34px 0 0}
+.step{background:var(--card);border:2px solid var(--ink);border-radius:6px;padding:18px 18px 22px;box-shadow:5px 5px 0 var(--ink)}
+.step .n{font:400 34px Anton,sans-serif;color:var(--pink);-webkit-text-stroke:1px var(--ink)}
+.step b{display:block;font:600 19px 'Pixelify Sans',monospace;margin:4px 0 6px}
+.step p{margin:0;font-size:15.5px;line-height:1.5}
+/* live */
+.live{background:var(--ink);color:#fff;border-radius:10px;padding:clamp(20px,4vw,40px)}
+.live h2 em{color:var(--pink)}
+.live .kick{color:var(--green)}
+.live-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;margin-bottom:22px}
+.live p{margin:10px 0 0;max-width:52ch;color:#D9D4DC}
+.btn{display:inline-block;font:600 16px 'Pixelify Sans',monospace;text-decoration:none;padding:12px 20px;border-radius:4px;background:var(--pink);color:var(--ink);border:2px solid var(--ink);box-shadow:4px 4px 0 var(--ink)}
+.live .btn{box-shadow:4px 4px 0 #000;border-color:#000}
+.btn.g{background:#fff}
+.bscreen{position:relative;aspect-ratio:16/10;overflow:hidden;border-radius:6px;background:#000}
+.bscreen iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0}
+.bscreen img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+/* seo */
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin:34px 0}
+.stat{background:var(--card);border:2px solid var(--ink);border-radius:6px;padding:18px}
+.stat b{display:block;font:400 clamp(38px,5vw,56px)/1 Anton,sans-serif;color:var(--pinkd)}
+.stat span{display:block;margin-top:6px;font-weight:600;font-size:15px;line-height:1.35}
+.urls{font:400 15px/1.9 'Pixelify Sans',monospace;background:var(--card);border:2px solid var(--ink);border-radius:6px;padding:16px 20px;margin:0;list-style:none;columns:2;column-gap:30px}
+.urls li::before{content:"› ";color:var(--pinkd)}
+/* details */
+.details{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:34px 0}
+.det{background:var(--card);border:2px solid var(--ink);border-radius:6px;overflow:hidden;display:flex;flex-direction:column}
+.det .pic{background:var(--pinkl);display:grid;place-items:center;overflow:hidden;border-bottom:2px solid var(--ink)}
+.det .pic img{width:100%;height:100%;object-fit:cover}
+.det .txt{padding:20px 22px 24px}
+.det h3{font:600 21px/1.2 'Pixelify Sans',monospace;margin:0 0 8px}
+.det p{margin:0;font-size:16px;line-height:1.55}
+.det.wide{grid-column:1/-1}
+.phone{display:grid;grid-template-columns:minmax(0,320px) minmax(0,1fr);gap:40px;align-items:center;margin:34px 0 0}
+.phone img{border:2px solid var(--ink);border-radius:22px;box-shadow:8px 8px 0 var(--ink)}
+.tools{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:30px 0 0}
+.tools div{background:var(--card);border:2px solid var(--ink);border-radius:6px;padding:18px}
+.tools b{display:block;font:600 13px 'Pixelify Sans',monospace;color:var(--pinkd)}
+.tools span{display:block;margin-top:6px;font-weight:600;line-height:1.35}
+.repo{background:var(--card);border:2px solid var(--ink);border-radius:6px;padding:18px 20px;margin:14px 0 0}
+.repo .lang{height:10px;display:flex;border-radius:999px;overflow:hidden;margin:12px 0 10px}
+.repo .ll{font-size:15px;display:flex;flex-wrap:wrap;gap:6px 16px}
+.repo .ll i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+/* end */
+.end{background:var(--ink);color:#fff;margin-top:clamp(80px,10vw,140px);padding:clamp(56px,8vw,100px) 0 34px}
+.end h2 em{color:var(--pink)}
+.end p{max-width:52ch;color:#D9D4DC}
+.btns{display:flex;gap:14px;flex-wrap:wrap;margin:26px 0 0}
+.end .btn{border-color:#000;box-shadow:4px 4px 0 #000}
+.small{margin-top:60px;padding-top:18px;border-top:1px solid rgba(255,255,255,.25);font-size:14px;color:#BDB7C0;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.rv{opacity:0;transform:translateY(24px);transition:opacity .9s ease,transform 1s cubic-bezier(.16,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion:reduce){.rv{opacity:1;transform:none;transition:none}}
+@media (max-width:900px){
+  .meta{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .sec-head,.cols{grid-template-columns:1fr}.cols>.spacer{display:none}
+  .steps,.tools,.stats{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .details,.grid2,.phone{grid-template-columns:1fr}
+  .phone img{max-width:300px}
+  .urls{columns:1}
+}
+@media (max-width:520px){.steps,.tools{grid-template-columns:1fr}.top nav a:not(.r){display:none}}
+</style>
+<meta property="og:url" content="https://harrisongreener.co.uk/projects/myface/">
+<meta property="og:site_name" content="Harrison Greener">
+<meta property="og:locale" content="en_GB">
+<meta property="og:image" content="https://harrisongreener.co.uk/projects/myface/img/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="MyFace: the captcha logo, an avatar.exe pop-up and the mascot on pink">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="MyFace · An interactive 3D website">
+<meta name="twitter:description" content="Prove you're not a robot, switch on the computer and customise your avatar. A website for a Manchester beauty studio that plays like a game.">
+<meta name="twitter:image" content="https://harrisongreener.co.uk/projects/myface/img/og.jpg">
+<meta name="twitter:image:alt" content="MyFace: the captcha logo, an avatar.exe pop-up and the mascot on pink">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "CreativeWork", "@id": "https://harrisongreener.co.uk/projects/myface/#work", "name": "MyFace", "headline": "MyFace · An interactive 3D website", "description": "Case study: an interactive 3D website for MyFace, a home beauty studio in Manchester, designed and built by Harrison Greener as a vintage computer you switch on.", "url": "https://harrisongreener.co.uk/projects/myface/", "image": "https://harrisongreener.co.uk/projects/myface/img/og.jpg", "inLanguage": "en-GB", "genre": "Interactive website design", "keywords": "interactive website, 3D website, three.js, web design Manchester, beauty salon website, local SEO", "author": {"@type": "Person", "@id": "https://harrisongreener.co.uk/#me", "name": "Harrison Greener", "url": "https://harrisongreener.co.uk/"}, "creator": {"@id": "https://harrisongreener.co.uk/#me"}, "isPartOf": {"@type": "WebSite", "@id": "https://harrisongreener.co.uk/#site", "name": "Harrison Greener", "url": "https://harrisongreener.co.uk/"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Harrison Greener", "item": "https://harrisongreener.co.uk/"}, {"@type": "ListItem", "position": 2, "name": "Interactive websites", "item": "https://harrisongreener.co.uk/interactive-websites/"}, {"@type": "ListItem", "position": 3, "name": "MyFace", "item": "https://harrisongreener.co.uk/projects/myface/"}]}]}</script>
+<script>
+/* Visitor stats (GoatCounter, no cookies). Only counts on the live domain; add #toggle-goatcounter to a URL to stop counting your own visits */
+(function(){var on=location.hostname==='harrisongreener.co.uk';
+window.gc=function(p,t){try{if(on&&window.goatcounter&&goatcounter.count)goatcounter.count({path:p,title:t||p,event:true})}catch(e){}};
+if(!on)return;var s=document.createElement('script');s.async=true;s.src='https://gc.zgo.at/count.js';s.setAttribute('data-goatcounter','https://harrygreener.goatcounter.com/count');document.head.appendChild(s);
+document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('a[href]');if(!a)return;var u;try{u=new URL(a.href,location.href)}catch(x){return}
+if(/\.(pdf|zip)$/i.test(u.pathname))gc('download'+u.pathname);else if(u.protocol==='mailto:')gc('contact/email');else if(/^https?:$/.test(u.protocol)&&u.hostname!==location.hostname)gc('out/'+u.hostname+u.pathname.replace(/\/$/,''))},true)})();
+</script>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <a href="../../" aria-label="Harrison Greener, home"><img src="../../brand/greener-solid-white.svg" alt="Greener" width="110" height="28"></a>
+  <nav><a data-back class="b" href="../../">← The wallet</a><a class="b r" href="https://harrisongreener.github.io/myface/" target="_blank" rel="noopener">Switch it on ↗</a></nav>
+</div></header>
+<div class="ticker" aria-hidden="true"><span>HAIR • NAILS • LASHES • BROWS • PIERCING • LIP FILLER • CUSTOMISE YOUR AVATAR • HAIR • NAILS • LASHES • BROWS • PIERCING • LIP FILLER • CUSTOMISE YOUR AVATAR •</span></div>
+
+<div class="hero"><div class="wrap">
+  <p class="kick">Client project · Interactive website · 3D · Brand</p>
+  <h1>My<em>Face</em></h1>
+  <p class="lede">A website for Ella Moore's home beauty studio in Manchester, built as a vintage computer you switch on. Prove you're not a robot, boot up the desktop and customise your avatar. Every treatment opens in its own window.</p>
+  <dl class="meta">
+    <div><dt>Client</dt><dd>MyFace, home beauty studio, Manchester</dd></div>
+    <div><dt>My role</dt><dd>Brand, web design, 3D, build, SEO</dd></div>
+    <div><dt>Made with</dt><dd>three.js, HTML, CSS, JavaScript, Python</dd></div>
+    <div><dt>Year</dt><dd>2026</dd></div>
+    <div><dt>Status</dt><dd>Launching soon</dd></div>
+  </dl>
+  <figure class="heroimg win"><div class="bar"><span>myface.exe</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/home.webp" alt="The MyFace homepage: a pink retro computer surrounded by pop-up windows of nails, lashes, hair and lip filler photos" width="1440" height="900"></figure>
+</div></div>
+
+<main>
+<section id="brief"><div class="wrap">
+  <div class="sec-head rv"><span class="no">01</span><h2>The <em>brief</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p class="pull">Ella didn't want another salon template. She wanted her website to <em>feel like a video game</em>.</p>
+    <p>MyFace is Ella's appointment-only beauty studio, run from home. She does nails, hair, lashes, brows, piercing and lip filler, and she did all her own piercings herself. The name is a spin on MySpace, and she wanted the site to feel like the MySpace-era internet: a bit emo, a bit retro and very pink.</p>
+    <p>Most beauty websites look the same: a photo, a price list and a booking button. Ella was after clients like her, people who'd see the site and get it straight away. So rather than a page about a game, I made the website <em>be</em> the game.</p>
+  </div></div>
+</div></section>
+
+<section id="how"><div class="wrap">
+  <div class="sec-head rv"><span class="no">02</span><h2>How it <em>plays</em></h2></div>
+  <div class="steps rv">
+    <div class="step"><span class="n">1</span><b>I'm not a robot</b><p>Every fresh visit starts with a captcha. The warped letters are the logo, and ticking the box lets you in.</p></div>
+    <div class="step"><span class="n">2</span><b>The desk</b><p>A pink 3D computer, with photo windows popping up around it like an old desktop full of open files.</p></div>
+    <div class="step"><span class="n">3</span><b>Switch it on</b><p>Click the computer and the camera dives into the screen, boots up and drops you on a working desktop.</p></div>
+    <div class="step"><span class="n">4</span><b>Customise</b><p>Open Paint to restyle the avatar, play her.exe, or browse treatments, prices and booking in their own windows.</p></div>
+  </div>
+  <div class="grid2 rv">
+    <figure class="win"><div class="bar"><span>captcha</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/captcha.webp" alt="The MyFace captcha: the logo in warped captcha letters above an I'm not a robot checkbox" loading="lazy" width="600" height="310"></figure>
+    <figure class="win"><div class="bar"><span>avatar.bmp - Paint</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/avatar.webp" alt="The avatar open in a Paint-style window, with hair colour swatches and background colours to choose from" loading="lazy" width="1440" height="900"></figure>
+  </div>
+</div></section>
+
+<section id="try"><div class="wrap">
+  <div class="live rv">
+    <div class="live-top">
+      <div><p class="kick" style="margin:0">Live preview</p><h2>Switch it <em>on</em></h2><p>The real site, running live. Tick the box, then click the computer to get in.</p></div>
+      <a class="btn" href="https://harrisongreener.github.io/myface/" target="_blank" rel="noopener">Open full size ↗</a>
+    </div>
+    <div class="bscreen" id="mfScreen"><img src="img/home.webp" alt="The MyFace homepage" width="1440" height="900"><iframe id="mfFrame" title="MyFace, live" src="https://harrisongreener.github.io/myface/" width="1440" height="900" loading="lazy" referrerpolicy="no-referrer"></iframe></div>
+  </div>
+</div></section>
+
+<section id="seo"><div class="wrap">
+  <div class="sec-head rv"><span class="no">03</span><h2>A game that <em>Google can read</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv">
+    <p class="pull">The fun only works if people <em>find it</em>.</p>
+    <p>3D sites often vanish from search because there's nothing for Google to read. So everything you can open on the computer is also a real page underneath, with proper links, headings and text. Each treatment has its own page aimed at what people actually search for, like "Lip Filler in Manchester", and each nearby area has one too.</p>
+    <p>All the pages come from one Python script. Change a price or add a treatment in one place, run it, and every page, the sitemap and the structured data update together.</p>
+  </div></div>
+  <div class="stats rv">
+    <div class="stat"><b>39</b><span>pages built from one script</span></div>
+    <div class="stat"><b>16</b><span>treatment pages, each with prices and FAQs</span></div>
+    <div class="stat"><b>3</b><span>area pages: Droylsden, Oldham and Stockport</span></div>
+    <div class="stat"><b>4</b><span>aftercare guides for piercing, filler, lashes and nails</span></div>
+  </div>
+  <div class="grid2 rv">
+    <figure class="win"><div class="bar"><span>myface://filler/lip-filler</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><img src="img/treatment.webp" alt="The Lip Filler in Manchester page, with a description and a price table" loading="lazy" width="1440" height="900"></figure>
+    <ul class="urls" aria-label="Some of the pages">
+      <li>/filler/lip-filler/</li><li>/nails/biab/</li><li>/nails/gel-nails/</li><li>/beauty/lashes/</li><li>/beauty/brows/</li><li>/piercing/ear-piercing/</li><li>/hair/extensions/</li><li>/areas/droylsden/</li><li>/areas/oldham/</li><li>/areas/stockport/</li><li>/aftercare/piercing/</li><li>/prices/</li><li>/faq/</li>
+    </ul>
+  </div>
+</div></section>
+
+<section id="details"><div class="wrap">
+  <div class="sec-head rv"><span class="no">04</span><h2>The small <em>details</em></h2></div>
+  <div class="details">
+    <article class="det rv"><div class="pic"><img src="img/her.webp" alt="her.exe: the MyFace mascot, a pixel-art girl with pink and black hair, over a collage of beauty magazine scans" loading="lazy" width="560" height="750"></div>
+      <div class="txt"><h3>her.exe</h3><p>The mascot gets her own program. She says hiya, and you can drag to spin her round in a window full of beauty-magazine collage.</p></div></article>
+    <article class="det rv"><div class="pic" style="padding:40px 20px"><div class="win" style="max-width:420px;width:100%"><div class="bar"><span>avatar.exe</span><i aria-hidden="true"><b></b><b></b><b></b></i></div><div style="padding:18px 20px;font:600 16px/1.45 Inter,sans-serif">⚠ Your avatar needs customising!<br><span style="font-weight:400;font-size:15px">Click the computer to customise your avatar and find your treatment x</span></div></div></div>
+      <div class="txt"><h3>Error messages that sell</h3><p>The pop-ups borrow the look of old system alerts. "Your avatar needs customising" is the call to action, and "Slots are open!" is the booking button.</p></div></article>
+    <article class="det wide rv"><div class="txt"><div class="phone"><img src="img/phone.webp" alt="MyFace on a phone: notifications for booking, the avatar and picture messages above a pink flip phone" loading="lazy" width="780" height="1688">
+      <div><h3>On a phone, it's a flip phone</h3><p>A desktop computer doesn't fit a phone screen, so phones get their own version: notifications slide in like texts, the photos arrive as picture messages, and the menu lives on a flip phone's keypad.</p><p style="margin-top:1em">"Customise your avatar" runs through everything, from the captcha to the strapline. A treatment is just a change to your avatar.</p></div></div></div></article>
+  </div>
+</div></section>
+
+<section id="built"><div class="wrap">
+  <div class="sec-head rv"><span class="no">05</span><h2>How it's <em>built</em></h2></div>
+  <div class="cols"><div class="spacer"></div><div class="prose rv"><p>The computer is a 3D model in three.js. The desktop, windows and pop-ups are ordinary HTML, so they're quick, accessible and readable by search engines. The 3D only loads once you're through the captcha, and phones get lighter textures, so the first screen appears fast.</p></div></div>
+  <div class="tools rv">
+    <div><b>3D</b><span>three.js</span></div>
+    <div><b>Interface</b><span>HTML, CSS and JavaScript</span></div>
+    <div><b>Pages</b><span>Generated by a Python script</span></div>
+    <div><b>Search</b><span>Schema, sitemap, local pages</span></div>
+  </div>
+  <div class="repo rv">
+    <a href="https://github.com/HarrisonGreener/myface" target="_blank" rel="noopener" style="font-weight:700">HarrisonGreener/myface ↗</a>
+    <div class="lang"><i style="width:80%;background:#e34c26"></i><i style="width:7%;background:#663399"></i><i style="width:6.5%;background:#3572A5"></i><i style="width:6.5%;background:#f1e05a"></i></div>
+    <div class="ll"><span><i style="background:#e34c26"></i>HTML 80%</span><span><i style="background:#663399"></i>CSS 7%</span><span><i style="background:#3572A5"></i>Python 6.5%</span><span><i style="background:#f1e05a"></i>JavaScript 6.5%</span></div>
+  </div>
+</div></section>
+</main>
+
+<footer class="end">
+  <div class="wrap">
+    <h2>Want a site people <em>play with?</em></h2>
+    <p>I design and build interactive and 3D websites for brands that want to be remembered, with the search side built in from the start.</p>
+    <div class="btns"><a class="btn" href="../../interactive-websites/">Interactive websites</a><a class="btn g" href="../../work-with-me/">Work with me</a></div>
+    <div class="small"><span><a data-back href="../../" style="color:inherit">← Back to the wallet</a></span><span>Designed and built by Harrison Greener</span></div>
+  </div>
+</footer>
+
+<script>
+(() => {
+  const els = document.querySelectorAll('.rv');
+  if (!('IntersectionObserver' in window)) { els.forEach((e) => e.classList.add('in')); return; }
+  const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { rootMargin: '0px 0px -8% 0px' });
+  els.forEach((e) => io.observe(e));
+})();
+(() => {
+  const box = document.getElementById('mfScreen'), f = document.getElementById('mfFrame');
+  const fit = () => { f.style.transform = `scale(${box.clientWidth / 1440})`; };
+  addEventListener('resize', fit); fit(); new ResizeObserver(fit).observe(box);
+})();
+</script>
+<script>
+(() => {   // Back goes to wherever you came from: the projects in the menu, or the desk
+  let r = null; try { r = JSON.parse(sessionStorage.getItem('wcv-return') || 'null'); } catch (e) {}
+  const same = document.referrer && new URL(document.referrer).origin === location.origin;
+  document.querySelectorAll('a[data-back]').forEach((a) => {
+    if (r && r.menu) a.textContent = '← All projects';
+    a.addEventListener('click', (e) => { if (same && history.length > 1) { e.preventDefault(); history.back(); } });
+  });
+})();
+</script>
+</body>
+</html>
