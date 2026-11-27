@@ -195,7 +195,7 @@ canvas.can-grab{cursor:var(--hand-grab)}
 .quick button:hover,.quick .q-hire:hover{background:rgba(31,31,31,.08)}
 .quick button:focus-visible,.quick a:focus-visible{outline:2px solid #1F1F1F;outline-offset:2px}
 body.menu-on .quick{opacity:0;pointer-events:none}
-@media (max-width:720px){.quick button{display:none}.quick .q-hire{font-size:14px;padding:11px 15px;background:#73956F;color:#F2F2F0;box-shadow:0 6px 16px -6px rgba(46,63,43,.6)}}
+@media (max-width:720px){.quick button{display:none}.quick .q-hire{font-size:14px;padding:11px 15px;background:#73956F;color:#1F1F1F;font-weight:700;box-shadow:0 6px 16px -6px rgba(46,63,43,.6)}}
 /* Menu: three uneven green bars that level out and twist into an X; the menu itself is a full green page */
 .menu-btn{position:fixed;z-index:9;top:calc(env(safe-area-inset-top,0px) + 24px);right:calc(max(16px,env(safe-area-inset-right,0px)) + 8px);width:48px;height:48px;
   border:0;background:none;padding:0;cursor:inherit}
@@ -536,7 +536,7 @@ body.menu-on .quick{opacity:0;pointer-events:none}
 @media (prefers-reduced-motion:reduce){.menu,.menu-under,[data-rv],[data-rv]>*{transition:none!important}.menu,.menu-under{transform:none;opacity:0}.menu.open,.menu-under.open{opacity:1}}
 </style>
 
-<div id="stage" aria-label="Interactive 3D wallet. Use the buttons below to open it and pull out each item."></div>
+<div id="stage" role="region" aria-label="Interactive 3D wallet. Use the buttons below to open it and pull out each item."></div>
 <script>
 /* No WebGL (very old device, or graphics turned off)? Show a plain way in instead of a blank desk */
 (function () {
@@ -813,16 +813,30 @@ const $ = (s) => document.querySelector(s);
 
 /* ---------- Renderer, scene, camera ---------- */
 const stage = $('#stage');
-const renderer = new THREE.WebGLRenderer({ antialias: true, logarithmicDepthBuffer: true, powerPreference: 'high-performance' });
+// Machines with no graphics chip (or with hardware acceleration switched off) draw WebGL on the CPU, where one full-quality
+// frame of this desk can take seconds. Spot that and draw a lighter version: lower resolution, no shadows, fewer frames.
+const SOFT = (() => {
+  try {
+    const c = document.createElement('canvas'), gl = c.getContext('webgl2') || c.getContext('webgl');
+    if (!gl) return false;
+    const ext = gl.getExtension('WEBGL_debug_renderer_info');
+    const name = String(gl.getParameter(ext ? ext.UNMASKED_RENDERER_WEBGL : gl.RENDERER));
+    gl.getExtension('WEBGL_lose_context')?.loseContext();
+    return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(name);
+  } catch { return false; }
+})();
+window.__soft = SOFT;
+const renderer = new THREE.WebGLRenderer({ antialias: !SOFT, logarithmicDepthBuffer: true, powerPreference: 'high-performance' });
 // Older or low-memory devices start at a lower resolution and cheaper shadows; a frame-rate check in frame() steps down further if needed
 const LOW_END = (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 4;
 // Cap the number of pixels drawn: on big or high-DPI screens (a 4K monitor, Windows scaling) full resolution is
 // several times more work for no visible gain, so stay around 2560x1440's worth of pixels.
-const prCap = () => Math.max(1, Math.min(devicePixelRatio, LOW_END ? 1.5 : 2, Math.sqrt(3.7e6 / (innerWidth * innerHeight))));
+const prCap = () => SOFT ? Math.min(1, Math.sqrt(2.5e5 / (innerWidth * innerHeight)))
+  : Math.max(1, Math.min(devicePixelRatio, LOW_END ? 1.5 : 2, Math.sqrt(3.7e6 / (innerWidth * innerHeight))));
 let pixelRatio = prCap();
 renderer.setPixelRatio(pixelRatio);
 renderer.setSize(innerWidth, innerHeight);
-renderer.shadowMap.enabled = true;
+renderer.shadowMap.enabled = !SOFT;
 renderer.shadowMap.type = LOW_END ? THREE.PCFShadowMap : THREE.PCFSoftShadowMap;
 renderer.toneMapping = THREE.ACESFilmicToneMapping;
 renderer.toneMappingExposure = 0.82;
@@ -2560,7 +2574,7 @@ function buildBrand(id, title) {
   box.hidden = !b; box.innerHTML = '';
   if (!b) return;
   box.innerHTML = `<div class="pdb-head"><h4>Brand guidelines</h4><div class="pd-links">${b.pdf ? `<a href="${b.pdf}" target="_blank" rel="noopener">Full guidelines (PDF) ↗</a>` : ''}${b.files ? `<a href="${b.files}" target="_blank" rel="noopener">Brand files ↗</a>` : ''}</div></div>`
-    + `<div class="pdb-strip" tabindex="0" aria-label="${esc(title)} brand guidelines, ${b.pages.length} pages">${b.pages.map((src, i) => `<img src="${src}" alt="${esc(title)} brand guidelines, page ${i + 1} of ${b.pages.length}" width="900" height="506" loading="lazy">`).join('')}</div>`;
+    + `<div class="pdb-strip" tabindex="0" role="region" aria-label="${esc(title)} brand guidelines, ${b.pages.length} pages">${b.pages.map((src, i) => `<img src="${src}" alt="${esc(title)} brand guidelines, page ${i + 1} of ${b.pages.length}" width="900" height="506" loading="lazy">`).join('')}</div>`;
 }
 const LANG_COLOURS = { JavaScript: '#f1e05a', TypeScript: '#3178c6', HTML: '#e34c26', CSS: '#563d7c', Python: '#3572A5', PLpgSQL: '#336790', Batchfile: '#C1F12E', Shell: '#89e051' };
 const ICON = {
@@ -3006,12 +3020,15 @@ function needsDraw(now) {
   if (document.hidden) return false;
   if (!menu.hidden) { if (!menuShownAt) menuShownAt = now; return now - menuShownAt < 700; }   // menu covers the desk once it has faded in
   if (menuShownAt) { menuShownAt = 0; poke(); }
+  if (SOFT) return now - lastPoke < 1500 || openVal !== openTarget || !!active || walletWobble > 0 || phoneP !== phoneTarget;   // software drawing: only when something moves
   return now < 9000 || now - lastPoke < 6000 || openVal !== openTarget || !!active || walletWobble > 0 || phoneP !== phoneTarget || phoneP > 0;
 }
 function frame() {
   requestAnimationFrame(frame);
   const now = performance.now();
   if (!needsDraw(now)) { clock.getDelta(); return; }
+  if (SOFT && now - (frame.last || 0) < 250) return;        // software drawing: a few frames a second is plenty
+  frame.last = now;
   const dt = Math.min(clock.getDelta(), 0.05);
   if (now > 4000) governFrameRate();                        // let the first textures and shaders settle before judging
   if (openVal !== openTarget) {
@@ -3085,6 +3102,7 @@ window.__walletReady = true;
 })();
 addEventListener('pageshow', (e) => { if (e.persisted) try { sessionStorage.removeItem('wcv-return'); } catch (_) {} });   // restored as it was, nothing to do
 window.__wallet = { state: () => ({ phoneP, phoneTarget, openVal, openTarget, active: !!active }), phoneNow: (step) => { openPhone(); phoneP = 1; posePhone(); placePhoneUI(); resetPhoneScreen(); phoneUI.classList.add('on'); if (step) phoneUI.dataset.step = step; }, holdP: (v) => { if (active) { active.dir = 0; active.p = v; poseActive(); } }, props, jiggleAll: () => props.forEach(jiggle), openNow: (v = 1) => { openVal = openTarget = v; applyOpen(); }, setOpen, pull: (id) => pull(ITEMS.find((i) => i.id === id)), putBack, camera, controls, ITEMS, scratchCard, THREE }; // handle for automated checks
-requestAnimationFrame(frame);
+// Build the shaders off the main thread where the browser can (KHR_parallel_shader_compile), so the page doesn't freeze while they compile
+Promise.race([renderer.compileAsync(scene, camera), new Promise((r) => setTimeout(r, 3000))]).catch(() => {}).finally(() => requestAnimationFrame(frame));
 setTimeout(() => $('#veil').classList.add('gone'), 150);
 </script>
