@@ -543,7 +543,7 @@ body.menu-on .quick{opacity:0;pointer-events:none}
   var c = document.createElement('canvas'), gl = null;
   try { gl = c.getContext('webgl2') || c.getContext('webgl'); } catch (e) {}
   if (gl) return;
-  var P = [['stack','Stack'],['quotable','Quotable'],['myface','MyFace'],['rolla','Rolla'],['folio','Folio'],['brandomizer','The Great Brandomizer'],['hibble','Hibble'],['greener-sans','Greener Sans'],['posters','Posters'],['big-brother','Big Brother Inc.'],['fly','Can a fly play Tetris?'],['pat','Pat']];
+  var P = [['stack','Stack'],['quotable','Quotable'],['myface','MyFace'],['seo','How I do SEO'],['rolla','Rolla'],['folio','Folio'],['brandomizer','The Great Brandomizer'],['hibble','Hibble'],['greener-sans','Greener Sans'],['posters','Posters'],['big-brother','Big Brother Inc.'],['fly','Can a fly play Tetris?'],['pat','Pat']];
   addEventListener('DOMContentLoaded', function () {
     var d = document.createElement('main'); d.className = 'nogl';
     d.innerHTML = '<h2>Harrison Greener, designer</h2><p>This portfolio is a 3D wallet, but your browser can\'t show 3D right now. Here\'s everything inside it.</p>' +
@@ -2220,6 +2220,8 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
 }
 { // graphic design: the poster series and the free textures, each on its own page
   const LINKS = [
+    { href: 'projects/seo/', title: 'How I do SEO', cats: ['Web'], bg: '#1F1F1F', label: 'How I do SEO: getting websites found on Google',
+      art: '<img src="projects/seo/img/cover.webp" alt="" loading="lazy" decoding="async">' },
     { href: 'projects/myface/', title: 'MyFace', cats: ['Web', 'Brand'], bg: '#EEE8E2', label: 'MyFace: a beauty studio website built as a vintage computer you switch on',
       art: '<img src="projects/myface/img/cover.webp" alt="" loading="lazy" decoding="async">' },
     { href: 'projects/posters/', title: 'Twelve Posters', cats: ['Graphic design'], bg: '#1F1F1F', label: 'Twelve Posters: twelve styles, every palette spun on the Brandomizer',
@@ -2238,7 +2240,7 @@ ITEMS.filter((i) => i.kind === 'biz').forEach((cfg, n) => {
   });
 }
 { // strongest work first: what an employer should see before they stop scrolling
-  const ORDER = ['quotable', 'myface', 'stack', 'wallet', 'rolla', 'folio', 'brandomizer', 'hibble', 'greener-sans', 'posters', 'big-brother', 'fly', 'pat'];
+  const ORDER = ['quotable', 'myface', 'stack', 'wallet', 'seo', 'rolla', 'folio', 'brandomizer', 'hibble', 'greener-sans', 'posters', 'big-brother', 'fly', 'pat'];
   const rank = (c) => { const i = ORDER.indexOf(c.dataset.id); return i < 0 ? ORDER.length : i; };
   workCards.sort((a, b) => rank(a) - rank(b));
   workCards.forEach((c, i) => { grid.appendChild(c); c.querySelector('.mw-no').textContent = String(i + 1).padStart(2, '0'); });
